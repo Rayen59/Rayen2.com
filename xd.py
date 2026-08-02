@@ -91,6 +91,7 @@ def init_db():
             email TEXT UNIQUE NOT NULL,
             username TEXT NOT NULL,
             password_hash TEXT NOT NULL,
+            token TEXT,
             avatar TEXT DEFAULT '',
             status TEXT DEFAULT 'offline',
             created_at REAL NOT NULL
@@ -178,6 +179,10 @@ def init_db():
             created_at REAL NOT NULL
         );
     """)
+    try:
+        c.execute("ALTER TABLE users ADD COLUMN token TEXT;")
+    except sqlite3.OperationalError:
+        pass
     conn.commit()
     conn.close()
 
