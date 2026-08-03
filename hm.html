@@ -2400,13 +2400,19 @@ async function startCall(type){
     showToast("Calls require HTTPS or localhost");
     return;
   }
-  if (!currentChat || currentChat.type !== "dm") return;
+  if (!currentChat || currentChat.type !== "dm") {
+    showToast("Only direct messages support calls");
+    return;
+  }
   isVideoCall = (type === "video");
   currentCallTargetId = currentChat.id;
 
+  // Show call overlay immediately
   showCallOverlay("Calling...", true);
+  
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: isVideoCall});
+    const constraints = {audio: true, video: isVideoCall};
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
     setupLocalVideo();
     createPeerConnection();
 
@@ -2420,8 +2426,9 @@ async function startCall(type){
       offer: offer,
       video: isVideoCall
     });
+    document.getElementById("callStatus").textContent = "Calling...";
   } catch(err){
-    showToast("Could not access camera/microphone");
+    showToast("Could not access camera/microphone: " + err.message);
     endCall(true);
   }
 }
@@ -2495,7 +2502,9 @@ function handleRemoteEnd(){
 }
 
 function declineCall(){
-  socket.emit("call_reject", {target: currentCallTargetId});
+  if (currentCallTargetId) {
+    socket.emit("call_reject", {target: currentCallTargetId});
+  }
   endCall(true);
 }
 
@@ -2515,6 +2524,7 @@ function endCall(silent){
   document.getElementById("callOverlay").classList.add("hidden");
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
+  document.getElementById("cameraBtn").classList.add("hidden");
 }
 
 function createPeerConnection(){
@@ -2544,19 +2554,14 @@ function setupLocalVideo(){
   }
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
-  document.getElementById("callOverlay").classList.remove("hidden");
-  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat?.name});
-  document.getElementById("callName").textContent = currentChat?.name || "Call";
-}
-
-function showCallStatus(text){
-  document.getElementById("callStatus").textContent = text;
 }
 
 function showCallOverlay(status, isOutgoing){
   document.getElementById("callStatus").textContent = status;
-  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat?.name, avatar: currentChat?.avatar});
-  document.getElementById("callName").textContent = currentChat?.name || "Call";
+  const name = currentChat ? currentChat.name : "Call";
+  const avatar = currentChat ? currentChat.avatar : null;
+  setAvatarEl(document.getElementById("callAvatar"), {username: name, avatar: avatar});
+  document.getElementById("callName").textContent = name;
   document.getElementById("callOverlay").classList.remove("hidden");
   if (isOutgoing) {
     document.getElementById("callActionsIncoming").classList.add("hidden");
