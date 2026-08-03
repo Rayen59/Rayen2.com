@@ -474,6 +474,8 @@
     }
     .bubble img, .bubble video { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 4px; }
     .bubble audio { width: 200px; max-width: 60vw; }
+    .bubble .gift-emoji { font-size: 48px; display: block; text-align: center; margin: 4px 0; }
+    .bubble .gift-label { font-size: 11px; color: rgba(255,255,255,0.6); text-align: center; }
     .composer {
       display: flex; align-items: flex-end; gap: 8px;
       padding: 10px 14px;
@@ -561,6 +563,7 @@
       width: 100%; height: 100%;
       object-fit: cover;
     }
+    .reel-item video::-webkit-media-controls { display: none !important; }
     .reel-overlay {
       position: relative; z-index: 2;
       width: 100%;
@@ -616,6 +619,13 @@
     .sheet-item:last-child { border-bottom: none; }
     .sheet-item:active { background: rgba(255,255,255,0.04); border-radius: 12px; }
     .sheet-item .ic { font-size: 20px; width: 28px; text-align: center; }
+    .sheet-item .role-badge {
+      font-size: 10px; padding: 2px 10px; border-radius: 12px;
+      background: rgba(79, 154, 255, 0.15); color: var(--accent);
+      margin-left: auto;
+    }
+    .sheet-item .role-badge.admin { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+    .sheet-item .role-badge.moderator { background: rgba(52, 211, 153, 0.15); color: #34d399; }
     .reaction-picker {
       display: flex; gap: 12px;
       justify-content: space-around;
@@ -726,6 +736,72 @@
     .edit-banner .edit-content { flex: 1; min-width: 0; }
     .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
     .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* Gift picker */
+    .gift-picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 12px 0;
+    }
+    .gift-picker .gift-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      border-radius: 14px;
+      background: var(--bg-surface-2);
+      border: 2px solid transparent;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+    .gift-picker .gift-option:hover, .gift-picker .gift-option:active {
+      border-color: var(--accent);
+      background: var(--bg-surface-3);
+      transform: scale(0.96);
+    }
+    .gift-picker .gift-option .gift-emoji { font-size: 36px; }
+    .gift-picker .gift-option .gift-name { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+    /* Group management */
+    .restriction-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 8px 0;
+    }
+    .restriction-picker button {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 13px;
+      transition: var(--transition-smooth);
+    }
+    .restriction-picker button:hover, .restriction-picker button:active {
+      background: var(--bg-surface-3);
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    .restriction-picker button.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .member-role-select {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 6px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .member-role-select option { background: var(--bg-surface); }
+    .restricted-badge {
+      font-size: 10px; padding: 2px 10px; border-radius: 12px;
+      background: rgba(255, 92, 122, 0.15); color: var(--danger);
+      margin-left: 8px;
+    }
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
@@ -785,7 +861,7 @@
   <div id="reelsScreen" class="hidden">
     <div class="reels-feed" id="reelsFeed"></div>
     <div class="reels-topbar">
-      <div class="reels-title">Reels</div>
+      <div class="reels-title">🎬 Reels</div>
       <div class="icon-btn" style="color:#fff;" onclick="openSettings()">⚙️</div>
     </div>
     <div class="fab" style="bottom:80px;z-index:15;" onclick="openUploadReelSheet()">＋</div>
@@ -849,6 +925,7 @@
       <div class="icon-btn" onclick="cancelEdit()">✕</div>
     </div>
     <div class="composer">
+      <div class="round-btn" onclick="openGiftPicker()">🎁</div>
       <div class="round-btn" onclick="triggerFile('image')">📷</div>
       <div class="round-btn" onclick="triggerFile('video')">🎬</div>
       <textarea id="msgInput" rows="1" placeholder="Message" oninput="onTypingInput()" onkeydown="onComposerKey(event)"></textarea>
@@ -879,6 +956,23 @@ let messageCache = {};
 let pendingMessages = {};
 let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
+let groupMembersCache = {};
+
+// ---- GIFTS ----
+const GIFTS = [
+  { emoji: "🌸", name: "Flower" },
+  { emoji: "🎂", name: "Cake" },
+  { emoji: "💎", name: "Diamond" },
+  { emoji: "🌹", name: "Rose" },
+  { emoji: "🍫", name: "Chocolate" },
+  { emoji: "🎸", name: "Guitar" },
+  { emoji: "🏆", name: "Trophy" },
+  { emoji: "💝", name: "Heart" },
+  { emoji: "🧸", name: "Teddy" },
+  { emoji: "🍾", name: "Champagne" },
+  { emoji: "🎈", name: "Balloon" },
+  { emoji: "💐", name: "Bouquet" },
+];
 
 // ---- API helper ----
 async function api(path, opts={}) {
@@ -1010,6 +1104,7 @@ function connectSocket(){
     showToast(d.error || "Call error");
     endCall(true);
   });
+  socket.on("group_member_updated", handleGroupMemberUpdate);
   socket.on("account_deleted", () => {
     showToast("This account was deleted");
     localStorage.removeItem("wg_token"); localStorage.removeItem("wg_me");
@@ -1133,11 +1228,12 @@ function renderGroups(groups){
     const el = document.createElement("div");
     el.className = "list-item";
     el.onclick = () => openGroup(gr);
+    const roleBadge = gr.role === 'admin' ? ' 👑' : (gr.role === 'moderator' ? ' 🛡️' : '');
     el.innerHTML = `
       <div class="avatar">${gr.avatar ? `<img src="${gr.avatar}">` : (gr.name ? gr.name.charAt(0).toUpperCase() : "?")}</div>
       <div class="list-item-content">
-        <div class="list-item-name">${escapeHtml(gr.name || "Group")}</div>
-        <div class="list-item-sub">${gr.role==='admin'?'You are the admin':'Group chat'}${gr.has_password?' · 🔒':''}</div>
+        <div class="list-item-name">${escapeHtml(gr.name || "Group")}${roleBadge}</div>
+        <div class="list-item-sub">${gr.role==='admin'?'You are the admin':(gr.role==='moderator'?'You are a moderator':'Group chat')}${gr.has_password?' · 🔒':''}</div>
       </div>`;
     body.appendChild(el);
   });
@@ -1170,6 +1266,15 @@ function openGroup(gr){
   enterChatScreen();
   api("/api/messages/group/"+gr.id).then(r => renderMessages(r.messages)).catch(e => showToast(e.message));
   socket.emit("mark_read", {chat_type:"group", target:gr.id});
+  // Load group members for admin functions
+  loadGroupMembers(gr.id);
+}
+
+async function loadGroupMembers(groupId){
+  try {
+    const r = await api("/api/groups/"+groupId+"/members");
+    groupMembersCache[groupId] = r.members || [];
+  } catch(e){}
 }
 
 function enterChatScreen(){
@@ -1237,7 +1342,7 @@ function buildBubble(m){
   if (m.reply_to && !m.deleted) {
     const rt = m.reply_to;
     const preview = rt.msg_type === "text" ? rt.preview :
-      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message"}[rt.msg_type] || rt.preview);
+      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[rt.msg_type] || rt.preview);
     inner += `<div class="quoted-block" style="background:rgba(255,255,255,0.06);border-left:3px solid rgba(255,255,255,0.2);border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;" onclick="scrollToMessage(${rt.id})">
       <div style="font-weight:700;color:#8ecbff;">${escapeHtml(rt.sender_name)}</div>
       <div style="color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${escapeHtml(preview)}</div>
@@ -1245,6 +1350,10 @@ function buildBubble(m){
   }
   if (m.deleted) {
     inner += "This message was deleted";
+  } else if (m.msg_type === "gift") {
+    const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift" };
+    inner += `<div class="gift-emoji">${gift.emoji}</div>`;
+    inner += `<div class="gift-label">🎁 ${escapeHtml(gift.name)}</div>`;
   } else if (m.msg_type === "image") {
     inner += `<img src="${m.media_path}" onclick="openMediaFull('${m.media_path}','image')">`;
   } else if (m.msg_type === "video") {
@@ -1387,7 +1496,8 @@ function startReply(m){
     id: m.id,
     sender_name: m.sender_id === ME.id ? "You" : m.sender_name,
     msg_type: m.msg_type,
-    preview: m.msg_type === "text" ? (m.content || "") : ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message"}[m.msg_type] || "Message"),
+    preview: m.msg_type === "text" ? (m.content || "") : 
+      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[m.msg_type] || "Message"),
   };
   document.getElementById("replyPreviewName").textContent = "Replying to " + replyingTo.sender_name;
   document.getElementById("replyPreviewText").textContent = replyingTo.preview;
@@ -1452,6 +1562,45 @@ function sendTextMessage(){
   });
   input.value = "";
   cancelReply();
+}
+
+function sendGift(emoji, name){
+  if (!currentChat) return;
+  if (document.getElementById("blockBanner")) { showToast("This conversation is unavailable"); return; }
+  document.querySelector(".overlay")?.remove();
+  
+  const replyId = replyingTo ? replyingTo.id : null;
+  const clientId = appendOptimistic("gift", emoji, "");
+  socket.emit("send_message", {
+    chat_type: currentChat.type,
+    target: currentChat.id,
+    msg_type: "gift",
+    content: emoji,
+    client_id: clientId,
+    reply_to_id: replyId
+  });
+  cancelReply();
+  showToast("🎁 Gift sent: " + name);
+}
+
+function openGiftPicker(){
+  if (!currentChat) return;
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
+  GIFTS.forEach(g => {
+    html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
+      <span class="gift-emoji">${g.emoji}</span>
+      <span class="gift-name">${escapeHtml(g.name)}</span>
+    </div>`;
+  });
+  html += `</div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
 }
 
 function onTypingInput(){
@@ -1527,8 +1676,9 @@ function handleIncomingMessage(m){
 
   if (!belongsToOpenChat) {
     if (m.sender_id !== ME.id) {
+      const preview = m.msg_type === "gift" ? "🎁 Sent a gift" : (m.msg_type === "text" ? m.content : "Sent a " + m.msg_type);
       showToast("New message from " + m.sender_name);
-      notifyDesktop(m.sender_name, m.msg_type === "text" ? m.content : "Sent a " + m.msg_type);
+      notifyDesktop(m.sender_name, preview);
     }
     return;
   }
@@ -1653,6 +1803,32 @@ function handleTyping(d){
   typingTimeout = setTimeout(() => el.textContent = "", 2000);
 }
 
+// ---- Group Member Updates ----
+function handleGroupMemberUpdate(data){
+  if (currentChat && currentChat.type === "group" && String(currentChat.id) === data.group_id) {
+    if (data.action === "role_changed") {
+      showToast(`${data.username} is now ${data.new_role}`);
+      if (data.target_id === ME.id) {
+        currentChat.role = data.new_role;
+        document.getElementById("chatStatus").textContent = "Group · " + data.new_role;
+      }
+    } else if (data.action === "removed") {
+      if (data.target_id === ME.id) {
+        showToast("You were removed from the group");
+        closeChat();
+      } else {
+        showToast(`${data.username} was removed from the group`);
+      }
+    } else if (data.action === "restricted") {
+      showToast(`${data.username} was restricted for ${data.duration}`);
+    } else if (data.action === "unrestricted") {
+      showToast(`${data.username} is no longer restricted`);
+    }
+    // Refresh members cache
+    loadGroupMembers(currentChat.id);
+  }
+}
+
 // ---- Message Menu ----
 function openMessageMenu(m, mine){
   if (typeof m.id !== "number") return;
@@ -1678,6 +1854,13 @@ function openMessageMenu(m, mine){
   if (mine && !m.deleted) {
     html += `<div class="sheet-item" style="color:var(--danger);" onclick="deleteMessage(${m.id})"><span class="ic">🗑️</span> Delete for everyone</div>`;
   }
+  // Admin actions for group messages
+  if (currentChat && currentChat.type === "group" && currentChat.role === "admin" && !mine && !m.deleted) {
+    html += `<div style="border-top:1px solid var(--border-subtle);margin:8px 0;padding-top:8px;">`;
+    html += `<div class="sheet-item" style="color:var(--danger);" onclick="removeUserFromGroup(${m.sender_id})"><span class="ic">🚫</span> Remove user from group</div>`;
+    html += `<div class="sheet-item" onclick="restrictUserFromGroup(${m.sender_id})"><span class="ic">⏰</span> Restrict user</div>`;
+    html += `</div>`;
+  }
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
@@ -1698,6 +1881,9 @@ function copyMessage(messageId) {
   let textToCopy = "";
   if (m.msg_type === "text") {
     textToCopy = m.content || "";
+  } else if (m.msg_type === "gift") {
+    const gift = GIFTS.find(g => g.emoji === m.content) || { name: "Gift" };
+    textToCopy = "🎁 " + gift.name;
   } else if (m.msg_type === "image") {
     textToCopy = "[Image]";
   } else if (m.msg_type === "video") {
@@ -1712,12 +1898,10 @@ function copyMessage(messageId) {
     textToCopy = m.content || "";
   }
   
-  // Add sender name for group messages
   if (currentChat && currentChat.type === "group" && m.sender_id !== ME.id) {
     textToCopy = m.sender_name + ": " + textToCopy;
   }
   
-  // Copy to clipboard
   if (navigator.clipboard && navigator.clipboard.writeText) {
     navigator.clipboard.writeText(textToCopy).then(() => {
       showToast("Message copied to clipboard");
@@ -1831,6 +2015,145 @@ function confirmForward(target){
   showToast("Forwarded to " + target.name);
 }
 
+// ---- Group Admin Functions ----
+async function openGroupManageMenu() {
+  if (!currentChat || currentChat.type !== "group") return;
+  if (currentChat.role !== "admin") {
+    showToast("Only admins can manage the group");
+    return;
+  }
+  
+  const members = groupMembersCache[currentChat.id] || [];
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  
+  let html = `<h2>👥 Manage Group</h2>`;
+  
+  // Members list with management options
+  html += `<div style="max-height:300px;overflow-y:auto;">`;
+  members.forEach(m => {
+    const isSelf = m.user_id === ME.id;
+    const isAdmin = m.role === 'admin';
+    const isModerator = m.role === 'moderator';
+    const isRestricted = m.restricted_until && new Date(m.restricted_until) > new Date();
+    
+    html += `<div class="sheet-item" style="flex-wrap:wrap;gap:8px;">
+      <span class="ic">${avatarInner(m)}</span>
+      <span style="flex:1;">${escapeHtml(m.username)}</span>
+      ${isAdmin ? '<span class="role-badge admin">👑 Admin</span>' : ''}
+      ${isModerator ? '<span class="role-badge moderator">🛡️ Mod</span>' : ''}
+      ${isRestricted ? `<span class="restricted-badge">⏰ Restricted</span>` : ''}
+      ${!isSelf && !isAdmin ? `
+        <select class="member-role-select" onchange="changeMemberRole(${m.user_id}, this.value)">
+          <option value="member" ${!isModerator ? 'selected' : ''}>Member</option>
+          <option value="moderator" ${isModerator ? 'selected' : ''}>Moderator</option>
+          <option value="admin" ${isAdmin ? 'selected' : ''}>Admin</option>
+        </select>
+        <button onclick="removeUserFromGroup(${m.user_id})" style="color:var(--danger);font-size:16px;">🗑️</button>
+        ${!isRestricted ? `<button onclick="restrictUserFromGroup(${m.user_id})" style="color:var(--accent);font-size:16px;">⏰</button>` : `<button onclick="unrestrictUser(${m.user_id})" style="color:#34d399;font-size:16px;">✅</button>`}
+      ` : ''}
+    </div>`;
+  });
+  html += `</div>`;
+  
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+async function changeMemberRole(userId, newRole) {
+  if (!currentChat || currentChat.type !== "group") return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/role", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId, role: newRole})
+    });
+    showToast("Role updated successfully");
+    loadGroupMembers(currentChat.id);
+    // Close and reopen the manage menu
+    document.querySelector(".overlay")?.remove();
+    setTimeout(openGroupManageMenu, 300);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+async function removeUserFromGroup(userId) {
+  if (!currentChat || currentChat.type !== "group") return;
+  if (!confirm("Are you sure you want to remove this user from the group?")) return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/remove", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId})
+    });
+    showToast("User removed from group");
+    document.querySelector(".overlay")?.remove();
+    loadGroupMembers(currentChat.id);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+async function restrictUserFromGroup(userId) {
+  if (!currentChat || currentChat.type !== "group") return;
+  
+  // Show restriction duration picker
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = `
+    <h2>⏰ Restrict User</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">Choose restriction duration:</p>
+    <div class="restriction-picker">
+      <button onclick="confirmRestrict(${userId}, 300)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">5 min</button>
+      <button onclick="confirmRestrict(${userId}, 3600)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">1 hour</button>
+      <button onclick="confirmRestrict(${userId}, 86400)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">24 hours</button>
+      <button onclick="confirmRestrict(${userId}, 604800)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">7 days</button>
+      <button onclick="confirmRestrict(${userId}, 2592000)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">30 days</button>
+    </div>
+    <button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()" style="background:var(--bg-surface-2);box-shadow:none;margin-top:8px;"><span>Cancel</span></button>
+  `;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+async function confirmRestrict(userId, durationSeconds) {
+  document.querySelector(".overlay")?.remove();
+  if (!currentChat || currentChat.type !== "group") return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/restrict", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId, duration: durationSeconds})
+    });
+    showToast(`User restricted for ${formatDuration(durationSeconds)}`);
+    loadGroupMembers(currentChat.id);
+    document.querySelector(".overlay")?.remove();
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+async function unrestrictUser(userId) {
+  if (!currentChat || currentChat.type !== "group") return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/unrestrict", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId})
+    });
+    showToast("User unrestricted");
+    loadGroupMembers(currentChat.id);
+    document.querySelector(".overlay")?.remove();
+    setTimeout(openGroupManageMenu, 300);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
 // ---- Chat Menu ----
 async function openChatMenu(){
   let blockStatus = {i_blocked: false};
@@ -1847,10 +2170,11 @@ async function openChatMenu(){
 
   if (currentChat && currentChat.type === "group") {
     html += `<div class="sheet-item" onclick="viewGroupMembers()"><span class="ic">👥</span> View members</div>`;
-    html += `<div class="sheet-item" onclick="shareInviteLink()"><span class="ic">🔗</span> Share invite link</div>`;
     if (currentChat.role === "admin") {
+      html += `<div class="sheet-item" onclick="openGroupManageMenu()"><span class="ic">⚙️</span> Manage group</div>`;
       html += `<div class="sheet-item" onclick="changeGroupAvatarPrompt()"><span class="ic">🖼️</span> Change group photo</div>`;
     }
+    html += `<div class="sheet-item" onclick="shareInviteLink()"><span class="ic">🔗</span> Share invite link</div>`;
   } else if (blockStatus.i_blocked) {
     html += `<div class="sheet-item" onclick="unblockFromChat()"><span class="ic">✅</span> Unblock user</div>`;
   } else if (currentChat && currentChat.type === "dm") {
@@ -1901,7 +2225,10 @@ async function viewGroupMembers(){
   let html = "<h2>Members</h2>";
   if (r.members) {
     r.members.forEach(m => {
-      html += `<div class="sheet-item"><span class="ic">${avatarInner(m)}</span> ${escapeHtml(m.username)} ${m.role==='admin'?' · Admin':''}</div>`;
+      const isRestricted = m.restricted_until && new Date(m.restricted_until) > new Date();
+      const roleBadge = m.role === 'admin' ? ' 👑' : (m.role === 'moderator' ? ' 🛡️' : '');
+      const restrictBadge = isRestricted ? ' ⏰' : '';
+      html += `<div class="sheet-item"><span class="ic">${avatarInner(m)}</span> ${escapeHtml(m.username)}${roleBadge}${restrictBadge}</div>`;
     });
   }
   sheet.innerHTML = html;
@@ -2170,7 +2497,7 @@ async function submitJoinGroup(token){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== REELS ====================
+// ==================== REELS (Improved) ====================
 let reelsData = [];
 let reelViewObserver = null;
 
@@ -2187,7 +2514,11 @@ function renderReelsFeed(){
   const feed = document.getElementById("reelsFeed");
   feed.innerHTML = "";
   if (!reelsData || reelsData.length === 0) {
-    feed.innerHTML = `<div class="reel-item"><div class="reel-empty" style="color:#fff;text-align:center;padding:60px 30px;opacity:.7;font-size:14px;height:100%;display:flex;align-items:center;justify-content:center;">No reels yet.<br>Tap ＋ to share the first photo or video.</div></div>`;
+    feed.innerHTML = `<div class="reel-item"><div class="reel-empty" style="color:#fff;text-align:center;padding:60px 30px;opacity:.7;font-size:14px;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+      <div style="font-size:48px;">🎬</div>
+      <div>No reels yet.</div>
+      <div style="font-size:13px;opacity:0.6;">Tap the + button to share your first photo or video.</div>
+    </div></div>`;
     return;
   }
   if (reelViewObserver) reelViewObserver.disconnect();
@@ -2203,53 +2534,93 @@ function renderReelsFeed(){
         if (video) video.pause();
       }
     });
-  }, {threshold: 0.6});
+  }, {threshold: 0.5});
 
-  reelsData.forEach(reel => {
-    const el = buildReelItem(reel);
+  reelsData.forEach((reel, index) => {
+    const el = buildReelItem(reel, index);
     feed.appendChild(el);
     reelViewObserver.observe(el);
   });
 }
 
-function buildReelItem(reel){
+function buildReelItem(reel, index){
   const el = document.createElement("div");
   el.className = "reel-item";
   el.dataset.reelId = reel.id;
+  el.style.background = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}`;
 
   const media = reel.media_type === "video"
-    ? `<video src="${reel.media_path}" loop muted playsinline></video>`
-    : `<img src="${reel.media_path}">`;
+    ? `<video src="${reel.media_path}" loop muted playsinline preload="metadata" poster="${reel.media_path}?v=${Date.now()}"></video>`
+    : `<img src="${reel.media_path}" loading="lazy">`;
 
   const totalReactions = Object.values(reel.reaction_counts||{}).reduce((a,b)=>a+b,0);
 
+  // Add gradient overlay with different colors for each reel
+  const gradientColors = [
+    'linear-gradient(0deg, rgba(0,0,0,0.8) 10%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%)',
+    'linear-gradient(0deg, rgba(20,0,40,0.8) 10%, rgba(20,0,40,0.2) 40%, rgba(20,0,40,0.1) 60%)',
+    'linear-gradient(0deg, rgba(0,20,40,0.8) 10%, rgba(0,20,40,0.2) 40%, rgba(0,20,40,0.1) 60%)',
+  ];
+  const gradient = gradientColors[index % gradientColors.length];
+
   el.innerHTML = `
     ${media}
-    <div class="reel-overlay">
+    <div class="reel-overlay" style="background:${gradient};">
       <div class="reel-info">
         <div class="reel-author">
-          <div class="avatar" style="width:32px;height:32px;font-size:13px;">${reel.author_avatar ? `<img src="${reel.author_avatar}">` : (reel.author_name ? reel.author_name.charAt(0).toUpperCase() : "?")}</div>
-          ${escapeHtml(reel.author_name)}
-          ${reel.is_mine ? `<span onclick="deleteReel(${reel.id})" style="margin-left:8px;font-size:16px;cursor:pointer;">🗑️</span>` : ""}
+          <div class="avatar" style="width:36px;height:36px;font-size:14px;border:2px solid rgba(255,255,255,0.3);">${reel.author_avatar ? `<img src="${reel.author_avatar}">` : (reel.author_name ? reel.author_name.charAt(0).toUpperCase() : "?")}</div>
+          <span style="font-size:16px;font-weight:600;">${escapeHtml(reel.author_name)}</span>
+          <span style="font-size:12px;opacity:0.6;margin-left:4px;">• ${formatRelativeTime(reel.timestamp)}</span>
+          ${reel.is_mine ? `<span onclick="event.stopPropagation();deleteReel(${reel.id})" style="margin-left:auto;font-size:18px;cursor:pointer;opacity:0.6;background:rgba(0,0,0,0.3);padding:4px 10px;border-radius:20px;">🗑️</span>` : ""}
         </div>
-        ${reel.caption ? `<div class="reel-caption">${escapeHtml(reel.caption)}</div>` : ""}
-        <div class="reel-views">👁 ${reel.view_count || 0} view${reel.view_count === 1 ? "" : "s"}</div>
+        ${reel.caption ? `<div class="reel-caption" style="font-size:15px;font-weight:400;margin-top:4px;">${escapeHtml(reel.caption)}</div>` : ""}
+        <div class="reel-views" style="margin-top:8px;font-size:13px;opacity:0.8;">
+          <span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${reel.view_count || 0} views</span>
+        </div>
       </div>
       <div class="reel-actions">
-        <div class="reel-action" onclick="toggleReelReaction(${reel.id})">
-          <span class="ricon" id="reelReactIcon${reel.id}">${reel.my_reaction || "🤍"}</span>
-          <span id="reelReactCount${reel.id}">${totalReactions || ""}</span>
+        <div class="reel-action" onclick="toggleReelReaction(${reel.id})" style="transition:transform 0.2s;">
+          <span class="ricon" id="reelReactIcon${reel.id}" style="font-size:32px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">${reel.my_reaction || "🤍"}</span>
+          <span id="reelReactCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${totalReactions || ""}</span>
         </div>
         <div class="reel-action" onclick="openReelComments(${reel.id})">
-          <span class="ricon">💬</span>
-          <span id="reelCommentCount${reel.id}">${reel.comment_count || ""}</span>
+          <span class="ricon" style="font-size:28px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">💬</span>
+          <span id="reelCommentCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${reel.comment_count || ""}</span>
         </div>
         <div class="reel-action" onclick="openReelReactionPicker(${reel.id})">
-          <span class="ricon">😀</span>
+          <span class="ricon" style="font-size:26px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">😊</span>
+        </div>
+        <div class="reel-action" onclick="shareReel(${reel.id})">
+          <span class="ricon" style="font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">📤</span>
         </div>
       </div>
-    </div>`;
+    </div>
+    <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3;padding:4px 0;">
+      <span style="width:6px;height:6px;border-radius:50%;background:${index === 0 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:${index === 1 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:${index === 2 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
+    </div>
+  `;
   return el;
+}
+
+function shareReel(reelId){
+  const reel = reelsData.find(r => r.id === reelId);
+  if (!reel) return;
+  const url = window.location.origin + "/?reel=" + reelId;
+  if (navigator.share) {
+    navigator.share({
+      title: reel.caption || "Check out this reel!",
+      text: reel.caption || "Check out this reel on Wavegram!",
+      url: url
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      showToast("Reel link copied to clipboard!");
+    }).catch(() => {
+      showToast("Share: " + url);
+    });
+  }
 }
 
 async function registerReelView(id){
@@ -2258,7 +2629,7 @@ async function registerReelView(id){
     const reel = reelsData.find(x => x.id === id);
     if (reel) reel.view_count = r.view_count;
     const el = document.querySelector(`.reel-item[data-reel-id="${id}"] .reel-views`);
-    if (el) el.textContent = `👁 ${r.view_count} view${r.view_count === 1 ? "" : "s"}`;
+    if (el) el.innerHTML = `<span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${r.view_count} views</span>`;
   } catch(e){}
 }
 
@@ -2271,8 +2642,15 @@ async function toggleReelReaction(id){
     reel.my_reaction = newEmoji;
     reel.reaction_counts = r.reaction_counts;
     const total = Object.values(r.reaction_counts || {}).reduce((a,b)=>a+b,0);
-    document.getElementById("reelReactIcon"+id).textContent = newEmoji || "🤍";
-    document.getElementById("reelReactCount"+id).textContent = total || "";
+    const icon = document.getElementById("reelReactIcon"+id);
+    const count = document.getElementById("reelReactCount"+id);
+    if (icon) icon.textContent = newEmoji || "🤍";
+    if (count) count.textContent = total || "";
+    // Animation
+    if (icon) {
+      icon.style.transform = "scale(1.3)";
+      setTimeout(() => icon.style.transform = "scale(1)", 200);
+    }
   } catch(e){ showToast(e.message); }
 }
 
@@ -2283,7 +2661,7 @@ function openReelReactionPicker(id){
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   sheet.innerHTML = `<h2>React</h2><div class="reaction-picker">
-    ${["❤️","👍","😂","😮","😢","🔥"].map(e=>`<span onclick="setReelReaction(${id},'${e}')">${e}</span>`).join("")}
+    ${["❤️","👍","😂","😮","😢","🔥","💯","🎉"].map(e=>`<span onclick="setReelReaction(${id},'${e}')" style="font-size:32px;transition:transform 0.2s;">${e}</span>`).join("")}
   </div>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
@@ -2294,13 +2672,16 @@ async function setReelReaction(id, emoji){
     const r = await api("/api/reels/"+id+"/react", {method:"POST", body: JSON.stringify({emoji})});
     if (reel) { reel.my_reaction = emoji; reel.reaction_counts = r.reaction_counts; }
     const total = Object.values(r.reaction_counts || {}).reduce((a,b)=>a+b,0);
-    document.getElementById("reelReactIcon"+id).textContent = emoji;
-    document.getElementById("reelReactCount"+id).textContent = total || "";
+    const icon = document.getElementById("reelReactIcon"+id);
+    const count = document.getElementById("reelReactCount"+id);
+    if (icon) { icon.textContent = emoji; icon.style.transform = "scale(1.3)"; setTimeout(() => icon.style.transform = "scale(1)", 200); }
+    if (count) count.textContent = total || "";
   } catch(e){ showToast(e.message); }
   document.querySelector(".overlay")?.remove();
 }
 
 async function deleteReel(id){
+  if (!confirm("Delete this reel?")) return;
   try {
     await api("/api/reels/"+id, {method:"DELETE"});
     reelsData = reelsData.filter(x => x.id !== id);
@@ -2322,13 +2703,14 @@ function openUploadReelSheet(){
     const isVideo = file.type.startsWith("video");
     const previewUrl = URL.createObjectURL(file);
     sheet.innerHTML = `
-      <h2>New reel</h2>
-      <div style="width:100%;max-height:320px;border-radius:14px;overflow:hidden;margin-bottom:14px;background:#000;">
+      <h2>🎬 New Reel</h2>
+      <div style="width:100%;max-height:320px;border-radius:16px;overflow:hidden;margin-bottom:14px;background:#000;display:flex;align-items:center;justify-content:center;">
         ${isVideo ? `<video src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;" controls></video>`
                    : `<img src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;">`}
       </div>
-      <div class="field"><label>Caption (optional)</label><input id="reelCaption" placeholder="Say something about this..."></div>
-      <button class="btn-primary" onclick="publishReel()"><span>Share reel</span></button>`;
+      <div class="field"><label>Caption (optional)</label><input id="reelCaption" placeholder="Say something about this..." style="width:100%;padding:12px 16px;background:var(--bg-surface-2);border-radius:12px;font-size:14px;"></div>
+      <button class="btn-primary" onclick="publishReel()" style="margin-top:8px;"><span>📤 Share Reel</span></button>
+    `;
     overlay.appendChild(sheet);
     document.getElementById("app").appendChild(overlay);
     window._pendingReelFile = file;
@@ -2338,7 +2720,7 @@ function openUploadReelSheet(){
 
 async function publishReel(){
   const file = window._pendingReelFile;
-  const caption = document.getElementById("reelCaption").value.trim();
+  const caption = document.getElementById("reelCaption")?.value.trim() || "";
   if (!file) return;
   const fd = new FormData();
   fd.append("file", file);
@@ -2346,7 +2728,7 @@ async function publishReel(){
   try {
     const r = await api("/api/reels", {method:"POST", body: fd});
     document.querySelector(".overlay")?.remove();
-    showToast("Reel shared");
+    showToast("🎬 Reel shared!");
     if (r.reel) {
       reelsData.unshift(r.reel);
       renderReelsFeed();
@@ -2361,16 +2743,20 @@ async function openReelComments(reelId){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.style.maxHeight = "75vh";
-  sheet.innerHTML = `<h2>Comments</h2><div id="commentsList"></div>
-    <div class="comment-input-row" style="display:flex;gap:8px;align-items:center;padding:10px 4px 4px;border-top:1px solid var(--border-subtle);margin-top:8px;">
-      <input id="commentInput" placeholder="Add a comment..." style="flex:1;background:var(--bg-surface-2);padding:9px 14px;border-radius:18px;font-size:13.5px;border:1.5px solid transparent;transition:var(--transition-smooth);">
-      <div class="round-btn send" style="width:36px;height:36px;" onclick="submitComment(${reelId})">➤</div>
+  sheet.style.maxHeight = "80vh";
+  sheet.innerHTML = `<h2>💬 Comments</h2>
+    <div id="commentsList" style="max-height:300px;overflow-y:auto;"></div>
+    <div class="comment-input-row" style="display:flex;gap:8px;align-items:center;padding:12px 4px 4px;border-top:1px solid var(--border-subtle);margin-top:12px;">
+      <input id="commentInput" placeholder="Write a comment..." style="flex:1;background:var(--bg-surface-2);padding:10px 16px;border-radius:20px;font-size:14px;border:1.5px solid transparent;transition:var(--transition-smooth);">
+      <div class="round-btn send" style="width:38px;height:38px;" onclick="submitComment(${reelId})">➤</div>
     </div>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
   window._currentReplyParent = null;
   renderComments(r.comments || []);
+  
+  // Focus input after render
+  setTimeout(() => document.getElementById("commentInput")?.focus(), 300);
 }
 
 function renderComments(comments){
@@ -2382,7 +2768,7 @@ function renderComments(comments){
     byParent[c.parent_id] = byParent[c.parent_id] || [];
     byParent[c.parent_id].push(c);
   });
-  if (top.length === 0){ list.innerHTML = "<div class='empty-state'>No comments yet. Be the first!</div>"; return; }
+  if (top.length === 0){ list.innerHTML = "<div class='empty-state' style='padding:30px 10px;'><i>💬</i>No comments yet. Be the first!</div>"; return; }
   list.innerHTML = "";
   top.forEach(c => {
     list.appendChild(buildCommentEl(c, false));
@@ -2395,23 +2781,26 @@ function renderComments(comments){
 function buildCommentEl(c, isReply){
   const el = document.createElement("div");
   el.className = "comment-item" + (isReply ? " reply" : "");
-  el.style.cssText = `display:flex;gap:10px;padding:10px 4px;${isReply ? 'margin-left:38px;' : ''}`;
+  el.style.cssText = `display:flex;gap:10px;padding:10px 4px;${isReply ? 'margin-left:38px;border-left:2px solid var(--accent);padding-left:12px;' : ''}`;
   el.innerHTML = `
-    <div class="avatar" style="width:30px;height:30px;font-size:12px;">${c.author_avatar ? `<img src="${c.author_avatar}">` : (c.author_name ? c.author_name.charAt(0).toUpperCase() : "?")}</div>
+    <div class="avatar" style="width:32px;height:32px;font-size:12px;flex-shrink:0;">${c.author_avatar ? `<img src="${c.author_avatar}">` : (c.author_name ? c.author_name.charAt(0).toUpperCase() : "?")}</div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:13px;font-weight:600;">${escapeHtml(c.author_name)}</div>
-      <div style="font-size:13.5px;color:var(--text-primary);margin-top:2px;word-wrap:break-word;">${escapeHtml(c.content)}</div>
+      <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
+        ${escapeHtml(c.author_name)}
+        <span style="font-size:10px;color:var(--text-dim);font-weight:400;">${formatRelativeTime(c.timestamp)}</span>
+      </div>
+      <div style="font-size:14px;color:var(--text-primary);margin-top:2px;word-wrap:break-word;">${escapeHtml(c.content)}</div>
     </div>`;
   return el;
 }
 
 async function submitComment(reelId){
   const input = document.getElementById("commentInput");
-  const content = input.value.trim();
+  const content = input?.value.trim();
   if (!content) return;
   try {
     await api("/api/reels/"+reelId+"/comments", {method:"POST", body: JSON.stringify({content})});
-    input.value = "";
+    if (input) input.value = "";
     const r = await api("/api/reels/"+reelId+"/comments");
     renderComments(r.comments || []);
     const countEl = document.getElementById("reelCommentCount"+reelId);
