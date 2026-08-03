@@ -44,10 +44,12 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
+    /* ===== APP CONTAINER ===== */
     #app {
       height: 100vh; height: 100dvh;
       max-width: 480px;
@@ -60,10 +62,12 @@
       overflow: hidden;
     }
 
+    /* ===== UTILITY ===== */
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
 
+    /* ===== AUTH SCREEN ===== */
     #authScreen {
       flex: 1;
       display: flex;
@@ -75,6 +79,7 @@
       overflow: hidden;
     }
 
+    /* Animated background orbs */
     #authScreen::before {
       content: '';
       position: absolute;
@@ -224,6 +229,7 @@
       z-index: 1;
     }
 
+    /* ===== APP BAR ===== */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -278,6 +284,7 @@
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
+    /* ===== TABS ===== */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -301,6 +308,7 @@
     }
     .tab:active { opacity: 0.6; }
 
+    /* ===== SEARCH ===== */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -323,6 +331,7 @@
     }
     .search-bar input::placeholder { color: var(--text-dim); }
 
+    /* ===== LIST ===== */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -386,6 +395,7 @@
     }
     .empty-state i { display: block; font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
 
+    /* ===== FAB ===== */
     .fab {
       position: absolute;
       bottom: 80px; right: 20px;
@@ -400,6 +410,7 @@
     }
     .fab:active { transform: scale(0.9); }
 
+    /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -421,6 +432,7 @@
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
 
+    /* ===== CHAT SCREEN ===== */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
@@ -554,6 +566,7 @@
       transition: var(--transition-smooth);
     }
 
+    /* ===== REELS ===== */
     #reelsScreen {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -611,6 +624,7 @@
     }
     .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
+    /* ===== MODALS / SHEETS ===== */
     .overlay {
       position: absolute; inset: 0;
       background: rgba(4, 8, 14, 0.65);
@@ -683,6 +697,7 @@
     }
     .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
 
+    /* ===== CALL OVERLAY ===== */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
@@ -738,6 +753,7 @@
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
 
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
@@ -879,6 +895,7 @@
 <script>
 // =============================================================================
 //  WAVEGRAM – FULL CLIENT LOGIC
+//  Compatible with the Python server backend
 // =============================================================================
 
 const API = "";
@@ -1020,10 +1037,6 @@ function connectSocket(){
   socket.on("call_ice_candidate", handleRemoteIce);
   socket.on("call_reject", handleCallReject);
   socket.on("call_end", handleRemoteEnd);
-  socket.on("call_error", (d) => {
-    showToast(d.error || "Call error");
-    endCall(true);
-  });
   socket.on("account_deleted", () => {
     showToast("This account was deleted");
     localStorage.removeItem("wg_token"); localStorage.removeItem("wg_me");
@@ -2377,15 +2390,9 @@ let currentCallTargetId = null;
 let isVideoCall = false;
 let isMuted = false;
 let isCameraOff = false;
-let callStartTime = null;
-let callTimerInterval = null;
-let isCallActive = false;
-let callRecordSaved = false;
 
 const rtcConfig = {
-  iceServers: [
-    {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}
-  ]
+  iceServers: [{urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}]
 };
 
 async function startCall(type){
@@ -2393,51 +2400,17 @@ async function startCall(type){
     showToast("Calls require HTTPS or localhost");
     return;
   }
-  if (!currentChat || currentChat.type !== "dm") {
-    showToast("Only direct messages support calls");
-    return;
-  }
-  if (isCallActive) {
-    showToast("Already in a call");
-    return;
-  }
-  if (!socket || !socket.connected) {
-    showToast("Not connected to server");
-    return;
-  }
-  
+  if (!currentChat || currentChat.type !== "dm") return;
   isVideoCall = (type === "video");
   currentCallTargetId = currentChat.id;
-  callStartTime = Date.now();
-  callRecordSaved = false;
-  isCallActive = true;
 
-  // Show call overlay
-  document.getElementById("callActionsIncoming").classList.add("hidden");
-  document.getElementById("callActionsActive").classList.remove("hidden");
-  document.getElementById("callOverlay").classList.remove("hidden");
-  document.getElementById("callStatus").textContent = "Calling...";
-  document.getElementById("callName").textContent = currentChat.name;
-  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat.name, avatar: currentChat.avatar});
-  
+  showCallOverlay("Calling...", true);
   try {
-    const constraints = {audio: true, video: isVideoCall};
-    localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    
-    // Setup local video
-    const lv = document.getElementById("localVideo");
-    if (isVideoCall) {
-      lv.srcObject = localStream;
-      lv.classList.remove("hidden");
-    } else {
-      lv.classList.add("hidden");
-    }
-    
+    localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: isVideoCall});
+    setupLocalVideo();
     createPeerConnection();
 
-    localStream.getTracks().forEach(track => {
-      if (pc) pc.addTrack(track, localStream);
-    });
+    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
@@ -2447,161 +2420,89 @@ async function startCall(type){
       offer: offer,
       video: isVideoCall
     });
-    
-    // Start call timer
-    startCallTimer();
-    
   } catch(err){
-    showToast("Could not start call: " + err.message);
+    showToast("Could not access camera/microphone");
     endCall(true);
   }
 }
 
-function startCallTimer() {
-  if (callTimerInterval) clearInterval(callTimerInterval);
-  callTimerInterval = setInterval(() => {
-    if (callStartTime) {
-      const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
-      const mins = Math.floor(elapsed / 60);
-      const secs = elapsed % 60;
-      document.getElementById("callStatus").textContent = 
-        `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-  }, 1000);
-}
-
 async function handleCallOffer(data){
-  if (isCallActive || currentCallTargetId) {
+  if (currentCallTargetId) {
     socket.emit("call_reject", {target: data.from_user_id});
     return;
   }
-  if (!data.from_user_id) return;
-  
   currentCallTargetId = data.from_user_id;
-  isVideoCall = data.video || false;
-  callStartTime = Date.now();
-  callRecordSaved = false;
-  isCallActive = true;
+  isVideoCall = data.video;
 
-  const user = {username: data.from_username || "Unknown", avatar: data.from_avatar || null};
+  const user = {username: data.from_username, avatar: data.from_avatar};
   setAvatarEl(document.getElementById("callAvatar"), user);
-  document.getElementById("callName").textContent = user.username;
-  document.getElementById("callStatus").textContent = isVideoCall ? "Incoming video call..." : "Incoming voice call...";
+  document.getElementById("callName").textContent = user.username || "Incoming call";
+  document.getElementById("callStatus").textContent = (isVideoCall ? "Incoming video call..." : "Incoming voice call...");
 
   document.getElementById("callActionsIncoming").classList.remove("hidden");
   document.getElementById("callActionsActive").classList.add("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
 
   window._incomingOffer = data.offer;
-  window._callerInfo = user;
 }
 
 async function acceptCall(){
-  if (!window._incomingOffer) {
-    showToast("No incoming call to accept");
-    return;
-  }
-  
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
   document.getElementById("callStatus").textContent = "Connecting...";
 
   try {
     localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: isVideoCall});
-    
-    const lv = document.getElementById("localVideo");
-    if (isVideoCall) {
-      lv.srcObject = localStream;
-      lv.classList.remove("hidden");
-    } else {
-      lv.classList.add("hidden");
-    }
-    
+    setupLocalVideo();
     createPeerConnection();
 
-    localStream.getTracks().forEach(track => {
-      if (pc) pc.addTrack(track, localStream);
-    });
+    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
     const answer = await pc.createAnswer();
     await pc.setLocalDescription(answer);
 
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
-    startCallTimer();
-    
   } catch(err){
-    showToast("Failed to accept call: " + err.message);
+    showToast("Failed to connect call");
     endCall(true);
   }
 }
 
 async function handleCallAnswer(data){
-  if (!pc) {
-    console.warn("No peer connection for answer");
-    return;
-  }
+  if (!pc) return;
   try {
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     document.getElementById("callStatus").textContent = "Connected";
-    startCallTimer();
-  } catch(e){
-    console.error("Error setting remote description:", e);
-  }
+  } catch(e){}
 }
 
 async function handleRemoteIce(data){
-  if (!pc || !data.candidate) return;
+  if (!pc) return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-  } catch(e){
-    console.warn("Failed to add ICE candidate:", e);
-  }
+  } catch(e){}
 }
 
-function handleCallReject(data){
+function handleCallReject(){
   showToast("Call declined");
-  if (!callRecordSaved) {
-    saveCallRecord("declined");
-    callRecordSaved = true;
-  }
   endCall(true);
 }
 
-function handleRemoteEnd(data){
+function handleRemoteEnd(){
   showToast("Call ended");
-  if (!callRecordSaved && callStartTime) {
-    saveCallRecord("completed");
-    callRecordSaved = true;
-  }
   endCall(true);
 }
 
 function declineCall(){
-  if (currentCallTargetId) {
-    socket.emit("call_reject", {target: currentCallTargetId});
-  }
-  if (!callRecordSaved) {
-    saveCallRecord("declined");
-    callRecordSaved = true;
-  }
+  socket.emit("call_reject", {target: currentCallTargetId});
   endCall(true);
 }
 
 function endCall(silent){
-  if (callTimerInterval) {
-    clearInterval(callTimerInterval);
-    callTimerInterval = null;
-  }
-  
-  if (!silent && currentCallTargetId && isCallActive) {
+  if (!silent && currentCallTargetId) {
     socket.emit("call_end", {target: currentCallTargetId});
-    if (!callRecordSaved && callStartTime) {
-      saveCallRecord("completed");
-      callRecordSaved = true;
-    }
   }
-  
   if (localStream) {
     localStream.getTracks().forEach(t => t.stop());
     localStream = null;
@@ -2611,61 +2512,15 @@ function endCall(silent){
     pc = null;
   }
   currentCallTargetId = null;
-  isCallActive = false;
-  callStartTime = null;
   document.getElementById("callOverlay").classList.add("hidden");
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
-  document.getElementById("cameraBtn").classList.add("hidden");
-}
-
-function saveCallRecord(status) {
-  if (!currentChat || currentChat.type !== "dm") return;
-  const callType = isVideoCall ? "video" : "audio";
-  const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
-  
-  const content = `${callType}:${status}:${duration}`;
-  const clientId = makeClientId();
-  
-  const m = {
-    id: clientId,
-    chat_type: "dm",
-    chat_id: null,
-    sender_id: ME.id,
-    sender_name: ME.username,
-    sender_avatar: ME.avatar,
-    msg_type: "call",
-    content: content,
-    media_path: "",
-    timestamp: Date.now()/1000,
-    deleted: false,
-    reactions: [],
-    client_id: clientId,
-  };
-  
-  const body = document.getElementById("messagesBody");
-  if (body) {
-    const row = buildBubble(m);
-    row.classList.add("pending");
-    row.dataset.id = clientId;
-    body.appendChild(row);
-    body.scrollTop = body.scrollHeight;
-  }
-  
-  socket.emit("send_message", {
-    chat_type: "dm",
-    target: currentChat.id,
-    msg_type: "call",
-    content: content,
-    client_id: clientId,
-    reply_to_id: null
-  });
 }
 
 function createPeerConnection(){
   pc = new RTCPeerConnection(rtcConfig);
   pc.onicecandidate = (event) => {
-    if (event.candidate && currentCallTargetId && socket) {
+    if (event.candidate && currentCallTargetId) {
       socket.emit("call_ice_candidate", {target: currentCallTargetId, candidate: event.candidate});
     }
   };
@@ -2677,27 +2532,36 @@ function createPeerConnection(){
     document.getElementById("callStatus").textContent = "Connected";
     document.getElementById("cameraBtn").classList.toggle("hidden", !isVideoCall);
   };
-  pc.oniceconnectionstatechange = () => {
-    if (pc && pc.iceConnectionState === "failed") {
-      showToast("Connection failed");
-      if (!callRecordSaved) {
-        saveCallRecord("missed");
-        callRecordSaved = true;
-      }
-      endCall(true);
-    }
-    if (pc && pc.iceConnectionState === "connected") {
-      document.getElementById("callStatus").textContent = "Connected";
-    }
-    if (pc && pc.iceConnectionState === "disconnected") {
-      showToast("Disconnected");
-      if (!callRecordSaved) {
-        saveCallRecord("missed");
-        callRecordSaved = true;
-      }
-      endCall(true);
-    }
-  };
+}
+
+function setupLocalVideo(){
+  const lv = document.getElementById("localVideo");
+  if (isVideoCall) {
+    lv.srcObject = localStream;
+    lv.classList.remove("hidden");
+  } else {
+    lv.classList.add("hidden");
+  }
+  document.getElementById("callActionsIncoming").classList.add("hidden");
+  document.getElementById("callActionsActive").classList.remove("hidden");
+  document.getElementById("callOverlay").classList.remove("hidden");
+  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat?.name});
+  document.getElementById("callName").textContent = currentChat?.name || "Call";
+}
+
+function showCallStatus(text){
+  document.getElementById("callStatus").textContent = text;
+}
+
+function showCallOverlay(status, isOutgoing){
+  document.getElementById("callStatus").textContent = status;
+  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat?.name, avatar: currentChat?.avatar});
+  document.getElementById("callName").textContent = currentChat?.name || "Call";
+  document.getElementById("callOverlay").classList.remove("hidden");
+  if (isOutgoing) {
+    document.getElementById("callActionsIncoming").classList.add("hidden");
+    document.getElementById("callActionsActive").classList.remove("hidden");
+  }
 }
 
 function toggleMute(){
