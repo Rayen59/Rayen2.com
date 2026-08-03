@@ -474,8 +474,12 @@
     }
     .bubble img, .bubble video { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 4px; }
     .bubble audio { width: 200px; max-width: 60vw; }
-    .bubble .gift-emoji { font-size: 48px; display: block; text-align: center; margin: 4px 0; }
+    .bubble .gift-emoji { font-size: 52px; display: block; text-align: center; margin: 4px 0; animation: giftFloat 2s ease-in-out infinite; }
     .bubble .gift-label { font-size: 11px; color: rgba(255,255,255,0.6); text-align: center; }
+    @keyframes giftFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.05); }
+    }
     .composer {
       display: flex; align-items: flex-end; gap: 8px;
       padding: 10px 14px;
@@ -736,32 +740,40 @@
     .edit-banner .edit-content { flex: 1; min-width: 0; }
     .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
     .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    /* Gift picker */
     .gift-picker {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       padding: 12px 0;
+      max-height: 350px;
+      overflow-y: auto;
     }
     .gift-picker .gift-option {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 10px;
+      padding: 12px 8px;
       border-radius: 14px;
       background: var(--bg-surface-2);
       border: 2px solid transparent;
       transition: var(--transition-smooth);
       cursor: pointer;
+      min-height: 80px;
+      justify-content: center;
     }
     .gift-picker .gift-option:hover, .gift-picker .gift-option:active {
       border-color: var(--accent);
       background: var(--bg-surface-3);
       transform: scale(0.96);
     }
-    .gift-picker .gift-option .gift-emoji { font-size: 36px; }
-    .gift-picker .gift-option .gift-name { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
-    /* Group management */
+    .gift-picker .gift-option .gift-emoji { font-size: 40px; line-height: 1.2; }
+    .gift-picker .gift-option .gift-name { font-size: 9px; color: var(--text-dim); margin-top: 4px; text-align: center; }
+    .gift-picker .gift-option .gift-category { font-size: 7px; color: var(--text-dim); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; }
+    .gift-category-header {
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      padding: 8px 4px 4px; border-bottom: 1px solid var(--border-subtle);
+      grid-column: 1 / -1;
+    }
     .restriction-picker {
       display: flex;
       gap: 8px;
@@ -958,20 +970,134 @@ let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
 
-// ---- GIFTS ----
+// ---- GIFTS (extended with categories) ----
 const GIFTS = [
-  { emoji: "🌸", name: "Flower" },
-  { emoji: "🎂", name: "Cake" },
-  { emoji: "💎", name: "Diamond" },
-  { emoji: "🌹", name: "Rose" },
-  { emoji: "🍫", name: "Chocolate" },
-  { emoji: "🎸", name: "Guitar" },
-  { emoji: "🏆", name: "Trophy" },
-  { emoji: "💝", name: "Heart" },
-  { emoji: "🧸", name: "Teddy" },
-  { emoji: "🍾", name: "Champagne" },
-  { emoji: "🎈", name: "Balloon" },
-  { emoji: "💐", name: "Bouquet" },
+  // Love & Romance
+  { emoji: "❤️", name: "Red Heart", category: "Love" },
+  { emoji: "💕", name: "Two Hearts", category: "Love" },
+  { emoji: "💗", name: "Growing Heart", category: "Love" },
+  { emoji: "💖", name: "Sparkling Heart", category: "Love" },
+  { emoji: "💝", name: "Heart with Ribbon", category: "Love" },
+  { emoji: "🌹", name: "Rose", category: "Love" },
+  { emoji: "🌷", name: "Tulip", category: "Love" },
+  { emoji: "🌸", name: "Cherry Blossom", category: "Love" },
+  { emoji: "💐", name: "Bouquet", category: "Love" },
+  { emoji: "🥰", name: "Smiling Face with Hearts", category: "Love" },
+  { emoji: "😘", name: "Face Blowing a Kiss", category: "Love" },
+  
+  // Food & Drink
+  { emoji: "🎂", name: "Birthday Cake", category: "Food" },
+  { emoji: "🍰", name: "Cake", category: "Food" },
+  { emoji: "🧁", name: "Cupcake", category: "Food" },
+  { emoji: "🍫", name: "Chocolate", category: "Food" },
+  { emoji: "🍭", name: "Lollipop", category: "Food" },
+  { emoji: "🍩", name: "Donut", category: "Food" },
+  { emoji: "🍪", name: "Cookie", category: "Food" },
+  { emoji: "🍣", name: "Sushi", category: "Food" },
+  { emoji: "🍕", name: "Pizza", category: "Food" },
+  { emoji: "🍔", name: "Burger", category: "Food" },
+  { emoji: "🌮", name: "Taco", category: "Food" },
+  { emoji: "🍾", name: "Champagne", category: "Food" },
+  { emoji: "🥂", name: "Clinking Glasses", category: "Food" },
+  { emoji: "🍷", name: "Wine Glass", category: "Food" },
+  
+  // Animals
+  { emoji: "🐶", name: "Dog", category: "Animals" },
+  { emoji: "🐱", name: "Cat", category: "Animals" },
+  { emoji: "🐭", name: "Mouse", category: "Animals" },
+  { emoji: "🐹", name: "Hamster", category: "Animals" },
+  { emoji: "🐰", name: "Rabbit", category: "Animals" },
+  { emoji: "🦊", name: "Fox", category: "Animals" },
+  { emoji: "🐻", name: "Bear", category: "Animals" },
+  { emoji: "🐼", name: "Panda", category: "Animals" },
+  { emoji: "🐨", name: "Koala", category: "Animals" },
+  { emoji: "🦁", name: "Lion", category: "Animals" },
+  { emoji: "🐯", name: "Tiger", category: "Animals" },
+  { emoji: "🦄", name: "Unicorn", category: "Animals" },
+  { emoji: "🐧", name: "Penguin", category: "Animals" },
+  { emoji: "🐦", name: "Bird", category: "Animals" },
+  { emoji: "🦋", name: "Butterfly", category: "Animals" },
+  
+  // Nature
+  { emoji: "⭐", name: "Star", category: "Nature" },
+  { emoji: "🌟", name: "Glowing Star", category: "Nature" },
+  { emoji: "✨", name: "Sparkles", category: "Nature" },
+  { emoji: "🌈", name: "Rainbow", category: "Nature" },
+  { emoji: "☀️", name: "Sun", category: "Nature" },
+  { emoji: "🌙", name: "Moon", category: "Nature" },
+  { emoji: "🌊", name: "Wave", category: "Nature" },
+  { emoji: "🌸", name: "Cherry Blossom", category: "Nature" },
+  { emoji: "🌺", name: "Hibiscus", category: "Nature" },
+  { emoji: "🌻", name: "Sunflower", category: "Nature" },
+  { emoji: "🌹", name: "Rose", category: "Nature" },
+  { emoji: "🌿", name: "Herb", category: "Nature" },
+  { emoji: "🌴", name: "Palm Tree", category: "Nature" },
+  
+  // Celebrations
+  { emoji: "🎉", name: "Party Popper", category: "Celebration" },
+  { emoji: "🎊", name: "Confetti Ball", category: "Celebration" },
+  { emoji: "🎈", name: "Balloon", category: "Celebration" },
+  { emoji: "🎁", name: "Gift", category: "Celebration" },
+  { emoji: "🎀", name: "Ribbon", category: "Celebration" },
+  { emoji: "🎆", name: "Fireworks", category: "Celebration" },
+  { emoji: "🎇", name: "Sparkler", category: "Celebration" },
+  { emoji: "🎤", name: "Microphone", category: "Celebration" },
+  { emoji: "🎸", name: "Guitar", category: "Celebration" },
+  { emoji: "🎹", name: "Musical Keyboard", category: "Celebration" },
+  { emoji: "🎺", name: "Trumpet", category: "Celebration" },
+  { emoji: "🎻", name: "Violin", category: "Celebration" },
+  
+  // Emotions
+  { emoji: "😊", name: "Smiling Face", category: "Emotions" },
+  { emoji: "😃", name: "Happy Face", category: "Emotions" },
+  { emoji: "🤗", name: "Hugging Face", category: "Emotions" },
+  { emoji: "🥳", name: "Party Face", category: "Emotions" },
+  { emoji: "🤩", name: "Starstruck", category: "Emotions" },
+  { emoji: "😍", name: "Heart Eyes", category: "Emotions" },
+  { emoji: "😎", name: "Cool Face", category: "Emotions" },
+  { emoji: "🤔", name: "Thinking Face", category: "Emotions" },
+  { emoji: "😴", name: "Sleepy Face", category: "Emotions" },
+  { emoji: "🥺", name: "Pleading Face", category: "Emotions" },
+  { emoji: "😭", name: "Crying Face", category: "Emotions" },
+  { emoji: "😂", name: "Joy Face", category: "Emotions" },
+  { emoji: "🤣", name: "Rolling on Floor", category: "Emotions" },
+  { emoji: "😁", name: "Grinning Face", category: "Emotions" },
+  { emoji: "😆", name: "Squinting Face", category: "Emotions" },
+  
+  // Objects
+  { emoji: "💎", name: "Diamond", category: "Objects" },
+  { emoji: "🔮", name: "Crystal Ball", category: "Objects" },
+  { emoji: "🏆", name: "Trophy", category: "Objects" },
+  { emoji: "💡", name: "Light Bulb", category: "Objects" },
+  { emoji: "🔑", name: "Key", category: "Objects" },
+  { emoji: "📚", name: "Books", category: "Objects" },
+  { emoji: "📱", name: "Phone", category: "Objects" },
+  { emoji: "💻", name: "Laptop", category: "Objects" },
+  { emoji: "🖥️", name: "Desktop", category: "Objects" },
+  { emoji: "⌨️", name: "Keyboard", category: "Objects" },
+  { emoji: "🖱️", name: "Mouse", category: "Objects" },
+  { emoji: "🕹️", name: "Joystick", category: "Objects" },
+  { emoji: "🎮", name: "Video Game", category: "Objects" },
+  { emoji: "🧸", name: "Teddy Bear", category: "Objects" },
+  { emoji: "🎯", name: "Target", category: "Objects" },
+  
+  // Sports
+  { emoji: "⚽", name: "Soccer Ball", category: "Sports" },
+  { emoji: "🏀", name: "Basketball", category: "Sports" },
+  { emoji: "🏈", name: "Football", category: "Sports" },
+  { emoji: "⚾", name: "Baseball", category: "Sports" },
+  { emoji: "🎾", name: "Tennis", category: "Sports" },
+  { emoji: "🏐", name: "Volleyball", category: "Sports" },
+  { emoji: "🏉", name: "Rugby", category: "Sports" },
+  { emoji: "🎱", name: "Pool Billiard", category: "Sports" },
+  { emoji: "🏓", name: "Ping Pong", category: "Sports" },
+  { emoji: "🏸", name: "Badminton", category: "Sports" },
+  { emoji: "🥊", name: "Boxing Glove", category: "Sports" },
+  { emoji: "🥋", name: "Martial Arts", category: "Sports" },
+  { emoji: "⛸️", name: "Ice Skate", category: "Sports" },
+  { emoji: "🏂", name: "Snowboard", category: "Sports" },
+  { emoji: "🏊", name: "Swimming", category: "Sports" },
+  { emoji: "🚴", name: "Cycling", category: "Sports" },
 ];
 
 // ---- API helper ----
@@ -1266,7 +1392,6 @@ function openGroup(gr){
   enterChatScreen();
   api("/api/messages/group/"+gr.id).then(r => renderMessages(r.messages)).catch(e => showToast(e.message));
   socket.emit("mark_read", {chat_type:"group", target:gr.id});
-  // Load group members for admin functions
   loadGroupMembers(gr.id);
 }
 
@@ -1351,7 +1476,7 @@ function buildBubble(m){
   if (m.deleted) {
     inner += "This message was deleted";
   } else if (m.msg_type === "gift") {
-    const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift" };
+    const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift", category: "Gift" };
     inner += `<div class="gift-emoji">${gift.emoji}</div>`;
     inner += `<div class="gift-label">🎁 ${escapeHtml(gift.name)}</div>`;
   } else if (m.msg_type === "image") {
@@ -1590,12 +1715,24 @@ function openGiftPicker(){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
+  
+  // Group gifts by category
+  const categories = {};
   GIFTS.forEach(g => {
-    html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
-      <span class="gift-emoji">${g.emoji}</span>
-      <span class="gift-name">${escapeHtml(g.name)}</span>
-    </div>`;
+    if (!categories[g.category]) categories[g.category] = [];
+    categories[g.category].push(g);
+  });
+  
+  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
+  Object.keys(categories).forEach(cat => {
+    html += `<div class="gift-category-header">${cat}</div>`;
+    categories[cat].forEach(g => {
+      html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
+        <span class="gift-emoji">${g.emoji}</span>
+        <span class="gift-name">${escapeHtml(g.name)}</span>
+        <span class="gift-category">${escapeHtml(g.category)}</span>
+      </div>`;
+    });
   });
   html += `</div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
   sheet.innerHTML = html;
@@ -1824,7 +1961,6 @@ function handleGroupMemberUpdate(data){
     } else if (data.action === "unrestricted") {
       showToast(`${data.username} is no longer restricted`);
     }
-    // Refresh members cache
     loadGroupMembers(currentChat.id);
   }
 }
@@ -1854,7 +1990,6 @@ function openMessageMenu(m, mine){
   if (mine && !m.deleted) {
     html += `<div class="sheet-item" style="color:var(--danger);" onclick="deleteMessage(${m.id})"><span class="ic">🗑️</span> Delete for everyone</div>`;
   }
-  // Admin actions for group messages
   if (currentChat && currentChat.type === "group" && currentChat.role === "admin" && !mine && !m.deleted) {
     html += `<div style="border-top:1px solid var(--border-subtle);margin:8px 0;padding-top:8px;">`;
     html += `<div class="sheet-item" style="color:var(--danger);" onclick="removeUserFromGroup(${m.sender_id})"><span class="ic">🚫</span> Remove user from group</div>`;
@@ -2032,7 +2167,6 @@ async function openGroupManageMenu() {
   
   let html = `<h2>👥 Manage Group</h2>`;
   
-  // Members list with management options
   html += `<div style="max-height:300px;overflow-y:auto;">`;
   members.forEach(m => {
     const isSelf = m.user_id === ME.id;
@@ -2073,7 +2207,6 @@ async function changeMemberRole(userId, newRole) {
     });
     showToast("Role updated successfully");
     loadGroupMembers(currentChat.id);
-    // Close and reopen the manage menu
     document.querySelector(".overlay")?.remove();
     setTimeout(openGroupManageMenu, 300);
   } catch(e) {
@@ -2100,7 +2233,6 @@ async function removeUserFromGroup(userId) {
 async function restrictUserFromGroup(userId) {
   if (!currentChat || currentChat.type !== "group") return;
   
-  // Show restriction duration picker
   const overlay = document.createElement("div");
   overlay.className = "overlay";
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
@@ -2110,11 +2242,11 @@ async function restrictUserFromGroup(userId) {
     <h2>⏰ Restrict User</h2>
     <p style="color:var(--text-secondary);margin-bottom:12px;">Choose restriction duration:</p>
     <div class="restriction-picker">
-      <button onclick="confirmRestrict(${userId}, 300)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">5 min</button>
-      <button onclick="confirmRestrict(${userId}, 3600)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">1 hour</button>
-      <button onclick="confirmRestrict(${userId}, 86400)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">24 hours</button>
-      <button onclick="confirmRestrict(${userId}, 604800)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">7 days</button>
-      <button onclick="confirmRestrict(${userId}, 2592000)" style="background:rgba(255,92,122,0.1);border-color:rgba(255,92,122,0.2);">30 days</button>
+      <button onclick="confirmRestrict(${userId}, 300)">5 min</button>
+      <button onclick="confirmRestrict(${userId}, 3600)">1 hour</button>
+      <button onclick="confirmRestrict(${userId}, 86400)">24 hours</button>
+      <button onclick="confirmRestrict(${userId}, 604800)">7 days</button>
+      <button onclick="confirmRestrict(${userId}, 2592000)">30 days</button>
     </div>
     <button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()" style="background:var(--bg-surface-2);box-shadow:none;margin-top:8px;"><span>Cancel</span></button>
   `;
@@ -2497,7 +2629,7 @@ async function submitJoinGroup(token){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== REELS (Improved) ====================
+// ==================== REELS ====================
 let reelsData = [];
 let reelViewObserver = null;
 
@@ -2555,7 +2687,6 @@ function buildReelItem(reel, index){
 
   const totalReactions = Object.values(reel.reaction_counts||{}).reduce((a,b)=>a+b,0);
 
-  // Add gradient overlay with different colors for each reel
   const gradientColors = [
     'linear-gradient(0deg, rgba(0,0,0,0.8) 10%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%)',
     'linear-gradient(0deg, rgba(20,0,40,0.8) 10%, rgba(20,0,40,0.2) 40%, rgba(20,0,40,0.1) 60%)',
@@ -2646,7 +2777,6 @@ async function toggleReelReaction(id){
     const count = document.getElementById("reelReactCount"+id);
     if (icon) icon.textContent = newEmoji || "🤍";
     if (count) count.textContent = total || "";
-    // Animation
     if (icon) {
       icon.style.transform = "scale(1.3)";
       setTimeout(() => icon.style.transform = "scale(1)", 200);
@@ -2754,8 +2884,6 @@ async function openReelComments(reelId){
   document.getElementById("app").appendChild(overlay);
   window._currentReplyParent = null;
   renderComments(r.comments || []);
-  
-  // Focus input after render
   setTimeout(() => document.getElementById("commentInput")?.focus(), 300);
 }
 
@@ -2826,11 +2954,14 @@ let callRecordSaved = false;
 
 const rtcConfig = {
   iceServers: [
-    {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]}
+    {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]},
+    {urls: ["stun:stun2.l.google.com:19302"]}
   ]
 };
 
 async function startCall(type){
+  console.log("startCall called with type:", type);
+  
   if (!window.isSecureContext) {
     showToast("Calls require HTTPS or localhost");
     return;
@@ -2854,6 +2985,9 @@ async function startCall(type){
   callRecordSaved = false;
   isCallActive = true;
 
+  console.log("Starting call to:", currentCallTargetId, "video:", isVideoCall);
+
+  // Show call UI
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
@@ -2863,7 +2997,9 @@ async function startCall(type){
   
   try {
     const constraints = {audio: true, video: isVideoCall};
+    console.log("Getting user media with constraints:", constraints);
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    console.log("Local stream obtained");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -2874,23 +3010,31 @@ async function startCall(type){
     }
     
     createPeerConnection();
+    console.log("Peer connection created");
 
     localStream.getTracks().forEach(track => {
-      if (pc) pc.addTrack(track, localStream);
+      if (pc) {
+        pc.addTrack(track, localStream);
+        console.log("Track added:", track.kind);
+      }
     });
 
     const offer = await pc.createOffer();
+    console.log("Offer created:", offer);
     await pc.setLocalDescription(offer);
+    console.log("Local description set");
 
     socket.emit("call_offer", {
       target: currentCallTargetId,
       offer: offer,
       video: isVideoCall
     });
+    console.log("Call offer sent");
     
     startCallTimer();
     
   } catch(err){
+    console.error("Error starting call:", err);
     showToast("Could not start call: " + err.message);
     endCall(true);
   }
@@ -2910,7 +3054,10 @@ function startCallTimer() {
 }
 
 async function handleCallOffer(data){
+  console.log("Call offer received from:", data.from_user_id);
+  
   if (isCallActive || currentCallTargetId) {
+    console.log("Already in a call, rejecting");
     socket.emit("call_reject", {target: data.from_user_id});
     return;
   }
@@ -2933,9 +3080,12 @@ async function handleCallOffer(data){
 
   window._incomingOffer = data.offer;
   window._callerInfo = user;
+  console.log("Incoming call offer stored");
 }
 
 async function acceptCall(){
+  console.log("Accepting call");
+  
   if (!window._incomingOffer) {
     showToast("No incoming call to accept");
     return;
@@ -2946,7 +3096,10 @@ async function acceptCall(){
   document.getElementById("callStatus").textContent = "Connecting...";
 
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: isVideoCall});
+    const constraints = {audio: true, video: isVideoCall};
+    console.log("Getting user media for answer");
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    console.log("Local stream obtained for answer");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -2957,48 +3110,66 @@ async function acceptCall(){
     }
     
     createPeerConnection();
+    console.log("Peer connection created for answer");
 
     localStream.getTracks().forEach(track => {
-      if (pc) pc.addTrack(track, localStream);
+      if (pc) {
+        pc.addTrack(track, localStream);
+        console.log("Track added for answer:", track.kind);
+      }
     });
 
+    console.log("Setting remote description");
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
+    console.log("Remote description set");
+    
     const answer = await pc.createAnswer();
+    console.log("Answer created");
     await pc.setLocalDescription(answer);
+    console.log("Local description set for answer");
 
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
+    console.log("Answer sent");
+    
     startCallTimer();
     
   } catch(err){
+    console.error("Error accepting call:", err);
     showToast("Failed to accept call: " + err.message);
     endCall(true);
   }
 }
 
 async function handleCallAnswer(data){
+  console.log("Call answer received");
   if (!pc) {
     console.warn("No peer connection for answer");
     return;
   }
   try {
+    console.log("Setting remote description from answer");
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+    console.log("Remote description set from answer");
     document.getElementById("callStatus").textContent = "Connected";
     startCallTimer();
   } catch(e){
-    console.error("Error setting remote description:", e);
+    console.error("Error handling call answer:", e);
   }
 }
 
 async function handleRemoteIce(data){
+  console.log("ICE candidate received");
   if (!pc || !data.candidate) return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    console.log("ICE candidate added");
   } catch(e){
     console.warn("Failed to add ICE candidate:", e);
   }
 }
 
 function handleCallReject(data){
+  console.log("Call rejected");
   showToast("Call declined");
   if (!callRecordSaved) {
     saveCallRecord("declined");
@@ -3008,6 +3179,7 @@ function handleCallReject(data){
 }
 
 function handleRemoteEnd(data){
+  console.log("Remote end received");
   showToast("Call ended");
   if (!callRecordSaved && callStartTime) {
     saveCallRecord("completed");
@@ -3017,6 +3189,7 @@ function handleRemoteEnd(data){
 }
 
 function declineCall(){
+  console.log("Declining call");
   if (currentCallTargetId) {
     socket.emit("call_reject", {target: currentCallTargetId});
   }
@@ -3028,6 +3201,8 @@ function declineCall(){
 }
 
 function endCall(silent){
+  console.log("Ending call, silent:", silent);
+  
   if (callTimerInterval) {
     clearInterval(callTimerInterval);
     callTimerInterval = null;
@@ -3044,10 +3219,12 @@ function endCall(silent){
   if (localStream) {
     localStream.getTracks().forEach(t => t.stop());
     localStream = null;
+    console.log("Local stream stopped");
   }
   if (pc) {
     pc.close();
     pc = null;
+    console.log("Peer connection closed");
   }
   currentCallTargetId = null;
   isCallActive = false;
@@ -3056,9 +3233,11 @@ function endCall(silent){
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
   document.getElementById("cameraBtn").classList.add("hidden");
+  console.log("Call ended and UI cleaned up");
 }
 
 function saveCallRecord(status) {
+  console.log("Saving call record with status:", status);
   if (!currentChat || currentChat.type !== "dm") return;
   const callType = isVideoCall ? "video" : "audio";
   const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
@@ -3099,16 +3278,22 @@ function saveCallRecord(status) {
     client_id: clientId,
     reply_to_id: null
   });
+  console.log("Call record saved");
 }
 
 function createPeerConnection(){
+  console.log("Creating peer connection");
   pc = new RTCPeerConnection(rtcConfig);
+  
   pc.onicecandidate = (event) => {
     if (event.candidate && currentCallTargetId && socket) {
+      console.log("Sending ICE candidate");
       socket.emit("call_ice_candidate", {target: currentCallTargetId, candidate: event.candidate});
     }
   };
+  
   pc.ontrack = (event) => {
+    console.log("Track received from remote");
     remoteStream = event.streams[0];
     const rv = document.getElementById("remoteVideo");
     rv.srcObject = remoteStream;
@@ -3116,7 +3301,9 @@ function createPeerConnection(){
     document.getElementById("callStatus").textContent = "Connected";
     document.getElementById("cameraBtn").classList.toggle("hidden", !isVideoCall);
   };
+  
   pc.oniceconnectionstatechange = () => {
+    console.log("ICE connection state:", pc?.iceConnectionState);
     if (pc && pc.iceConnectionState === "failed") {
       showToast("Connection failed");
       if (!callRecordSaved) {
@@ -3137,6 +3324,8 @@ function createPeerConnection(){
       endCall(true);
     }
   };
+  
+  console.log("Peer connection created");
 }
 
 function toggleMute(){
