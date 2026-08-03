@@ -44,12 +44,10 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
-    /* ===== APP CONTAINER ===== */
     #app {
       height: 100vh; height: 100dvh;
       max-width: 480px;
@@ -62,12 +60,10 @@
       overflow: hidden;
     }
 
-    /* ===== UTILITY ===== */
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
 
-    /* ===== AUTH SCREEN ===== */
     #authScreen {
       flex: 1;
       display: flex;
@@ -79,7 +75,6 @@
       overflow: hidden;
     }
 
-    /* Animated background orbs */
     #authScreen::before {
       content: '';
       position: absolute;
@@ -229,7 +224,6 @@
       z-index: 1;
     }
 
-    /* ===== APP BAR ===== */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -284,7 +278,6 @@
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* ===== TABS ===== */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -308,7 +301,6 @@
     }
     .tab:active { opacity: 0.6; }
 
-    /* ===== SEARCH ===== */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -331,7 +323,6 @@
     }
     .search-bar input::placeholder { color: var(--text-dim); }
 
-    /* ===== LIST ===== */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -395,7 +386,6 @@
     }
     .empty-state i { display: block; font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
 
-    /* ===== FAB ===== */
     .fab {
       position: absolute;
       bottom: 80px; right: 20px;
@@ -410,7 +400,6 @@
     }
     .fab:active { transform: scale(0.9); }
 
-    /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -432,7 +421,6 @@
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
 
-    /* ===== CHAT SCREEN ===== */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
@@ -566,7 +554,6 @@
       transition: var(--transition-smooth);
     }
 
-    /* ===== REELS ===== */
     #reelsScreen {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -624,7 +611,6 @@
     }
     .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 
-    /* ===== MODALS / SHEETS ===== */
     .overlay {
       position: absolute; inset: 0;
       background: rgba(4, 8, 14, 0.65);
@@ -697,7 +683,6 @@
     }
     .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
 
-    /* ===== CALL OVERLAY ===== */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
@@ -753,7 +738,6 @@
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
 
-    /* ===== RESPONSIVE ===== */
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
@@ -895,7 +879,6 @@
 <script>
 // =============================================================================
 //  WAVEGRAM – FULL CLIENT LOGIC
-//  Compatible with the Python server backend
 // =============================================================================
 
 const API = "";
@@ -2396,6 +2379,8 @@ let isMuted = false;
 let isCameraOff = false;
 let callStartTime = null;
 let callTimerInterval = null;
+let isCallActive = false;
+let callRecordSaved = false;
 
 const rtcConfig = {
   iceServers: [
@@ -2412,6 +2397,10 @@ async function startCall(type){
     showToast("Only direct messages support calls");
     return;
   }
+  if (isCallActive) {
+    showToast("Already in a call");
+    return;
+  }
   if (!socket || !socket.connected) {
     showToast("Not connected to server");
     return;
@@ -2420,8 +2409,10 @@ async function startCall(type){
   isVideoCall = (type === "video");
   currentCallTargetId = currentChat.id;
   callStartTime = Date.now();
+  callRecordSaved = false;
+  isCallActive = true;
 
-  // Show call overlay immediately
+  // Show call overlay
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
@@ -2480,7 +2471,7 @@ function startCallTimer() {
 }
 
 async function handleCallOffer(data){
-  if (currentCallTargetId) {
+  if (isCallActive || currentCallTargetId) {
     socket.emit("call_reject", {target: data.from_user_id});
     return;
   }
@@ -2488,6 +2479,9 @@ async function handleCallOffer(data){
   
   currentCallTargetId = data.from_user_id;
   isVideoCall = data.video || false;
+  callStartTime = Date.now();
+  callRecordSaved = false;
+  isCallActive = true;
 
   const user = {username: data.from_username || "Unknown", avatar: data.from_avatar || null};
   setAvatarEl(document.getElementById("callAvatar"), user);
@@ -2499,7 +2493,6 @@ async function handleCallOffer(data){
   document.getElementById("callOverlay").classList.remove("hidden");
 
   window._incomingOffer = data.offer;
-  // Store the caller info
   window._callerInfo = user;
 }
 
@@ -2516,7 +2509,6 @@ async function acceptCall(){
   try {
     localStream = await navigator.mediaDevices.getUserMedia({audio: true, video: isVideoCall});
     
-    // Setup local video
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
       lv.srcObject = localStream;
@@ -2536,7 +2528,6 @@ async function acceptCall(){
     await pc.setLocalDescription(answer);
 
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
-    callStartTime = Date.now();
     startCallTimer();
     
   } catch(err){
@@ -2553,7 +2544,6 @@ async function handleCallAnswer(data){
   try {
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     document.getElementById("callStatus").textContent = "Connected";
-    callStartTime = Date.now();
     startCallTimer();
   } catch(e){
     console.error("Error setting remote description:", e);
@@ -2571,15 +2561,19 @@ async function handleRemoteIce(data){
 
 function handleCallReject(data){
   showToast("Call declined");
-  // Save call record
-  saveCallRecord("declined");
+  if (!callRecordSaved) {
+    saveCallRecord("declined");
+    callRecordSaved = true;
+  }
   endCall(true);
 }
 
 function handleRemoteEnd(data){
   showToast("Call ended");
-  // Save call record
-  saveCallRecord("completed");
+  if (!callRecordSaved && callStartTime) {
+    saveCallRecord("completed");
+    callRecordSaved = true;
+  }
   endCall(true);
 }
 
@@ -2587,8 +2581,10 @@ function declineCall(){
   if (currentCallTargetId) {
     socket.emit("call_reject", {target: currentCallTargetId});
   }
-  // Save call record
-  saveCallRecord("declined");
+  if (!callRecordSaved) {
+    saveCallRecord("declined");
+    callRecordSaved = true;
+  }
   endCall(true);
 }
 
@@ -2598,11 +2594,11 @@ function endCall(silent){
     callTimerInterval = null;
   }
   
-  if (!silent && currentCallTargetId) {
+  if (!silent && currentCallTargetId && isCallActive) {
     socket.emit("call_end", {target: currentCallTargetId});
-    // Save call record if not already saved
-    if (callStartTime) {
+    if (!callRecordSaved && callStartTime) {
       saveCallRecord("completed");
+      callRecordSaved = true;
     }
   }
   
@@ -2615,6 +2611,7 @@ function endCall(silent){
     pc = null;
   }
   currentCallTargetId = null;
+  isCallActive = false;
   callStartTime = null;
   document.getElementById("callOverlay").classList.add("hidden");
   document.getElementById("remoteVideo").classList.add("hidden");
@@ -2627,11 +2624,9 @@ function saveCallRecord(status) {
   const callType = isVideoCall ? "video" : "audio";
   const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
   
-  // Send call record as a message
   const content = `${callType}:${status}:${duration}`;
   const clientId = makeClientId();
   
-  // Add optimistic message
   const m = {
     id: clientId,
     chat_type: "dm",
@@ -2657,7 +2652,6 @@ function saveCallRecord(status) {
     body.scrollTop = body.scrollHeight;
   }
   
-  // Send to server
   socket.emit("send_message", {
     chat_type: "dm",
     target: currentChat.id,
@@ -2686,6 +2680,10 @@ function createPeerConnection(){
   pc.oniceconnectionstatechange = () => {
     if (pc && pc.iceConnectionState === "failed") {
       showToast("Connection failed");
+      if (!callRecordSaved) {
+        saveCallRecord("missed");
+        callRecordSaved = true;
+      }
       endCall(true);
     }
     if (pc && pc.iceConnectionState === "connected") {
@@ -2693,6 +2691,10 @@ function createPeerConnection(){
     }
     if (pc && pc.iceConnectionState === "disconnected") {
       showToast("Disconnected");
+      if (!callRecordSaved) {
+        saveCallRecord("missed");
+        callRecordSaved = true;
+      }
       endCall(true);
     }
   };
