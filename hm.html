@@ -9,7 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
-    /* ===== ROOT ===== */
     :root {
       --bg-primary: #0c111b;
       --bg-surface: #141c2b;
@@ -33,7 +32,6 @@
       --radius-bubble: 18px;
       --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; }
     body {
@@ -43,13 +41,9 @@
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
     }
-
-    /* Scrollbar */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
-    /* ===== APP CONTAINER ===== */
     #app {
       height: 100vh; height: 100dvh;
       max-width: 480px;
@@ -61,13 +55,9 @@
       box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
       overflow: hidden;
     }
-
-    /* ===== UTILITY ===== */
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
-
-    /* ===== AUTH SCREEN ===== */
     #authScreen {
       flex: 1;
       display: flex;
@@ -78,8 +68,6 @@
       position: relative;
       overflow: hidden;
     }
-
-    /* Animated background orbs */
     #authScreen::before {
       content: '';
       position: absolute;
@@ -102,7 +90,6 @@
       0% { transform: translate(0, 0) scale(1); }
       100% { transform: translate(30px, 20px) scale(1.2); }
     }
-
     .auth-logo {
       width: 80px; height: 80px;
       border-radius: 24px;
@@ -118,7 +105,6 @@
       transition: var(--transition-smooth);
     }
     .auth-logo:hover { transform: scale(1.03) rotate(-2deg); }
-
     .auth-title {
       text-align: center;
       font-size: 28px; font-weight: 700;
@@ -142,7 +128,6 @@
       position: relative;
       z-index: 1;
     }
-
     .field {
       margin-bottom: 18px;
       position: relative;
@@ -174,7 +159,6 @@
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .field input::placeholder { color: var(--text-dim); }
-
     .btn-primary {
       width: 100%;
       padding: 16px;
@@ -199,7 +183,6 @@
     .btn-primary:hover::after { opacity: 1; }
     .btn-primary:active { transform: scale(0.97); }
     .btn-primary span { position: relative; z-index: 2; }
-
     .auth-switch {
       text-align: center;
       margin-top: 20px;
@@ -215,7 +198,6 @@
       transition: var(--transition-smooth);
     }
     .auth-switch span:hover { color: #6aafff; }
-
     .auth-error {
       background: rgba(255, 92, 122, 0.12);
       color: var(--danger);
@@ -228,8 +210,6 @@
       position: relative;
       z-index: 1;
     }
-
-    /* ===== APP BAR ===== */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -270,7 +250,6 @@
       padding: 0 5px;
       box-shadow: 0 2px 8px rgba(255, 92, 122, 0.4);
     }
-
     .avatar {
       width: 40px; height: 40px;
       border-radius: 50%;
@@ -283,8 +262,6 @@
       transition: var(--transition-smooth);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* ===== TABS ===== */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -307,8 +284,6 @@
       border-color: var(--accent);
     }
     .tab:active { opacity: 0.6; }
-
-    /* ===== SEARCH ===== */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -330,8 +305,6 @@
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .search-bar input::placeholder { color: var(--text-dim); }
-
-    /* ===== LIST ===== */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -394,8 +367,6 @@
       line-height: 1.7;
     }
     .empty-state i { display: block; font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
-
-    /* ===== FAB ===== */
     .fab {
       position: absolute;
       bottom: 80px; right: 20px;
@@ -409,8 +380,6 @@
       transition: var(--transition-smooth);
     }
     .fab:active { transform: scale(0.9); }
-
-    /* ===== BOTTOM NAV ===== */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -431,15 +400,12 @@
     }
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
-
-    /* ===== CHAT SCREEN ===== */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
       background: var(--bg-primary);
     }
     #chatScreen.active { display: flex; }
-
     .chat-appbar {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 16px;
@@ -451,7 +417,6 @@
     .chat-appbar .name-block { flex: 1; min-width: 0; }
     .chat-appbar .name-block .n { font-size: 16px; font-weight: 700; }
     .chat-appbar .name-block .s { font-size: 12px; color: var(--text-secondary); }
-
     .messages {
       flex: 1;
       overflow-y: auto;
@@ -508,7 +473,6 @@
     }
     .bubble img, .bubble video { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 4px; }
     .bubble audio { width: 200px; max-width: 60vw; }
-
     .composer {
       display: flex; align-items: flex-end; gap: 8px;
       padding: 10px 14px;
@@ -556,7 +520,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
-
     .typing-indicator {
       padding: 4px 18px;
       font-size: 12px;
@@ -565,8 +528,6 @@
       height: 22px;
       transition: var(--transition-smooth);
     }
-
-    /* ===== REELS ===== */
     #reelsScreen {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -612,7 +573,6 @@
     }
     .reel-caption { font-size: 14px; line-height: 1.4; opacity: 0.9; }
     .reel-views { font-size: 12px; opacity: 0.7; margin-top: 6px; }
-
     .reel-actions {
       display: flex; flex-direction: column; align-items: center;
       gap: 18px; padding-bottom: 4px; margin-left: 12px;
@@ -623,8 +583,6 @@
       align-items: center; gap: 3px;
     }
     .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
-
-    /* ===== MODALS / SHEETS ===== */
     .overlay {
       position: absolute; inset: 0;
       background: rgba(4, 8, 14, 0.65);
@@ -657,7 +615,6 @@
     .sheet-item:last-child { border-bottom: none; }
     .sheet-item:active { background: rgba(255,255,255,0.04); border-radius: 12px; }
     .sheet-item .ic { font-size: 20px; width: 28px; text-align: center; }
-
     .reaction-picker {
       display: flex; gap: 12px;
       justify-content: space-around;
@@ -669,7 +626,6 @@
       cursor: pointer;
     }
     .reaction-picker span:active { transform: scale(1.4); }
-
     .toast {
       position: absolute; bottom: 100px; left: 50%;
       transform: translateX(-50%);
@@ -687,7 +643,6 @@
       0%, 70% { opacity: 1; transform: translateX(-50%) translateY(0); }
       100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
     }
-
     .link-box {
       display: flex; gap: 10px; align-items: center;
       background: var(--bg-surface-2);
@@ -696,8 +651,6 @@
       margin: 10px 0;
     }
     .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
-
-    /* ===== CALL OVERLAY ===== */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
@@ -752,8 +705,26 @@
       backdrop-filter: blur(4px);
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
-
-    /* ===== RESPONSIVE ===== */
+    .reply-preview {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .reply-preview .preview-bar {
+      width: 3px; align-self: stretch; background: var(--accent); border-radius: 2px;
+    }
+    .reply-preview .preview-content { flex: 1; min-width: 0; }
+    .reply-preview .preview-name { font-size: 12px; font-weight: 700; color: var(--accent); }
+    .reply-preview .preview-text { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .edit-banner {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .edit-banner .edit-bar { width: 3px; align-self: stretch; background: #ffb84d; border-radius: 2px; }
+    .edit-banner .edit-content { flex: 1; min-width: 0; }
+    .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
+    .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
@@ -764,20 +735,18 @@
 <body>
 <div id="app">
 
-  <!-- ============ AUTH SCREEN ============ -->
+  <!-- AUTH SCREEN -->
   <div id="authScreen">
     <div class="auth-logo">WG</div>
     <div class="auth-title">Welcome to <span class="highlight">Wavegram</span></div>
     <div class="auth-sub" id="authSub">Sign in to continue</div>
     <div class="auth-error hidden" id="authError"></div>
-
     <div id="loginFields">
       <div class="field"><label>Email</label><input type="email" id="loginEmail" placeholder="you@example.com"></div>
       <div class="field"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••"></div>
       <button class="btn-primary" onclick="doLogin()"><span>Log In</span></button>
       <div class="auth-switch">Don't have an account? <span onclick="toggleAuth(false)">Sign up</span></div>
     </div>
-
     <div id="registerFields" class="hidden">
       <div class="field"><label>Username</label><input type="text" id="regUsername" placeholder="Your name"></div>
       <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com"></div>
@@ -787,7 +756,7 @@
     </div>
   </div>
 
-  <!-- ============ LIST SCREEN ============ -->
+  <!-- LIST SCREEN -->
   <div id="listScreen" class="hidden">
     <div class="appbar">
       <h1>Wavegram</h1>
@@ -811,7 +780,7 @@
     </div>
   </div>
 
-  <!-- ============ REELS SCREEN ============ -->
+  <!-- REELS SCREEN -->
   <div id="reelsScreen" class="hidden">
     <div class="reels-feed" id="reelsFeed"></div>
     <div class="reels-topbar">
@@ -827,7 +796,7 @@
 
   <input type="file" id="reelFileInput" class="hidden" accept="image/*,video/*">
 
-  <!-- ============ CALL OVERLAY ============ -->
+  <!-- CALL OVERLAY -->
   <div id="callOverlay" class="call-overlay hidden">
     <video id="remoteVideo" autoplay playsinline class="remote-video hidden"></video>
     <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
@@ -847,7 +816,7 @@
     </div>
   </div>
 
-  <!-- ============ CHAT SCREEN ============ -->
+  <!-- CHAT SCREEN -->
   <div id="chatScreen">
     <div class="chat-appbar">
       <div class="icon-btn" onclick="closeChat()">←</div>
@@ -862,19 +831,19 @@
     </div>
     <div class="messages" id="messagesBody"></div>
     <div class="typing-indicator" id="typingIndicator"></div>
-    <div class="reply-preview hidden" id="replyPreview" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--bg-surface-2);flex-shrink:0;border-top:1px solid var(--border-subtle);">
-      <div style="width:3px;align-self:stretch;background:var(--accent);border-radius:2px;"></div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:700;color:var(--accent);" id="replyPreviewName"></div>
-        <div style="font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="replyPreviewText"></div>
+    <div class="reply-preview hidden" id="replyPreview">
+      <div class="preview-bar"></div>
+      <div class="preview-content">
+        <div class="preview-name" id="replyPreviewName"></div>
+        <div class="preview-text" id="replyPreviewText"></div>
       </div>
       <div class="icon-btn" onclick="cancelReply()">✕</div>
     </div>
-    <div class="reply-preview hidden" id="editBanner" style="display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--bg-surface-2);flex-shrink:0;border-top:1px solid var(--border-subtle);">
-      <div style="width:3px;align-self:stretch;background:#ffb84d;border-radius:2px;"></div>
-      <div style="flex:1;min-width:0;">
-        <div style="font-size:12px;font-weight:700;color:#ffb84d;">Editing message</div>
-        <div style="font-size:12px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" id="editPreviewText"></div>
+    <div class="edit-banner hidden" id="editBanner">
+      <div class="edit-bar"></div>
+      <div class="edit-content">
+        <div class="edit-label">Editing message</div>
+        <div class="edit-preview" id="editPreviewText"></div>
       </div>
       <div class="icon-btn" onclick="cancelEdit()">✕</div>
     </div>
@@ -893,10 +862,9 @@
 </div>
 
 <script>
-// =============================================================================
+// ============================================================
 //  WAVEGRAM – FULL CLIENT LOGIC
-//  Compatible with the Python server backend
-// =============================================================================
+// ============================================================
 
 const API = "";
 let TOKEN = localStorage.getItem("wg_token") || "";
@@ -2547,10 +2515,6 @@ function setupLocalVideo(){
   document.getElementById("callOverlay").classList.remove("hidden");
   setAvatarEl(document.getElementById("callAvatar"), {username: currentChat?.name});
   document.getElementById("callName").textContent = currentChat?.name || "Call";
-}
-
-function showCallStatus(text){
-  document.getElementById("callStatus").textContent = text;
 }
 
 function showCallOverlay(status, isOutgoing){
