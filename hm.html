@@ -230,13 +230,15 @@
       background-clip: text;
     }
     .icon-btn {
-      width: 40px; height: 40px;
+      width: 44px; height: 44px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
       transition: var(--transition-smooth);
       background: rgba(255,255,255,0.03);
       position: relative;
+      min-width: 44px;
+      min-height: 44px;
     }
     .icon-btn:active { background: rgba(255,255,255,0.08); transform: scale(0.92); }
     .icon-btn .badge {
@@ -278,6 +280,7 @@
       border-bottom: 2.5px solid transparent;
       transition: var(--transition-smooth);
       letter-spacing: 0.3px;
+      cursor: pointer;
     }
     .tab.active {
       color: var(--accent);
@@ -318,6 +321,7 @@
       transition: var(--transition-smooth);
       border-bottom: 1px solid var(--border-subtle);
       animation: fadeSlide 0.25s ease-out;
+      cursor: pointer;
     }
     @keyframes fadeSlide {
       from { opacity: 0; transform: translateY(6px); }
@@ -397,6 +401,7 @@
       display: flex; flex-direction: column; align-items: center;
       gap: 2px;
       transition: var(--transition-smooth);
+      cursor: pointer;
     }
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
@@ -482,23 +487,23 @@
     }
     .composer {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       gap: 8px;
       padding: 10px 14px;
       background: var(--bg-surface);
       border-top: 1px solid var(--border-subtle);
       flex-shrink: 0;
       backdrop-filter: blur(12px);
-      min-height: 64px;
+      min-height: 70px;
     }
     .composer textarea {
       flex: 1;
       background: var(--bg-surface-2);
       border-radius: 24px;
-      padding: 12px 18px;
-      font-size: 14.5px;
-      max-height: 140px;
-      min-height: 44px;
+      padding: 14px 20px;
+      font-size: 15px;
+      max-height: 160px;
+      min-height: 50px;
       resize: none;
       line-height: 1.5;
       border: 1.5px solid transparent;
@@ -510,14 +515,21 @@
       background: var(--bg-surface-3);
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
+    .composer textarea::placeholder { 
+      color: var(--text-dim);
+      font-size: 14px;
+    }
     .round-btn {
-      width: 44px; height: 44px;
+      width: 48px; height: 48px;
+      min-width: 48px;
+      min-height: 48px;
       border-radius: 50%;
       background: var(--bg-surface-2);
       display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
+      font-size: 22px;
       flex-shrink: 0;
       transition: var(--transition-smooth);
+      cursor: pointer;
     }
     .round-btn:active { transform: scale(0.88); }
     .round-btn.send {
@@ -594,6 +606,7 @@
       color: #fff; text-align: center;
       font-size: 11px; display: flex; flex-direction: column;
       align-items: center; gap: 3px;
+      cursor: pointer;
     }
     .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
     .overlay {
@@ -624,6 +637,7 @@
       font-size: 15px;
       border-bottom: 1px solid var(--border-subtle);
       transition: var(--transition-smooth);
+      cursor: pointer;
     }
     .sheet-item:last-child { border-bottom: none; }
     .sheet-item:active { background: rgba(255,255,255,0.04); border-radius: 12px; }
@@ -688,7 +702,7 @@
     }
     .local-video {
       position: absolute; top: calc(16px + env(safe-area-inset-top)); right: 16px;
-      width: 100px; height: 140px;
+      width: 120px; height: 160px;
       border-radius: 16px;
       object-fit: cover;
       background: #111;
@@ -715,13 +729,14 @@
       font-size: 28px;
       box-shadow: 0 6px 24px rgba(0,0,0,0.4);
       transition: var(--transition-smooth);
+      cursor: pointer;
     }
     .call-btn:active { transform: scale(0.9); }
     .call-btn.accept { background: linear-gradient(135deg, #34d399, #17b862); }
     .call-btn.decline { background: linear-gradient(135deg, #ff5c7a, #e0324a); }
     .call-btn.secondary {
       background: rgba(255,255,255,0.12);
-      width: 56px; height: 56px; font-size: 22px;
+      width: 60px; height: 60px; font-size: 24px;
       backdrop-filter: blur(4px);
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
@@ -750,7 +765,7 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 10px;
       padding: 12px 0;
-      max-height: 350px;
+      max-height: 400px;
       overflow-y: auto;
     }
     .gift-picker .gift-option {
@@ -763,7 +778,7 @@
       border: 2px solid transparent;
       transition: var(--transition-smooth);
       cursor: pointer;
-      min-height: 80px;
+      min-height: 90px;
       justify-content: center;
     }
     .gift-picker .gift-option:hover, .gift-picker .gift-option:active {
@@ -919,8 +934,8 @@
         <div class="n" id="chatName">Chat</div>
         <div class="s" id="chatStatus"></div>
       </div>
-      <div class="icon-btn" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
-      <div class="icon-btn" id="videoCallBtn" onclick="startCall('video')">🎥</div>
+      <div class="icon-btn" id="voiceCallBtn" onclick="startCall('audio')" style="display:flex;align-items:center;justify-content:center;">📞</div>
+      <div class="icon-btn" id="videoCallBtn" onclick="startCall('video')" style="display:flex;align-items:center;justify-content:center;">🎥</div>
       <div class="icon-btn" onclick="openChatMenu()">⋮</div>
     </div>
     <div class="messages" id="messagesBody"></div>
@@ -945,7 +960,7 @@
       <div class="round-btn" onclick="openGiftPicker()">🎁</div>
       <div class="round-btn" onclick="triggerFile('image')">📷</div>
       <div class="round-btn" onclick="triggerFile('video')">🎬</div>
-      <textarea id="msgInput" rows="1" placeholder="Message" oninput="onTypingInput()" onkeydown="onComposerKey(event)"></textarea>
+      <textarea id="msgInput" rows="1" placeholder="Message..." oninput="onTypingInput()" onkeydown="onComposerKey(event)"></textarea>
       <div class="round-btn" id="voiceBtn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording(event)" ontouchend="stopRecording(event)">🎤</div>
       <div class="round-btn send" onclick="sendTextMessage()">➤</div>
     </div>
@@ -975,7 +990,7 @@ let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
 
-// ---- GIFTS (extended with categories) ----
+// ---- GIFTS (extended with more categories) ----
 const GIFTS = [
   // Love & Romance
   { emoji: "❤️", name: "Red Heart", category: "Love" },
@@ -1031,10 +1046,8 @@ const GIFTS = [
   { emoji: "☀️", name: "Sun", category: "Nature" },
   { emoji: "🌙", name: "Moon", category: "Nature" },
   { emoji: "🌊", name: "Wave", category: "Nature" },
-  { emoji: "🌸", name: "Cherry Blossom", category: "Nature" },
   { emoji: "🌺", name: "Hibiscus", category: "Nature" },
   { emoji: "🌻", name: "Sunflower", category: "Nature" },
-  { emoji: "🌹", name: "Rose", category: "Nature" },
   { emoji: "🌿", name: "Herb", category: "Nature" },
   { emoji: "🌴", name: "Palm Tree", category: "Nature" },
   
@@ -1046,11 +1059,6 @@ const GIFTS = [
   { emoji: "🎀", name: "Ribbon", category: "Celebration" },
   { emoji: "🎆", name: "Fireworks", category: "Celebration" },
   { emoji: "🎇", name: "Sparkler", category: "Celebration" },
-  { emoji: "🎤", name: "Microphone", category: "Celebration" },
-  { emoji: "🎸", name: "Guitar", category: "Celebration" },
-  { emoji: "🎹", name: "Musical Keyboard", category: "Celebration" },
-  { emoji: "🎺", name: "Trumpet", category: "Celebration" },
-  { emoji: "🎻", name: "Violin", category: "Celebration" },
   
   // Emotions
   { emoji: "😊", name: "Smiling Face", category: "Emotions" },
@@ -1103,6 +1111,47 @@ const GIFTS = [
   { emoji: "🏂", name: "Snowboard", category: "Sports" },
   { emoji: "🏊", name: "Swimming", category: "Sports" },
   { emoji: "🚴", name: "Cycling", category: "Sports" },
+  
+  // Travel & Places
+  { emoji: "✈️", name: "Airplane", category: "Travel" },
+  { emoji: "🚀", name: "Rocket", category: "Travel" },
+  { emoji: "🚗", name: "Car", category: "Travel" },
+  { emoji: "🚕", name: "Taxi", category: "Travel" },
+  { emoji: "🚌", name: "Bus", category: "Travel" },
+  { emoji: "🚲", name: "Bicycle", category: "Travel" },
+  { emoji: "🚂", name: "Train", category: "Travel" },
+  { emoji: "⛵", name: "Sailboat", category: "Travel" },
+  { emoji: "🏠", name: "House", category: "Travel" },
+  { emoji: "🏖️", name: "Beach", category: "Travel" },
+  { emoji: "⛰️", name: "Mountain", category: "Travel" },
+  { emoji: "🏔️", name: "Snow Mountain", category: "Travel" },
+  { emoji: "🌋", name: "Volcano", category: "Travel" },
+  
+  // Music & Entertainment
+  { emoji: "🎵", name: "Musical Note", category: "Music" },
+  { emoji: "🎶", name: "Music Notes", category: "Music" },
+  { emoji: "🎤", name: "Microphone", category: "Music" },
+  { emoji: "🎸", name: "Guitar", category: "Music" },
+  { emoji: "🎹", name: "Musical Keyboard", category: "Music" },
+  { emoji: "🎺", name: "Trumpet", category: "Music" },
+  { emoji: "🎻", name: "Violin", category: "Music" },
+  { emoji: "🥁", name: "Drum", category: "Music" },
+  { emoji: "🎬", name: "Clapper Board", category: "Music" },
+  { emoji: "🎥", name: "Movie Camera", category: "Music" },
+  { emoji: "📺", name: "TV", category: "Music" },
+  { emoji: "🎧", name: "Headphones", category: "Music" },
+  
+  // New additions - Fun
+  { emoji: "🦄", name: "Unicorn", category: "Fun" },
+  { emoji: "🐉", name: "Dragon", category: "Fun" },
+  { emoji: "🧚", name: "Fairy", category: "Fun" },
+  { emoji: "🧙", name: "Wizard", category: "Fun" },
+  { emoji: "🦸", name: "Superhero", category: "Fun" },
+  { emoji: "🦹", name: "Villain", category: "Fun" },
+  { emoji: "🧞", name: "Genie", category: "Fun" },
+  { emoji: "🧟", name: "Zombie", category: "Fun" },
+  { emoji: "👽", name: "Alien", category: "Fun" },
+  { emoji: "🤖", name: "Robot", category: "Fun" },
 ];
 
 // ---- API helper ----
@@ -1413,8 +1462,18 @@ function enterChatScreen(){
   document.getElementById("chatName").textContent = currentChat.name || "Chat";
   document.getElementById("chatStatus").textContent = currentChat.type==="dm" ? (currentChat.status==="online"?"Online":"Offline") : "Group";
   setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:currentChat.avatar});
-  document.getElementById("voiceCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
-  document.getElementById("videoCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
+  // Show call buttons only for DM
+  const voiceBtn = document.getElementById("voiceCallBtn");
+  const videoBtn = document.getElementById("videoCallBtn");
+  if (currentChat.type === "dm") {
+    voiceBtn.classList.remove("hidden");
+    videoBtn.classList.remove("hidden");
+    voiceBtn.style.display = "flex";
+    videoBtn.style.display = "flex";
+  } else {
+    voiceBtn.classList.add("hidden");
+    videoBtn.classList.add("hidden");
+  }
   document.getElementById("messagesBody").innerHTML = "";
   document.getElementById("typingIndicator").textContent = "";
   document.getElementById("blockBanner")?.remove();
@@ -2964,15 +3023,6 @@ const rtcConfig = {
   ]
 };
 
-// Make sure call buttons are visible
-document.addEventListener("DOMContentLoaded", function() {
-  // Ensure call buttons are shown for DM
-  const voiceBtn = document.getElementById("voiceCallBtn");
-  const videoBtn = document.getElementById("videoCallBtn");
-  if (voiceBtn) voiceBtn.classList.remove("hidden");
-  if (videoBtn) videoBtn.classList.remove("hidden");
-});
-
 async function startCall(type){
   console.log("startCall called with type:", type);
   
@@ -2999,8 +3049,6 @@ async function startCall(type){
   callRecordSaved = false;
   isCallActive = true;
 
-  console.log("Starting call to:", currentCallTargetId, "video:", isVideoCall);
-
   // Show call UI
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
@@ -3011,9 +3059,7 @@ async function startCall(type){
   
   try {
     const constraints = {audio: true, video: isVideoCall};
-    console.log("Getting user media with constraints:", constraints);
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    console.log("Local stream obtained");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -3024,26 +3070,19 @@ async function startCall(type){
     }
     
     createPeerConnection();
-    console.log("Peer connection created");
-
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
-        console.log("Track added:", track.kind);
       }
     });
 
     const offer = await pc.createOffer();
-    console.log("Offer created:", offer);
     await pc.setLocalDescription(offer);
-    console.log("Local description set");
-
     socket.emit("call_offer", {
       target: currentCallTargetId,
       offer: offer,
       video: isVideoCall
     });
-    console.log("Call offer sent");
     
     startCallTimer();
     
@@ -3068,10 +3107,7 @@ function startCallTimer() {
 }
 
 async function handleCallOffer(data){
-  console.log("Call offer received from:", data.from_user_id);
-  
   if (isCallActive || currentCallTargetId) {
-    console.log("Already in a call, rejecting");
     socket.emit("call_reject", {target: data.from_user_id});
     return;
   }
@@ -3093,13 +3129,9 @@ async function handleCallOffer(data){
   document.getElementById("callOverlay").classList.remove("hidden");
 
   window._incomingOffer = data.offer;
-  window._callerInfo = user;
-  console.log("Incoming call offer stored");
 }
 
 async function acceptCall(){
-  console.log("Accepting call");
-  
   if (!window._incomingOffer) {
     showToast("No incoming call to accept");
     return;
@@ -3111,9 +3143,7 @@ async function acceptCall(){
 
   try {
     const constraints = {audio: true, video: isVideoCall};
-    console.log("Getting user media for answer");
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    console.log("Local stream obtained for answer");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -3124,26 +3154,16 @@ async function acceptCall(){
     }
     
     createPeerConnection();
-    console.log("Peer connection created for answer");
-
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
-        console.log("Track added for answer:", track.kind);
       }
     });
 
-    console.log("Setting remote description");
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
-    console.log("Remote description set");
-    
     const answer = await pc.createAnswer();
-    console.log("Answer created");
     await pc.setLocalDescription(answer);
-    console.log("Local description set for answer");
-
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
-    console.log("Answer sent");
     
     startCallTimer();
     
@@ -3155,15 +3175,9 @@ async function acceptCall(){
 }
 
 async function handleCallAnswer(data){
-  console.log("Call answer received");
-  if (!pc) {
-    console.warn("No peer connection for answer");
-    return;
-  }
+  if (!pc) return;
   try {
-    console.log("Setting remote description from answer");
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-    console.log("Remote description set from answer");
     document.getElementById("callStatus").textContent = "Connected";
     startCallTimer();
   } catch(e){
@@ -3172,18 +3186,15 @@ async function handleCallAnswer(data){
 }
 
 async function handleRemoteIce(data){
-  console.log("ICE candidate received");
   if (!pc || !data.candidate) return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-    console.log("ICE candidate added");
   } catch(e){
     console.warn("Failed to add ICE candidate:", e);
   }
 }
 
 function handleCallReject(data){
-  console.log("Call rejected");
   showToast("Call declined");
   if (!callRecordSaved) {
     saveCallRecord("declined");
@@ -3193,7 +3204,6 @@ function handleCallReject(data){
 }
 
 function handleRemoteEnd(data){
-  console.log("Remote end received");
   showToast("Call ended");
   if (!callRecordSaved && callStartTime) {
     saveCallRecord("completed");
@@ -3203,7 +3213,6 @@ function handleRemoteEnd(data){
 }
 
 function declineCall(){
-  console.log("Declining call");
   if (currentCallTargetId) {
     socket.emit("call_reject", {target: currentCallTargetId});
   }
@@ -3215,8 +3224,6 @@ function declineCall(){
 }
 
 function endCall(silent){
-  console.log("Ending call, silent:", silent);
-  
   if (callTimerInterval) {
     clearInterval(callTimerInterval);
     callTimerInterval = null;
@@ -3233,12 +3240,10 @@ function endCall(silent){
   if (localStream) {
     localStream.getTracks().forEach(t => t.stop());
     localStream = null;
-    console.log("Local stream stopped");
   }
   if (pc) {
     pc.close();
     pc = null;
-    console.log("Peer connection closed");
   }
   currentCallTargetId = null;
   isCallActive = false;
@@ -3247,11 +3252,9 @@ function endCall(silent){
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
   document.getElementById("cameraBtn").classList.add("hidden");
-  console.log("Call ended and UI cleaned up");
 }
 
 function saveCallRecord(status) {
-  console.log("Saving call record with status:", status);
   if (!currentChat || currentChat.type !== "dm") return;
   const callType = isVideoCall ? "video" : "audio";
   const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
@@ -3292,22 +3295,18 @@ function saveCallRecord(status) {
     client_id: clientId,
     reply_to_id: null
   });
-  console.log("Call record saved");
 }
 
 function createPeerConnection(){
-  console.log("Creating peer connection");
   pc = new RTCPeerConnection(rtcConfig);
   
   pc.onicecandidate = (event) => {
     if (event.candidate && currentCallTargetId && socket) {
-      console.log("Sending ICE candidate");
       socket.emit("call_ice_candidate", {target: currentCallTargetId, candidate: event.candidate});
     }
   };
   
   pc.ontrack = (event) => {
-    console.log("Track received from remote");
     remoteStream = event.streams[0];
     const rv = document.getElementById("remoteVideo");
     rv.srcObject = remoteStream;
@@ -3317,7 +3316,6 @@ function createPeerConnection(){
   };
   
   pc.oniceconnectionstatechange = () => {
-    console.log("ICE connection state:", pc?.iceConnectionState);
     if (pc && pc.iceConnectionState === "failed") {
       showToast("Connection failed");
       if (!callRecordSaved) {
@@ -3338,8 +3336,6 @@ function createPeerConnection(){
       endCall(true);
     }
   };
-  
-  console.log("Peer connection created");
 }
 
 function toggleMute(){
@@ -3360,39 +3356,29 @@ function toggleCamera(){
   btn.textContent = isCameraOff ? "🎦" : "📷";
 }
 
-// Make sure the chat app bar call buttons are visible
-// Fix: remove hidden class from call buttons when entering chat
-const originalEnterChatScreen = enterChatScreen;
-enterChatScreen = function() {
-  originalEnterChatScreen();
-  // Ensure call buttons are visible for DM
+// Ensure call buttons are shown for DM
+function ensureCallButtons() {
   if (currentChat && currentChat.type === "dm") {
-    document.getElementById("voiceCallBtn").classList.remove("hidden");
-    document.getElementById("videoCallBtn").classList.remove("hidden");
-  } else {
-    document.getElementById("voiceCallBtn").classList.add("hidden");
-    document.getElementById("videoCallBtn").classList.add("hidden");
+    document.getElementById("voiceCallBtn").style.display = "flex";
+    document.getElementById("videoCallBtn").style.display = "flex";
   }
+}
+
+// Override enterChatScreen to ensure call buttons
+const originalEnterChat = enterChatScreen;
+enterChatScreen = function() {
+  originalEnterChat();
+  ensureCallButtons();
 };
 
-// Fix: expose startCall globally
+// Expose functions globally
 window.startCall = startCall;
+window.toggleMute = toggleMute;
+window.toggleCamera = toggleCamera;
+window.endCall = endCall;
+window.declineCall = declineCall;
+window.acceptCall = acceptCall;
 
-// Fix: ensure voiceCallBtn and videoCallBtn are visible
-document.addEventListener("DOMContentLoaded", function() {
-  const voiceBtn = document.getElementById("voiceCallBtn");
-  const videoBtn = document.getElementById("videoCallBtn");
-  if (voiceBtn) {
-    voiceBtn.style.display = "flex";
-    voiceBtn.style.alignItems = "center";
-    voiceBtn.style.justifyContent = "center";
-  }
-  if (videoBtn) {
-    videoBtn.style.display = "flex";
-    videoBtn.style.alignItems = "center";
-    videoBtn.style.justifyContent = "center";
-  }
-});
 </script>
 </body>
 </html>
