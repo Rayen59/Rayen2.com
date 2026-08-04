@@ -9,14 +9,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
-    /* ============================================================
-       ROOT VARIABLES & THEMES
-    ============================================================ */
     :root {
       --bg-primary: #0c111b;
       --bg-surface: #141c2b;
       --bg-surface-2: #1c283c;
       --bg-surface-3: #25344d;
+      --bg-elevated: #1c283c;
       --text-primary: #f0f4fa;
       --text-secondary: #b2c9e8;
       --text-dim: #7b94b8;
@@ -33,111 +31,7 @@
       --radius-card: 28px;
       --radius-bubble: 18px;
       --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
     }
-
-    /* Theme: Cosmic */
-    .theme-cosmic {
-      --bg-primary: #0a0a1a;
-      --bg-surface: #12122a;
-      --bg-surface-2: #1a1a3a;
-      --bg-surface-3: #2a2a4a;
-      --text-primary: #e8e0ff;
-      --text-secondary: #a090d0;
-      --text-dim: #7060a0;
-      --accent: #7c5cff;
-      --accent-glow: rgba(124, 92, 255, 0.3);
-      --accent-gradient: linear-gradient(145deg, #7c5cff, #4f9aff);
-      --bubble-mine: #5c3cdf;
-      --bubble-theirs: #1a1a3a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(124, 92, 255, 0.05), transparent 60%);
-    }
-
-    /* Theme: Aurora */
-    .theme-aurora {
-      --bg-primary: #0a1a1a;
-      --bg-surface: #0a2a2a;
-      --bg-surface-2: #0a3a3a;
-      --bg-surface-3: #1a4a4a;
-      --text-primary: #d0f0f0;
-      --text-secondary: #80c0c0;
-      --text-dim: #509090;
-      --accent: #34d399;
-      --accent-glow: rgba(52, 211, 153, 0.3);
-      --accent-gradient: linear-gradient(145deg, #34d399, #0ea5e9);
-      --bubble-mine: #1a8a7a;
-      --bubble-theirs: #0a2a2a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(52, 211, 153, 0.05), transparent 60%);
-    }
-
-    /* Theme: Sunset */
-    .theme-sunset {
-      --bg-primary: #1a0a0a;
-      --bg-surface: #2a1212;
-      --bg-surface-2: #3a1a1a;
-      --bg-surface-3: #4a2a2a;
-      --text-primary: #f0d0c0;
-      --text-secondary: #d09070;
-      --text-dim: #a06040;
-      --accent: #f472b6;
-      --accent-glow: rgba(244, 114, 182, 0.3);
-      --accent-gradient: linear-gradient(145deg, #f472b6, #fb923c);
-      --bubble-mine: #c05070;
-      --bubble-theirs: #2a1212;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
-    }
-
-    /* Theme: Ocean */
-    .theme-ocean {
-      --bg-primary: #0a0a1a;
-      --bg-surface: #0a1a2a;
-      --bg-surface-2: #0a2a3a;
-      --bg-surface-3: #1a3a4a;
-      --text-primary: #c0e0f0;
-      --text-secondary: #70a0c0;
-      --text-dim: #4070a0;
-      --accent: #0ea5e9;
-      --accent-glow: rgba(14, 165, 233, 0.3);
-      --accent-gradient: linear-gradient(145deg, #0ea5e9, #06b6d4);
-      --bubble-mine: #0a6a8a;
-      --bubble-theirs: #0a1a2a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.05), transparent 60%);
-    }
-
-    /* Theme: Sakura */
-    .theme-sakura {
-      --bg-primary: #1a0a14;
-      --bg-surface: #2a1018;
-      --bg-surface-2: #3a1822;
-      --bg-surface-3: #4a202a;
-      --text-primary: #f0d0d8;
-      --text-secondary: #d090a0;
-      --text-dim: #a06070;
-      --accent: #f472b6;
-      --accent-glow: rgba(244, 114, 182, 0.3);
-      --accent-gradient: linear-gradient(145deg, #f472b6, #ec4899);
-      --bubble-mine: #c05080;
-      --bubble-theirs: #2a1018;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
-    }
-
-    /* Theme: Midnight */
-    .theme-midnight {
-      --bg-primary: #0a0a0a;
-      --bg-surface: #0a0a12;
-      --bg-surface-2: #12121a;
-      --bg-surface-3: #1a1a22;
-      --text-primary: #e0e0e8;
-      --text-secondary: #8888a0;
-      --text-dim: #505068;
-      --accent: #8b5cf6;
-      --accent-glow: rgba(139, 92, 246, 0.3);
-      --accent-gradient: linear-gradient(145deg, #8b5cf6, #6366f1);
-      --bubble-mine: #5b3cf6;
-      --bubble-theirs: #12121a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.05), transparent 60%);
-    }
-
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; }
     body {
@@ -146,12 +40,10 @@
       color: var(--text-primary);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
-      transition: background 0.4s ease, color 0.4s ease;
     }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-
     #app {
       height: 100vh; height: 100dvh;
       max-width: 480px;
@@ -162,13 +54,10 @@
       flex-direction: column;
       box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
       overflow: hidden;
-      transition: background 0.4s ease;
     }
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
-
-    /* AUTH SCREEN */
     #authScreen {
       flex: 1;
       display: flex;
@@ -321,8 +210,6 @@
       position: relative;
       z-index: 1;
     }
-
-    /* APP BAR */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -375,8 +262,6 @@
       transition: var(--transition-smooth);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* TABS */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -399,8 +284,6 @@
       border-color: var(--accent);
     }
     .tab:active { opacity: 0.6; }
-
-    /* SEARCH */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -422,8 +305,6 @@
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .search-bar input::placeholder { color: var(--text-dim); }
-
-    /* LIST */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -486,8 +367,6 @@
       line-height: 1.7;
     }
     .empty-state i { display: block; font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
-
-    /* FAB */
     .fab {
       position: absolute;
       bottom: 80px; right: 20px;
@@ -501,8 +380,6 @@
       transition: var(--transition-smooth);
     }
     .fab:active { transform: scale(0.9); }
-
-    /* BOTTOM NAV */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -523,20 +400,12 @@
     }
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
-
-    /* CHAT SCREEN */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
       background: var(--bg-primary);
-      transition: background 0.4s ease;
     }
     #chatScreen.active { display: flex; }
-    #chatScreen .messages {
-      background: var(--chat-bg);
-      transition: background 0.4s ease;
-    }
-
     .chat-appbar {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 16px;
@@ -548,14 +417,13 @@
     .chat-appbar .name-block { flex: 1; min-width: 0; }
     .chat-appbar .name-block .n { font-size: 16px; font-weight: 700; }
     .chat-appbar .name-block .s { font-size: 12px; color: var(--text-secondary); }
-
     .messages {
       flex: 1;
       overflow-y: auto;
       padding: 16px 14px;
       display: flex; flex-direction: column; gap: 4px;
       -webkit-overflow-scrolling: touch;
-      transition: background 0.4s ease;
+      background: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
     }
     .bubble-row {
       display: flex;
@@ -612,8 +480,6 @@
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-6px) scale(1.05); }
     }
-
-    /* COMPOSER */
     .composer {
       display: flex; align-items: flex-end; gap: 8px;
       padding: 10px 14px;
@@ -661,7 +527,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
-
     .typing-indicator {
       padding: 4px 18px;
       font-size: 12px;
@@ -670,8 +535,6 @@
       height: 22px;
       transition: var(--transition-smooth);
     }
-
-    /* REELS */
     #reelsScreen {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -728,8 +591,6 @@
       align-items: center; gap: 3px;
     }
     .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
-
-    /* OVERLAY & SHEET */
     .overlay {
       position: absolute; inset: 0;
       background: rgba(4, 8, 14, 0.65);
@@ -769,7 +630,6 @@
     }
     .sheet-item .role-badge.admin { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
     .sheet-item .role-badge.moderator { background: rgba(52, 211, 153, 0.15); color: #34d399; }
-
     .reaction-picker {
       display: flex; gap: 12px;
       justify-content: space-around;
@@ -781,8 +641,6 @@
       cursor: pointer;
     }
     .reaction-picker span:active { transform: scale(1.4); }
-
-    /* TOAST */
     .toast {
       position: absolute; bottom: 100px; left: 50%;
       transform: translateX(-50%);
@@ -800,7 +658,6 @@
       0%, 70% { opacity: 1; transform: translateX(-50%) translateY(0); }
       100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
     }
-
     .link-box {
       display: flex; gap: 10px; align-items: center;
       background: var(--bg-surface-2);
@@ -809,28 +666,14 @@
       margin: 10px 0;
     }
     .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
-
-    /* CALL OVERLAY - BEAUTIFUL DESIGN */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
-      background: radial-gradient(ellipse at 50% 30%, #1a2a3a, #060a10);
+      background: radial-gradient(ellipse at 50% 40%, #1c2c42, #060a10);
       display: flex; flex-direction: column;
       align-items: center; justify-content: flex-end;
       padding-bottom: 50px;
       overflow: hidden;
-    }
-    .call-overlay::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 30% 20%, rgba(79, 154, 255, 0.05), transparent 60%),
-                  radial-gradient(circle at 70% 80%, rgba(124, 92, 255, 0.05), transparent 60%);
-      animation: callPulse 4s ease-in-out infinite alternate;
-    }
-    @keyframes callPulse {
-      0% { opacity: 0.5; transform: scale(1); }
-      100% { opacity: 1; transform: scale(1.05); }
     }
     .remote-video {
       position: absolute; inset: 0;
@@ -839,78 +682,44 @@
       background: #000;
     }
     .local-video {
-      position: absolute; top: calc(20px + env(safe-area-inset-top)); right: 16px;
-      width: 110px; height: 150px;
-      border-radius: 20px;
+      position: absolute; top: calc(16px + env(safe-area-inset-top)); right: 16px;
+      width: 100px; height: 140px;
+      border-radius: 16px;
       object-fit: cover;
       background: #111;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
-      border: 2px solid rgba(255,255,255,0.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,255,255,0.1);
       z-index: 2;
     }
     .call-info {
       position: relative; z-index: 1;
       text-align: center; color: #fff;
-      margin-bottom: 40px; margin-top: auto;
+      margin-bottom: 48px; margin-top: auto;
       padding-top: 80px;
     }
-    .call-info .call-avatar {
-      width: 100px; height: 100px;
-      border-radius: 50%;
-      margin: 0 auto 16px;
-      border: 3px solid rgba(255,255,255,0.15);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 40px; font-weight: 700;
-      background: var(--accent-gradient);
-      position: relative;
-    }
-    .call-info .call-avatar .pulse-ring {
-      position: absolute;
-      inset: -8px;
-      border-radius: 50%;
-      border: 2px solid rgba(79, 154, 255, 0.3);
-      animation: ringPulse 2s ease-out infinite;
-    }
-    @keyframes ringPulse {
-      0% { transform: scale(0.8); opacity: 0.8; }
-      100% { transform: scale(1.3); opacity: 0; }
-    }
-    .call-name { font-size: 26px; font-weight: 700; margin-bottom: 4px; text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
-    .call-status { 
-      font-size: 15px; 
-      opacity: 0.8; 
-      background: rgba(0,0,0,0.3); 
-      padding: 4px 16px; 
-      border-radius: 20px; 
-      display: inline-block;
-      backdrop-filter: blur(4px);
-    }
+    .call-name { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .call-status { font-size: 14px; opacity: 0.75; }
     .call-actions {
       position: relative; z-index: 2;
-      display: flex; gap: 30px; align-items: center;
+      display: flex; gap: 34px; align-items: center;
     }
     .call-btn {
       width: 68px; height: 68px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 28px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
       transition: var(--transition-smooth);
-      border: 2px solid rgba(255,255,255,0.05);
     }
     .call-btn:active { transform: scale(0.9); }
-    .call-btn.accept { background: linear-gradient(135deg, #34d399, #059669); }
-    .call-btn.decline { background: linear-gradient(135deg, #ff5c7a, #dc2626); }
+    .call-btn.accept { background: linear-gradient(135deg, #34d399, #17b862); }
+    .call-btn.decline { background: linear-gradient(135deg, #ff5c7a, #e0324a); }
     .call-btn.secondary {
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.12);
       width: 56px; height: 56px; font-size: 22px;
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.08);
+      backdrop-filter: blur(4px);
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
-
-    /* REPLY & EDIT PREVIEW */
     .reply-preview {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
@@ -922,7 +731,6 @@
     .reply-preview .preview-content { flex: 1; min-width: 0; }
     .reply-preview .preview-name { font-size: 12px; font-weight: 700; color: var(--accent); }
     .reply-preview .preview-text { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
     .edit-banner {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
@@ -932,8 +740,6 @@
     .edit-banner .edit-content { flex: 1; min-width: 0; }
     .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
     .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* GIFT PICKER */
     .gift-picker {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -968,8 +774,6 @@
       padding: 8px 4px 4px; border-bottom: 1px solid var(--border-subtle);
       grid-column: 1 / -1;
     }
-
-    /* RESTRICTION PICKER */
     .restriction-picker {
       display: flex;
       gap: 8px;
@@ -990,6 +794,11 @@
       border-color: var(--accent);
       color: var(--text-primary);
     }
+    .restriction-picker button.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
     .member-role-select {
       background: var(--bg-surface-2);
       border: 1px solid var(--border-subtle);
@@ -1005,38 +814,10 @@
       background: rgba(255, 92, 122, 0.15); color: var(--danger);
       margin-left: 8px;
     }
-
-    /* THEME SELECTOR */
-    .theme-selector {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 8px 0;
-    }
-    .theme-selector .theme-option {
-      padding: 12px 8px;
-      border-radius: 14px;
-      background: var(--bg-surface-2);
-      border: 2px solid transparent;
-      text-align: center;
-      transition: var(--transition-smooth);
-      cursor: pointer;
-    }
-    .theme-selector .theme-option:hover { border-color: var(--accent); }
-    .theme-selector .theme-option.active { border-color: var(--accent); background: var(--bg-surface-3); }
-    .theme-selector .theme-option .theme-preview {
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      margin: 0 auto 6px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-    .theme-selector .theme-option .theme-name { font-size: 11px; color: var(--text-dim); }
-
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
       .sheet { padding: 20px 16px; }
-      .local-video { width: 80px; height: 110px; }
     }
   </style>
 </head>
@@ -1109,12 +890,9 @@
     <video id="remoteVideo" autoplay playsinline class="remote-video hidden"></video>
     <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
     <div class="call-info">
-      <div class="call-avatar" id="callAvatar">
-        <div class="pulse-ring"></div>
-        <span id="callAvatarText">?</span>
-      </div>
-      <div class="call-name" id="callName">Call</div>
-      <div class="call-status" id="callStatus">Connecting...</div>
+      <div class="avatar" id="callAvatar" style="width:100px;height:100px;font-size:38px;margin:0 auto 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);"></div>
+      <div class="call-name" id="callName"></div>
+      <div class="call-status" id="callStatus">Calling...</div>
     </div>
     <div class="call-actions" id="callActionsIncoming">
       <div class="call-btn decline" onclick="declineCall()">📵</div>
@@ -1136,7 +914,6 @@
         <div class="n" id="chatName">Chat</div>
         <div class="s" id="chatStatus"></div>
       </div>
-      <div class="icon-btn" onclick="openChatThemePicker()">🎨</div>
       <div class="icon-btn hidden" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
       <div class="icon-btn hidden" id="videoCallBtn" onclick="startCall('video')">🎥</div>
       <div class="icon-btn" onclick="openChatMenu()">⋮</div>
@@ -1192,24 +969,6 @@ let pendingMessages = {};
 let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
-let currentTheme = localStorage.getItem("wg_theme") || "default";
-
-// ---- Apply Theme ----
-function applyTheme(theme) {
-  const app = document.getElementById("app");
-  const chatScreen = document.getElementById("chatScreen");
-  const messages = document.getElementById("messagesBody");
-  
-  // Remove all theme classes
-  app.classList.remove('theme-cosmic', 'theme-aurora', 'theme-sunset', 'theme-ocean', 'theme-sakura', 'theme-midnight');
-  
-  if (theme !== 'default') {
-    app.classList.add('theme-' + theme);
-  }
-  
-  currentTheme = theme;
-  localStorage.setItem("wg_theme", theme);
-}
 
 // ---- GIFTS (extended with categories) ----
 const GIFTS = [
@@ -1267,8 +1026,10 @@ const GIFTS = [
   { emoji: "☀️", name: "Sun", category: "Nature" },
   { emoji: "🌙", name: "Moon", category: "Nature" },
   { emoji: "🌊", name: "Wave", category: "Nature" },
+  { emoji: "🌸", name: "Cherry Blossom", category: "Nature" },
   { emoji: "🌺", name: "Hibiscus", category: "Nature" },
   { emoji: "🌻", name: "Sunflower", category: "Nature" },
+  { emoji: "🌹", name: "Rose", category: "Nature" },
   { emoji: "🌿", name: "Herb", category: "Nature" },
   { emoji: "🌴", name: "Palm Tree", category: "Nature" },
   
@@ -1355,7 +1116,6 @@ async function api(path, opts={}) {
 // ---- Boot ----
 window.addEventListener("DOMContentLoaded", () => {
   api("/api/config").then(r => { PUBLIC_BASE_URL = r.public_base_url || ""; }).catch(()=>{});
-  applyTheme(currentTheme);
   if (TOKEN && ME) {
     api("/api/me").then(r => { ME = r.user; saveSession(); showList(); connectSocket(); })
       .catch(() => { logout(true); });
@@ -1611,10 +1371,6 @@ function avatarInner(u){
 function setAvatarEl(el, u){
   if (!u) { el.innerHTML = "?"; return; }
   el.innerHTML = avatarInner(u);
-}
-function setCallAvatarEl(el, u){
-  if (!u) { el.querySelector("span").textContent = "?"; return; }
-  el.querySelector("span").textContent = avatarInner(u).replace(/<[^>]*>/g, '');
 }
 
 function fabAction(){
@@ -1960,6 +1716,7 @@ function openGiftPicker(){
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   
+  // Group gifts by category
   const categories = {};
   GIFTS.forEach(g => {
     if (!categories[g.category]) categories[g.category] = [];
@@ -2560,38 +2317,6 @@ async function openChatMenu(){
   document.getElementById("app").appendChild(overlay);
 }
 
-// ---- Theme Picker for Chat ----
-function openChatThemePicker() {
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  
-  const themes = [
-    { id: 'default', name: 'Default', color: '#4f9aff' },
-    { id: 'cosmic', name: 'Cosmic', color: '#7c5cff' },
-    { id: 'aurora', name: 'Aurora', color: '#34d399' },
-    { id: 'sunset', name: 'Sunset', color: '#f472b6' },
-    { id: 'ocean', name: 'Ocean', color: '#0ea5e9' },
-    { id: 'sakura', name: 'Sakura', color: '#ec4899' },
-    { id: 'midnight', name: 'Midnight', color: '#8b5cf6' }
-  ];
-  
-  let html = `<h2>🎨 Chat Themes</h2><div class="theme-selector">`;
-  themes.forEach(t => {
-    const active = currentTheme === t.id ? 'active' : '';
-    html += `<div class="theme-option ${active}" onclick="applyTheme('${t.id}');document.querySelector('.overlay')?.remove();">
-      <div class="theme-preview" style="background:${t.color};"></div>
-      <div class="theme-name">${t.name}</div>
-    </div>`;
-  });
-  html += `</div>`;
-  sheet.innerHTML = html;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-}
-
 async function checkBlockStatus(){
   if (!currentChat || currentChat.type !== "dm") return;
   try {
@@ -2764,16 +2489,6 @@ async function openSettings(){
       <div class="toggle-switch ${ANIMATIONS_ON ? 'on' : ''}" style="width:44px;height:24px;border-radius:14px;background:#2a3a4d;position:relative;flex-shrink:0;transition:.2s;cursor:pointer;" onclick="toggleAnimations()"><div class="knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:.2s;"></div></div>
     </div>
 
-    <h2 style="margin-top:22px;">Chat Themes</h2>
-    <div class="theme-selector" style="grid-template-columns:repeat(4,1fr);">
-      ${['default','cosmic','aurora','sunset','ocean','sakura','midnight'].map(t => `
-        <div class="theme-option ${currentTheme === t ? 'active' : ''}" onclick="applyTheme('${t}');document.querySelector('.overlay')?.remove();">
-          <div class="theme-preview" style="background:${t === 'default' ? '#4f9aff' : t === 'cosmic' ? '#7c5cff' : t === 'aurora' ? '#34d399' : t === 'sunset' ? '#f472b6' : t === 'ocean' ? '#0ea5e9' : t === 'sakura' ? '#ec4899' : '#8b5cf6'};"></div>
-          <div class="theme-name">${t.charAt(0).toUpperCase() + t.slice(1)}</div>
-        </div>
-      `).join('')}
-    </div>
-
     <h2 style="margin-top:22px;">Server</h2>
     <div class="settings-row" style="display:block;padding:13px 4px;border-bottom:1px solid var(--border-subtle);">
       <div>Invite link base address</div>
@@ -2781,7 +2496,7 @@ async function openSettings(){
     </div>
     <div class="settings-row" style="display:block;padding:13px 4px;border-bottom:1px solid var(--border-subtle);">
       <div>Voice &amp; video calls</div>
-      <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">${window.isSecureContext ? "✅ This connection supports calls." : "⚠️ Calls require HTTPS or localhost."}</div>
+      <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">${window.isSecureContext ? "This connection supports calls." : "⚠️ Calls are blocked on this connection because it isn't secure (HTTPS). Open the app using its public link" + (PUBLIC_BASE_URL ? " (" + escapeHtml(PUBLIC_BASE_URL) + ")" : "") + ", or via 127.0.0.1/localhost on this device, for calls to work."}</div>
     </div>
 
     <div class="sheet-item" onclick="viewBlockedList()"><span class="ic">🚫</span> Blocked users</div>
@@ -3224,7 +2939,7 @@ async function submitComment(reelId){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== CALLS (WebRTC) - FIXED ====================
+// ==================== CALLS (WebRTC) ====================
 let pc = null;
 let localStream = null;
 let remoteStream = null;
@@ -3239,17 +2954,13 @@ let callRecordSaved = false;
 
 const rtcConfig = {
   iceServers: [
-    { urls: "stun:stun.l.google.com:19302" },
-    { urls: "stun:stun1.l.google.com:19302" },
-    { urls: "stun:stun2.l.google.com:19302" },
-    { urls: "stun:stun3.l.google.com:19302" },
-    { urls: "stun:stun4.l.google.com:19302" }
-  ],
-  iceCandidatePoolSize: 10
+    {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]},
+    {urls: ["stun:stun2.l.google.com:19302"]}
+  ]
 };
 
 async function startCall(type){
-  console.log("🔵 startCall called with type:", type);
+  console.log("startCall called with type:", type);
   
   if (!window.isSecureContext) {
     showToast("Calls require HTTPS or localhost");
@@ -3274,7 +2985,7 @@ async function startCall(type){
   callRecordSaved = false;
   isCallActive = true;
 
-  console.log("📞 Starting call to:", currentCallTargetId, "video:", isVideoCall);
+  console.log("Starting call to:", currentCallTargetId, "video:", isVideoCall);
 
   // Show call UI
   document.getElementById("callActionsIncoming").classList.add("hidden");
@@ -3282,16 +2993,13 @@ async function startCall(type){
   document.getElementById("callOverlay").classList.remove("hidden");
   document.getElementById("callStatus").textContent = "Calling...";
   document.getElementById("callName").textContent = currentChat.name;
-  setCallAvatarEl(document.getElementById("callAvatar"), {username: currentChat.name, avatar: currentChat.avatar});
+  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat.name, avatar: currentChat.avatar});
   
   try {
-    const constraints = { 
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      video: isVideoCall ? { width: { ideal: 640 }, height: { ideal: 480 } } : false
-    };
-    console.log("🎤 Getting user media with constraints:", constraints);
+    const constraints = {audio: true, video: isVideoCall};
+    console.log("Getting user media with constraints:", constraints);
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    console.log("✅ Local stream obtained");
+    console.log("Local stream obtained");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -3302,36 +3010,31 @@ async function startCall(type){
     }
     
     createPeerConnection();
-    console.log("🔗 Peer connection created");
+    console.log("Peer connection created");
 
-    // Add all tracks to the peer connection
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
-        console.log("➕ Track added:", track.kind);
+        console.log("Track added:", track.kind);
       }
     });
 
-    // Create and send offer
-    const offer = await pc.createOffer({
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: isVideoCall
-    });
-    console.log("📤 Offer created:", offer);
+    const offer = await pc.createOffer();
+    console.log("Offer created:", offer);
     await pc.setLocalDescription(offer);
-    console.log("📝 Local description set");
+    console.log("Local description set");
 
     socket.emit("call_offer", {
       target: currentCallTargetId,
       offer: offer,
       video: isVideoCall
     });
-    console.log("📨 Call offer sent");
+    console.log("Call offer sent");
     
     startCallTimer();
     
   } catch(err){
-    console.error("❌ Error starting call:", err);
+    console.error("Error starting call:", err);
     showToast("Could not start call: " + err.message);
     endCall(true);
   }
@@ -3351,17 +3054,14 @@ function startCallTimer() {
 }
 
 async function handleCallOffer(data){
-  console.log("📥 Call offer received from:", data.from_user_id);
+  console.log("Call offer received from:", data.from_user_id);
   
   if (isCallActive || currentCallTargetId) {
-    console.log("⛔ Already in a call, rejecting");
+    console.log("Already in a call, rejecting");
     socket.emit("call_reject", {target: data.from_user_id});
     return;
   }
-  if (!data.from_user_id) {
-    console.warn("⚠️ Invalid call offer: missing from_user_id");
-    return;
-  }
+  if (!data.from_user_id) return;
   
   currentCallTargetId = data.from_user_id;
   isVideoCall = data.video || false;
@@ -3370,9 +3070,9 @@ async function handleCallOffer(data){
   isCallActive = true;
 
   const user = {username: data.from_username || "Unknown", avatar: data.from_avatar || null};
-  setCallAvatarEl(document.getElementById("callAvatar"), user);
+  setAvatarEl(document.getElementById("callAvatar"), user);
   document.getElementById("callName").textContent = user.username;
-  document.getElementById("callStatus").textContent = isVideoCall ? "📹 Incoming video call..." : "📞 Incoming voice call...";
+  document.getElementById("callStatus").textContent = isVideoCall ? "Incoming video call..." : "Incoming voice call...";
 
   document.getElementById("callActionsIncoming").classList.remove("hidden");
   document.getElementById("callActionsActive").classList.add("hidden");
@@ -3380,16 +3080,11 @@ async function handleCallOffer(data){
 
   window._incomingOffer = data.offer;
   window._callerInfo = user;
-  console.log("📥 Incoming call offer stored");
-  
-  // Play ringtone effect (vibration on mobile)
-  if (navigator.vibrate) {
-    navigator.vibrate([200, 100, 200]);
-  }
+  console.log("Incoming call offer stored");
 }
 
 async function acceptCall(){
-  console.log("✅ Accepting call");
+  console.log("Accepting call");
   
   if (!window._incomingOffer) {
     showToast("No incoming call to accept");
@@ -3401,13 +3096,10 @@ async function acceptCall(){
   document.getElementById("callStatus").textContent = "Connecting...";
 
   try {
-    const constraints = { 
-      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
-      video: isVideoCall ? { width: { ideal: 640 }, height: { ideal: 480 } } : false
-    };
-    console.log("🎤 Getting user media for answer");
+    const constraints = {audio: true, video: isVideoCall};
+    console.log("Getting user media for answer");
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    console.log("✅ Local stream obtained for answer");
+    console.log("Local stream obtained for answer");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -3418,66 +3110,66 @@ async function acceptCall(){
     }
     
     createPeerConnection();
-    console.log("🔗 Peer connection created for answer");
+    console.log("Peer connection created for answer");
 
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
-        console.log("➕ Track added for answer:", track.kind);
+        console.log("Track added for answer:", track.kind);
       }
     });
 
-    console.log("📥 Setting remote description");
+    console.log("Setting remote description");
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
-    console.log("✅ Remote description set");
+    console.log("Remote description set");
     
     const answer = await pc.createAnswer();
-    console.log("📤 Answer created");
+    console.log("Answer created");
     await pc.setLocalDescription(answer);
-    console.log("📝 Local description set for answer");
+    console.log("Local description set for answer");
 
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
-    console.log("📨 Answer sent");
+    console.log("Answer sent");
     
     startCallTimer();
     
   } catch(err){
-    console.error("❌ Error accepting call:", err);
+    console.error("Error accepting call:", err);
     showToast("Failed to accept call: " + err.message);
     endCall(true);
   }
 }
 
 async function handleCallAnswer(data){
-  console.log("📥 Call answer received");
+  console.log("Call answer received");
   if (!pc) {
-    console.warn("⚠️ No peer connection for answer");
+    console.warn("No peer connection for answer");
     return;
   }
   try {
-    console.log("📥 Setting remote description from answer");
+    console.log("Setting remote description from answer");
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-    console.log("✅ Remote description set from answer");
+    console.log("Remote description set from answer");
     document.getElementById("callStatus").textContent = "Connected";
     startCallTimer();
   } catch(e){
-    console.error("❌ Error handling call answer:", e);
+    console.error("Error handling call answer:", e);
   }
 }
 
 async function handleRemoteIce(data){
-  console.log("🧊 ICE candidate received");
+  console.log("ICE candidate received");
   if (!pc || !data.candidate) return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-    console.log("✅ ICE candidate added");
+    console.log("ICE candidate added");
   } catch(e){
-    console.warn("⚠️ Failed to add ICE candidate:", e);
+    console.warn("Failed to add ICE candidate:", e);
   }
 }
 
 function handleCallReject(data){
-  console.log("📵 Call rejected");
+  console.log("Call rejected");
   showToast("Call declined");
   if (!callRecordSaved) {
     saveCallRecord("declined");
@@ -3487,7 +3179,7 @@ function handleCallReject(data){
 }
 
 function handleRemoteEnd(data){
-  console.log("📵 Remote end received");
+  console.log("Remote end received");
   showToast("Call ended");
   if (!callRecordSaved && callStartTime) {
     saveCallRecord("completed");
@@ -3497,7 +3189,7 @@ function handleRemoteEnd(data){
 }
 
 function declineCall(){
-  console.log("📵 Declining call");
+  console.log("Declining call");
   if (currentCallTargetId) {
     socket.emit("call_reject", {target: currentCallTargetId});
   }
@@ -3509,7 +3201,7 @@ function declineCall(){
 }
 
 function endCall(silent){
-  console.log("🔴 Ending call, silent:", silent);
+  console.log("Ending call, silent:", silent);
   
   if (callTimerInterval) {
     clearInterval(callTimerInterval);
@@ -3525,17 +3217,14 @@ function endCall(silent){
   }
   
   if (localStream) {
-    localStream.getTracks().forEach(t => {
-      t.stop();
-      console.log("⏹️ Track stopped:", t.kind);
-    });
+    localStream.getTracks().forEach(t => t.stop());
     localStream = null;
-    console.log("✅ Local stream stopped");
+    console.log("Local stream stopped");
   }
   if (pc) {
     pc.close();
     pc = null;
-    console.log("✅ Peer connection closed");
+    console.log("Peer connection closed");
   }
   currentCallTargetId = null;
   isCallActive = false;
@@ -3544,11 +3233,11 @@ function endCall(silent){
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
   document.getElementById("cameraBtn").classList.add("hidden");
-  console.log("✅ Call ended and UI cleaned up");
+  console.log("Call ended and UI cleaned up");
 }
 
 function saveCallRecord(status) {
-  console.log("💾 Saving call record with status:", status);
+  console.log("Saving call record with status:", status);
   if (!currentChat || currentChat.type !== "dm") return;
   const callType = isVideoCall ? "video" : "audio";
   const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
@@ -3589,22 +3278,22 @@ function saveCallRecord(status) {
     client_id: clientId,
     reply_to_id: null
   });
-  console.log("💾 Call record saved");
+  console.log("Call record saved");
 }
 
 function createPeerConnection(){
-  console.log("🔗 Creating peer connection");
+  console.log("Creating peer connection");
   pc = new RTCPeerConnection(rtcConfig);
   
   pc.onicecandidate = (event) => {
     if (event.candidate && currentCallTargetId && socket) {
-      console.log("🧊 Sending ICE candidate");
+      console.log("Sending ICE candidate");
       socket.emit("call_ice_candidate", {target: currentCallTargetId, candidate: event.candidate});
     }
   };
   
   pc.ontrack = (event) => {
-    console.log("📺 Track received from remote:", event.track.kind);
+    console.log("Track received from remote");
     remoteStream = event.streams[0];
     const rv = document.getElementById("remoteVideo");
     rv.srcObject = remoteStream;
@@ -3614,9 +3303,8 @@ function createPeerConnection(){
   };
   
   pc.oniceconnectionstatechange = () => {
-    const state = pc?.iceConnectionState;
-    console.log("🧊 ICE connection state:", state);
-    if (state === "failed") {
+    console.log("ICE connection state:", pc?.iceConnectionState);
+    if (pc && pc.iceConnectionState === "failed") {
       showToast("Connection failed");
       if (!callRecordSaved) {
         saveCallRecord("missed");
@@ -3624,10 +3312,10 @@ function createPeerConnection(){
       }
       endCall(true);
     }
-    if (state === "connected") {
+    if (pc && pc.iceConnectionState === "connected") {
       document.getElementById("callStatus").textContent = "Connected";
     }
-    if (state === "disconnected") {
+    if (pc && pc.iceConnectionState === "disconnected") {
       showToast("Disconnected");
       if (!callRecordSaved) {
         saveCallRecord("missed");
@@ -3637,11 +3325,7 @@ function createPeerConnection(){
     }
   };
   
-  pc.onconnectionstatechange = () => {
-    console.log("🔗 Connection state:", pc?.connectionState);
-  };
-  
-  console.log("✅ Peer connection created");
+  console.log("Peer connection created");
 }
 
 function toggleMute(){
@@ -3651,7 +3335,6 @@ function toggleMute(){
   const btn = document.getElementById("muteBtn");
   btn.classList.toggle("active-toggle", isMuted);
   btn.textContent = isMuted ? "🔇" : "🎤";
-  console.log("🎤 Mute toggled:", isMuted);
 }
 
 function toggleCamera(){
@@ -3661,7 +3344,6 @@ function toggleCamera(){
   const btn = document.getElementById("cameraBtn");
   btn.classList.toggle("active-toggle", isCameraOff);
   btn.textContent = isCameraOff ? "🎦" : "📷";
-  console.log("📷 Camera toggled:", isCameraOff);
 }
 </script>
 </body>
