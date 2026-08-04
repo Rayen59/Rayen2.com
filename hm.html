@@ -3,34 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Wavegram · Chat</title>
+  <title>Wavegram</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-primary: #0c111b;
       --bg-surface: #141c2b;
       --bg-surface-2: #1c283c;
       --bg-surface-3: #25344d;
-      --bg-elevated: #1c283c;
       --text-primary: #f0f4fa;
       --text-secondary: #b2c9e8;
       --text-dim: #7b94b8;
       --accent: #4f9aff;
       --accent-glow: rgba(79, 154, 255, 0.25);
       --accent-gradient: linear-gradient(145deg, #4f9aff, #7c5cff);
-      --accent-gradient-hover: linear-gradient(145deg, #6aafff, #8c6eff);
       --bubble-mine: #2b7fff;
       --bubble-theirs: #1c283c;
       --online: #34d399;
       --danger: #ff5c7a;
-      --border-subtle: rgba(255, 255, 255, 0.04);
-      --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
-      --radius-card: 28px;
+      --border-subtle: rgba(255,255,255,0.04);
       --radius-bubble: 18px;
-      --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; }
@@ -52,12 +47,14 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 0 60px rgba(0,0,0,0.6);
       overflow: hidden;
     }
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
+
+    /* AUTH */
     #authScreen {
       flex: 1;
       display: flex;
@@ -72,7 +69,7 @@
       content: '';
       position: absolute;
       width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(79, 154, 255, 0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(79,154,255,0.08) 0%, transparent 70%);
       top: -80px; right: -80px;
       border-radius: 50%;
       animation: floatOrb 12s ease-in-out infinite alternate;
@@ -81,14 +78,14 @@
       content: '';
       position: absolute;
       width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(124, 92, 255, 0.06) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(124,92,255,0.06) 0%, transparent 70%);
       bottom: -40px; left: -40px;
       border-radius: 50%;
       animation: floatOrb 16s ease-in-out infinite alternate-reverse;
     }
     @keyframes floatOrb {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(30px, 20px) scale(1.2); }
+      0% { transform: translate(0,0) scale(1); }
+      100% { transform: translate(30px,20px) scale(1.2); }
     }
     .auth-logo {
       width: 80px; height: 80px;
@@ -99,12 +96,10 @@
       justify-content: center;
       font-size: 36px; font-weight: 800;
       margin: 0 auto 20px;
-      box-shadow: 0 12px 32px rgba(79, 154, 255, 0.35);
+      box-shadow: 0 12px 32px rgba(79,154,255,0.35);
       position: relative;
       z-index: 1;
-      transition: var(--transition-smooth);
     }
-    .auth-logo:hover { transform: scale(1.03) rotate(-2deg); }
     .auth-title {
       text-align: center;
       font-size: 28px; font-weight: 700;
@@ -149,9 +144,8 @@
       border-radius: 16px;
       font-size: 15px;
       border: 1.5px solid transparent;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
       color: var(--text-primary);
-      backdrop-filter: blur(4px);
     }
     .field input:focus {
       border-color: var(--accent);
@@ -166,21 +160,12 @@
       border-radius: 16px;
       font-size: 16px; font-weight: 700;
       color: #fff;
-      transition: var(--transition-smooth);
-      box-shadow: 0 6px 20px rgba(79, 154, 255, 0.3);
+      transition: all 0.25s;
+      box-shadow: 0 6px 20px rgba(79,154,255,0.3);
       position: relative;
       z-index: 1;
       overflow: hidden;
     }
-    .btn-primary::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: var(--accent-gradient-hover);
-      opacity: 0;
-      transition: var(--transition-smooth);
-    }
-    .btn-primary:hover::after { opacity: 1; }
     .btn-primary:active { transform: scale(0.97); }
     .btn-primary span { position: relative; z-index: 2; }
     .auth-switch {
@@ -195,21 +180,21 @@
       color: var(--accent);
       font-weight: 600;
       cursor: pointer;
-      transition: var(--transition-smooth);
     }
-    .auth-switch span:hover { color: #6aafff; }
     .auth-error {
-      background: rgba(255, 92, 122, 0.12);
+      background: rgba(255,92,122,0.12);
       color: var(--danger);
       padding: 12px 16px;
       border-radius: 14px;
       font-size: 13px;
       text-align: center;
       margin-bottom: 16px;
-      border: 1px solid rgba(255, 92, 122, 0.15);
+      border: 1px solid rgba(255,92,122,0.15);
       position: relative;
       z-index: 1;
     }
+
+    /* APP BAR */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -234,7 +219,7 @@
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
       background: rgba(255,255,255,0.03);
       position: relative;
     }
@@ -248,7 +233,7 @@
       border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
       padding: 0 5px;
-      box-shadow: 0 2px 8px rgba(255, 92, 122, 0.4);
+      box-shadow: 0 2px 8px rgba(255,92,122,0.4);
     }
     .avatar {
       width: 40px; height: 40px;
@@ -259,9 +244,10 @@
       overflow: hidden;
       flex-shrink: 0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-      transition: var(--transition-smooth);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* TABS */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -276,14 +262,15 @@
       font-size: 13px; font-weight: 600;
       color: var(--text-dim);
       border-bottom: 2.5px solid transparent;
-      transition: var(--transition-smooth);
-      letter-spacing: 0.3px;
+      transition: all 0.25s;
     }
     .tab.active {
       color: var(--accent);
       border-color: var(--accent);
     }
     .tab:active { opacity: 0.6; }
+
+    /* SEARCH */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -296,7 +283,7 @@
       border-radius: 30px;
       font-size: 14px;
       border: 1.5px solid transparent;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
       color: var(--text-primary);
     }
     .search-bar input:focus {
@@ -305,6 +292,8 @@
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .search-bar input::placeholder { color: var(--text-dim); }
+
+    /* LIST */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -315,7 +304,7 @@
     .list-item {
       display: flex; align-items: center; gap: 14px;
       padding: 14px 18px;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
       border-bottom: 1px solid var(--border-subtle);
       animation: fadeSlide 0.25s ease-out;
     }
@@ -331,9 +320,9 @@
       border-radius: 50%;
       background: var(--online);
       border: 2.5px solid var(--bg-surface);
-      box-shadow: 0 0 0 1px rgba(52, 211, 153, 0.3);
+      box-shadow: 0 0 0 1px rgba(52,211,153,0.3);
     }
-    .status-dot.offline { background: var(--danger); box-shadow: 0 0 0 1px rgba(255, 92, 122, 0.3); }
+    .status-dot.offline { background: var(--danger); box-shadow: 0 0 0 1px rgba(255,92,122,0.3); }
     .list-item-content { flex: 1; min-width: 0; }
     .list-item-name { font-size: 16px; font-weight: 600; }
     .list-item-sub {
@@ -357,7 +346,7 @@
       border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       padding: 0 6px;
-      box-shadow: 0 2px 8px rgba(79, 154, 255, 0.3);
+      box-shadow: 0 2px 8px rgba(79,154,255,0.3);
     }
     .empty-state {
       text-align: center;
@@ -375,11 +364,13 @@
       background: var(--accent-gradient);
       display: flex; align-items: center; justify-content: center;
       font-size: 28px;
-      box-shadow: 0 8px 28px rgba(79, 154, 255, 0.4);
+      box-shadow: 0 8px 28px rgba(79,154,255,0.4);
       z-index: 5;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
     }
     .fab:active { transform: scale(0.9); }
+
+    /* BOTTOM NAV */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -396,10 +387,12 @@
       color: var(--text-dim);
       display: flex; flex-direction: column; align-items: center;
       gap: 2px;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
     }
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
+
+    /* CHAT SCREEN */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
@@ -417,18 +410,20 @@
     .chat-appbar .name-block { flex: 1; min-width: 0; }
     .chat-appbar .name-block .n { font-size: 16px; font-weight: 700; }
     .chat-appbar .name-block .s { font-size: 12px; color: var(--text-secondary); }
+
+    /* MESSAGES */
     .messages {
       flex: 1;
       overflow-y: auto;
       padding: 16px 14px;
       display: flex; flex-direction: column; gap: 4px;
       -webkit-overflow-scrolling: touch;
-      background: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
+      background: radial-gradient(ellipse at 20% 20%, rgba(79,154,255,0.02), transparent 60%);
     }
     .bubble-row {
       display: flex;
       max-width: 100%;
-      animation: bubbleIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+      animation: bubbleIn 0.3s cubic-bezier(0.2,0.9,0.3,1);
     }
     @keyframes bubbleIn {
       from { opacity: 0; transform: translateY(8px) scale(0.97); }
@@ -443,7 +438,6 @@
       line-height: 1.5;
       word-wrap: break-word;
       box-shadow: 0 1px 4px rgba(0,0,0,0.15);
-      transition: var(--transition-smooth);
       position: relative;
     }
     .bubble-row.mine .bubble {
@@ -466,12 +460,6 @@
       margin-top: 4px;
       text-align: right;
     }
-    .bubble.deleted {
-      font-style: italic;
-      color: var(--text-dim);
-      background: transparent !important;
-      border: 1px dashed var(--border-subtle);
-    }
     .bubble img, .bubble video { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 4px; }
     .bubble audio { width: 200px; max-width: 60vw; }
     .bubble .gift-emoji { font-size: 52px; display: block; text-align: center; margin: 4px 0; animation: giftFloat 2s ease-in-out infinite; }
@@ -480,16 +468,32 @@
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-6px) scale(1.05); }
     }
+
+    /* COMPOSER */
     .composer {
       display: flex;
-      align-items: center;
+      align-items: flex-end;
       gap: 8px;
       padding: 10px 14px;
       background: var(--bg-surface);
       border-top: 1px solid var(--border-subtle);
       flex-shrink: 0;
       backdrop-filter: blur(12px);
-      min-height: 64px;
+      flex-wrap: wrap;
+    }
+    .composer .top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+    }
+    .composer .bottom-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-subtle);
     }
     .composer textarea {
       flex: 1;
@@ -497,12 +501,12 @@
       border-radius: 24px;
       padding: 12px 18px;
       font-size: 14.5px;
-      max-height: 140px;
+      max-height: 120px;
       min-height: 44px;
       resize: none;
       line-height: 1.5;
       border: 1.5px solid transparent;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
       overflow-y: auto;
     }
     .composer textarea:focus {
@@ -517,12 +521,12 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
       flex-shrink: 0;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
     }
     .round-btn:active { transform: scale(0.88); }
     .round-btn.send {
       background: var(--accent-gradient);
-      box-shadow: 0 4px 16px rgba(79, 154, 255, 0.35);
+      box-shadow: 0 4px 16px rgba(79,154,255,0.35);
     }
     .round-btn.recording {
       background: var(--danger);
@@ -538,139 +542,57 @@
       color: var(--accent);
       font-style: italic;
       height: 22px;
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
     }
-    #reelsScreen {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      background: #000;
-      z-index: 10;
+
+    /* GIF PICKER */
+    .gif-picker {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 12px 0;
+      max-height: 350px;
+      overflow-y: auto;
     }
-    .reels-topbar {
-      position: absolute; top: 0; left: 0; right: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 18px;
-      z-index: 5;
-      background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent);
+    .gif-picker .gif-option {
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.25s;
+      background: var(--bg-surface-2);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      border: 2px solid transparent;
     }
-    .reels-title { font-size: 20px; font-weight: 700; color: #fff; }
-    .reels-feed {
-      flex: 1;
-      overflow-y: scroll;
-      scroll-snap-type: y mandatory;
-      -webkit-overflow-scrolling: touch;
+    .gif-picker .gif-option:hover, .gif-picker .gif-option:active {
+      border-color: var(--accent);
+      transform: scale(0.95);
     }
-    .reel-item {
-      scroll-snap-align: start;
-      height: 100%; width: 100%;
-      position: relative;
-      display: flex; align-items: flex-end;
-      background: #000;
-    }
-    .reel-item img, .reel-item video {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
+    .gif-picker .gif-option img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
-    .reel-item video::-webkit-media-controls { display: none !important; }
-    .reel-overlay {
-      position: relative; z-index: 2;
+    .gif-search {
       width: 100%;
-      padding: 16px 14px calc(90px + env(safe-area-inset-bottom));
-      background: linear-gradient(0deg, rgba(0,0,0,0.7) 10%, transparent 55%);
-    }
-    .reel-info { flex: 1; color: #fff; min-width: 0; }
-    .reel-author {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 700; font-size: 15px; margin-bottom: 6px;
-    }
-    .reel-caption { font-size: 14px; line-height: 1.4; opacity: 0.9; }
-    .reel-views { font-size: 12px; opacity: 0.7; margin-top: 6px; }
-    .reel-actions {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 18px; padding-bottom: 4px; margin-left: 12px;
-    }
-    .reel-action {
-      color: #fff; text-align: center;
-      font-size: 11px; display: flex; flex-direction: column;
-      align-items: center; gap: 3px;
-    }
-    .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
-    .overlay {
-      position: absolute; inset: 0;
-      background: rgba(4, 8, 14, 0.65);
-      backdrop-filter: blur(6px);
-      z-index: 20;
-      display: flex; align-items: flex-end;
-      animation: fadeOverlay 0.25s ease-out;
-    }
-    @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
-    .sheet {
-      background: var(--bg-surface);
-      width: 100%;
-      border-radius: 28px 28px 0 0;
-      padding: 24px 22px;
-      max-height: 80vh;
-      overflow-y: auto;
-      animation: slideUp 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-      border-top: 1px solid var(--border-subtle);
-      box-shadow: 0 -12px 40px rgba(0,0,0,0.4);
-    }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-    .sheet h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
-    .sheet-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 4px;
-      font-size: 15px;
-      border-bottom: 1px solid var(--border-subtle);
-      transition: var(--transition-smooth);
-    }
-    .sheet-item:last-child { border-bottom: none; }
-    .sheet-item:active { background: rgba(255,255,255,0.04); border-radius: 12px; }
-    .sheet-item .ic { font-size: 20px; width: 28px; text-align: center; }
-    .sheet-item .role-badge {
-      font-size: 10px; padding: 2px 10px; border-radius: 12px;
-      background: rgba(79, 154, 255, 0.15); color: var(--accent);
-      margin-left: auto;
-    }
-    .sheet-item .role-badge.admin { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
-    .sheet-item .role-badge.moderator { background: rgba(52, 211, 153, 0.15); color: #34d399; }
-    .reaction-picker {
-      display: flex; gap: 12px;
-      justify-content: space-around;
-      padding: 8px 0 16px;
-      font-size: 28px;
-    }
-    .reaction-picker span {
-      transition: var(--transition-smooth);
-      cursor: pointer;
-    }
-    .reaction-picker span:active { transform: scale(1.4); }
-    .toast {
-      position: absolute; bottom: 100px; left: 50%;
-      transform: translateX(-50%);
-      background: var(--bg-surface-3);
-      padding: 12px 24px;
-      border-radius: 30px;
-      font-size: 13px;
-      z-index: 50;
-      animation: toastFade 2.8s forwards;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-      border: 1px solid var(--border-subtle);
-      backdrop-filter: blur(8px);
-    }
-    @keyframes toastFade {
-      0%, 70% { opacity: 1; transform: translateX(-50%) translateY(0); }
-      100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
-    }
-    .link-box {
-      display: flex; gap: 10px; align-items: center;
+      padding: 10px 16px;
       background: var(--bg-surface-2);
-      padding: 12px 16px;
-      border-radius: 14px;
-      margin: 10px 0;
+      border-radius: 24px;
+      font-size: 14px;
+      color: var(--text-primary);
+      border: 1.5px solid transparent;
+      transition: all 0.25s;
+      margin-bottom: 12px;
     }
-    .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
+    .gif-search:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px var(--accent-glow);
+    }
+
+    /* CALL OVERLAY */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
@@ -714,7 +636,7 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 28px;
       box-shadow: 0 6px 24px rgba(0,0,0,0.4);
-      transition: var(--transition-smooth);
+      transition: all 0.25s;
     }
     .call-btn:active { transform: scale(0.9); }
     .call-btn.accept { background: linear-gradient(135deg, #34d399, #17b862); }
@@ -725,6 +647,58 @@
       backdrop-filter: blur(4px);
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
+
+    /* OVERLAY / SHEET */
+    .overlay {
+      position: absolute; inset: 0;
+      background: rgba(4,8,14,0.65);
+      backdrop-filter: blur(6px);
+      z-index: 20;
+      display: flex; align-items: flex-end;
+      animation: fadeOverlay 0.25s ease-out;
+    }
+    @keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
+    .sheet {
+      background: var(--bg-surface);
+      width: 100%;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 22px;
+      max-height: 80vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s cubic-bezier(0.2,0.9,0.3,1);
+      border-top: 1px solid var(--border-subtle);
+      box-shadow: 0 -12px 40px rgba(0,0,0,0.4);
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .sheet h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .sheet-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 4px;
+      font-size: 15px;
+      border-bottom: 1px solid var(--border-subtle);
+      transition: all 0.25s;
+    }
+    .sheet-item:last-child { border-bottom: none; }
+    .sheet-item:active { background: rgba(255,255,255,0.04); border-radius: 12px; }
+    .sheet-item .ic { font-size: 20px; width: 28px; text-align: center; }
+
+    .toast {
+      position: absolute; bottom: 100px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-surface-3);
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 13px;
+      z-index: 50;
+      animation: toastFade 2.8s forwards;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      border: 1px solid var(--border-subtle);
+      backdrop-filter: blur(8px);
+    }
+    @keyframes toastFade {
+      0%, 70% { opacity: 1; transform: translateX(-50%) translateY(0); }
+      100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    }
     .reply-preview {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
@@ -736,89 +710,7 @@
     .reply-preview .preview-content { flex: 1; min-width: 0; }
     .reply-preview .preview-name { font-size: 12px; font-weight: 700; color: var(--accent); }
     .reply-preview .preview-text { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .edit-banner {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
-      border-top: 1px solid var(--border-subtle);
-    }
-    .edit-banner .edit-bar { width: 3px; align-self: stretch; background: #ffb84d; border-radius: 2px; }
-    .edit-banner .edit-content { flex: 1; min-width: 0; }
-    .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
-    .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .gift-picker {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      padding: 12px 0;
-      max-height: 350px;
-      overflow-y: auto;
-    }
-    .gift-picker .gift-option {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 8px;
-      border-radius: 14px;
-      background: var(--bg-surface-2);
-      border: 2px solid transparent;
-      transition: var(--transition-smooth);
-      cursor: pointer;
-      min-height: 80px;
-      justify-content: center;
-    }
-    .gift-picker .gift-option:hover, .gift-picker .gift-option:active {
-      border-color: var(--accent);
-      background: var(--bg-surface-3);
-      transform: scale(0.96);
-    }
-    .gift-picker .gift-option .gift-emoji { font-size: 40px; line-height: 1.2; }
-    .gift-picker .gift-option .gift-name { font-size: 9px; color: var(--text-dim); margin-top: 4px; text-align: center; }
-    .gift-picker .gift-option .gift-category { font-size: 7px; color: var(--text-dim); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; }
-    .gift-category-header {
-      font-size: 12px; font-weight: 600; color: var(--text-secondary);
-      padding: 8px 4px 4px; border-bottom: 1px solid var(--border-subtle);
-      grid-column: 1 / -1;
-    }
-    .restriction-picker {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 8px 0;
-    }
-    .restriction-picker button {
-      padding: 8px 16px;
-      border-radius: 20px;
-      background: var(--bg-surface-2);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 13px;
-      transition: var(--transition-smooth);
-    }
-    .restriction-picker button:hover, .restriction-picker button:active {
-      background: var(--bg-surface-3);
-      border-color: var(--accent);
-      color: var(--text-primary);
-    }
-    .restriction-picker button.selected {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-    .member-role-select {
-      background: var(--bg-surface-2);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 6px 12px;
-      color: var(--text-primary);
-      font-size: 13px;
-      cursor: pointer;
-    }
-    .member-role-select option { background: var(--bg-surface); }
-    .restricted-badge {
-      font-size: 10px; padding: 2px 10px; border-radius: 12px;
-      background: rgba(255, 92, 122, 0.15); color: var(--danger);
-      margin-left: 8px;
-    }
+
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
@@ -870,43 +762,6 @@
     <div class="fab" onclick="fabAction()">＋</div>
     <div class="bottom-nav">
       <div class="bn-item active" onclick="switchMainScreen('list')"><span class="bn-ic">💬</span>Chats</div>
-      <div class="bn-item" onclick="switchMainScreen('reels')"><span class="bn-ic">🎬</span>Reels</div>
-    </div>
-  </div>
-
-  <!-- REELS SCREEN -->
-  <div id="reelsScreen" class="hidden">
-    <div class="reels-feed" id="reelsFeed"></div>
-    <div class="reels-topbar">
-      <div class="reels-title">🎬 Reels</div>
-      <div class="icon-btn" style="color:#fff;" onclick="openSettings()">⚙️</div>
-    </div>
-    <div class="fab" style="bottom:80px;z-index:15;" onclick="openUploadReelSheet()">＋</div>
-    <div class="bottom-nav" style="position:absolute;bottom:0;left:0;right:0;">
-      <div class="bn-item" onclick="switchMainScreen('list')"><span class="bn-ic">💬</span>Chats</div>
-      <div class="bn-item active" onclick="switchMainScreen('reels')"><span class="bn-ic">🎬</span>Reels</div>
-    </div>
-  </div>
-
-  <input type="file" id="reelFileInput" class="hidden" accept="image/*,video/*">
-
-  <!-- CALL OVERLAY -->
-  <div id="callOverlay" class="call-overlay hidden">
-    <video id="remoteVideo" autoplay playsinline class="remote-video hidden"></video>
-    <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
-    <div class="call-info">
-      <div class="avatar" id="callAvatar" style="width:100px;height:100px;font-size:38px;margin:0 auto 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);"></div>
-      <div class="call-name" id="callName"></div>
-      <div class="call-status" id="callStatus">Calling...</div>
-    </div>
-    <div class="call-actions" id="callActionsIncoming">
-      <div class="call-btn decline" onclick="declineCall()">📵</div>
-      <div class="call-btn accept" onclick="acceptCall()">📞</div>
-    </div>
-    <div class="call-actions hidden" id="callActionsActive">
-      <div class="call-btn secondary" id="muteBtn" onclick="toggleMute()">🎤</div>
-      <div class="call-btn secondary hidden" id="cameraBtn" onclick="toggleCamera()">📷</div>
-      <div class="call-btn decline" onclick="endCall()">📵</div>
     </div>
   </div>
 
@@ -933,32 +788,52 @@
       </div>
       <div class="icon-btn" onclick="cancelReply()">✕</div>
     </div>
-    <div class="edit-banner hidden" id="editBanner">
-      <div class="edit-bar"></div>
-      <div class="edit-content">
-        <div class="edit-label">Editing message</div>
-        <div class="edit-preview" id="editPreviewText"></div>
-      </div>
-      <div class="icon-btn" onclick="cancelEdit()">✕</div>
-    </div>
     <div class="composer">
-      <div class="round-btn" onclick="openGiftPicker()">🎁</div>
-      <div class="round-btn" onclick="triggerFile('image')">📷</div>
-      <div class="round-btn" onclick="triggerFile('video')">🎬</div>
-      <textarea id="msgInput" rows="1" placeholder="Message" oninput="onTypingInput()" onkeydown="onComposerKey(event)"></textarea>
-      <div class="round-btn" id="voiceBtn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording(event)" ontouchend="stopRecording(event)">🎤</div>
-      <div class="round-btn send" onclick="sendTextMessage()">➤</div>
+      <div class="top-row">
+        <div class="round-btn" onclick="openGifPicker()">GIF</div>
+        <div class="round-btn" onclick="triggerFile('image')">📷</div>
+        <div class="round-btn" onclick="triggerFile('video')">🎬</div>
+        <textarea id="msgInput" rows="1" placeholder="Votre message..." oninput="onTypingInput()" onkeydown="onComposerKey(event)"></textarea>
+        <div class="round-btn send" onclick="sendTextMessage()">➤</div>
+      </div>
+      <div class="bottom-row">
+        <div class="round-btn" id="voiceBtn" onmousedown="startRecording()" onmouseup="stopRecording()" ontouchstart="startRecording(event)" ontouchend="stopRecording(event)">🎤</div>
+        <div class="round-btn" onclick="openGiftPicker()">🎁</div>
+        <div style="flex:1;text-align:center;font-size:11px;color:var(--text-dim);">Rechercher dans GIPHY</div>
+        <div class="round-btn" style="background:transparent;font-size:14px;color:var(--text-secondary);">OK</div>
+        <div class="round-btn" style="background:transparent;font-size:14px;color:var(--text-secondary);">GIF</div>
+      </div>
     </div>
   </div>
 
   <input type="file" id="fileInput" class="hidden" accept="image/*">
   <input type="file" id="fileInputVideo" class="hidden" accept="video/*">
 
+  <!-- CALL OVERLAY -->
+  <div id="callOverlay" class="call-overlay hidden">
+    <video id="remoteVideo" autoplay playsinline class="remote-video hidden"></video>
+    <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
+    <div class="call-info">
+      <div class="avatar" id="callAvatar" style="width:100px;height:100px;font-size:38px;margin:0 auto 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);"></div>
+      <div class="call-name" id="callName"></div>
+      <div class="call-status" id="callStatus">Calling...</div>
+    </div>
+    <div class="call-actions" id="callActionsIncoming">
+      <div class="call-btn decline" onclick="declineCall()">📵</div>
+      <div class="call-btn accept" onclick="acceptCall()">📞</div>
+    </div>
+    <div class="call-actions hidden" id="callActionsActive">
+      <div class="call-btn secondary" id="muteBtn" onclick="toggleMute()">🎤</div>
+      <div class="call-btn secondary hidden" id="cameraBtn" onclick="toggleCamera()">📷</div>
+      <div class="call-btn decline" onclick="endCall()">📵</div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 // ============================================================
-//  WAVEGRAM – FULL CLIENT LOGIC
+// WAVEGRAM – FULL CLIENT LOGIC
 // ============================================================
 
 const API = "";
@@ -972,137 +847,72 @@ let allGroups = [];
 let messageCache = {};
 let pendingMessages = {};
 let PUBLIC_BASE_URL = "";
-let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
+let replyingTo = null;
+let editingMessageId = null;
 
-// ---- GIFTS (extended with categories) ----
-const GIFTS = [
-  // Love & Romance
-  { emoji: "❤️", name: "Red Heart", category: "Love" },
-  { emoji: "💕", name: "Two Hearts", category: "Love" },
-  { emoji: "💗", name: "Growing Heart", category: "Love" },
-  { emoji: "💖", name: "Sparkling Heart", category: "Love" },
-  { emoji: "💝", name: "Heart with Ribbon", category: "Love" },
-  { emoji: "🌹", name: "Rose", category: "Love" },
-  { emoji: "🌷", name: "Tulip", category: "Love" },
-  { emoji: "🌸", name: "Cherry Blossom", category: "Love" },
-  { emoji: "💐", name: "Bouquet", category: "Love" },
-  { emoji: "🥰", name: "Smiling Face with Hearts", category: "Love" },
-  { emoji: "😘", name: "Face Blowing a Kiss", category: "Love" },
-  
-  // Food & Drink
-  { emoji: "🎂", name: "Birthday Cake", category: "Food" },
-  { emoji: "🍰", name: "Cake", category: "Food" },
-  { emoji: "🧁", name: "Cupcake", category: "Food" },
-  { emoji: "🍫", name: "Chocolate", category: "Food" },
-  { emoji: "🍭", name: "Lollipop", category: "Food" },
-  { emoji: "🍩", name: "Donut", category: "Food" },
-  { emoji: "🍪", name: "Cookie", category: "Food" },
-  { emoji: "🍣", name: "Sushi", category: "Food" },
-  { emoji: "🍕", name: "Pizza", category: "Food" },
-  { emoji: "🍔", name: "Burger", category: "Food" },
-  { emoji: "🌮", name: "Taco", category: "Food" },
-  { emoji: "🍾", name: "Champagne", category: "Food" },
-  { emoji: "🥂", name: "Clinking Glasses", category: "Food" },
-  { emoji: "🍷", name: "Wine Glass", category: "Food" },
-  
-  // Animals
-  { emoji: "🐶", name: "Dog", category: "Animals" },
-  { emoji: "🐱", name: "Cat", category: "Animals" },
-  { emoji: "🐭", name: "Mouse", category: "Animals" },
-  { emoji: "🐹", name: "Hamster", category: "Animals" },
-  { emoji: "🐰", name: "Rabbit", category: "Animals" },
-  { emoji: "🦊", name: "Fox", category: "Animals" },
-  { emoji: "🐻", name: "Bear", category: "Animals" },
-  { emoji: "🐼", name: "Panda", category: "Animals" },
-  { emoji: "🐨", name: "Koala", category: "Animals" },
-  { emoji: "🦁", name: "Lion", category: "Animals" },
-  { emoji: "🐯", name: "Tiger", category: "Animals" },
-  { emoji: "🦄", name: "Unicorn", category: "Animals" },
-  { emoji: "🐧", name: "Penguin", category: "Animals" },
-  { emoji: "🐦", name: "Bird", category: "Animals" },
-  { emoji: "🦋", name: "Butterfly", category: "Animals" },
-  
-  // Nature
-  { emoji: "⭐", name: "Star", category: "Nature" },
-  { emoji: "🌟", name: "Glowing Star", category: "Nature" },
-  { emoji: "✨", name: "Sparkles", category: "Nature" },
-  { emoji: "🌈", name: "Rainbow", category: "Nature" },
-  { emoji: "☀️", name: "Sun", category: "Nature" },
-  { emoji: "🌙", name: "Moon", category: "Nature" },
-  { emoji: "🌊", name: "Wave", category: "Nature" },
-  { emoji: "🌸", name: "Cherry Blossom", category: "Nature" },
-  { emoji: "🌺", name: "Hibiscus", category: "Nature" },
-  { emoji: "🌻", name: "Sunflower", category: "Nature" },
-  { emoji: "🌹", name: "Rose", category: "Nature" },
-  { emoji: "🌿", name: "Herb", category: "Nature" },
-  { emoji: "🌴", name: "Palm Tree", category: "Nature" },
-  
-  // Celebrations
-  { emoji: "🎉", name: "Party Popper", category: "Celebration" },
-  { emoji: "🎊", name: "Confetti Ball", category: "Celebration" },
-  { emoji: "🎈", name: "Balloon", category: "Celebration" },
-  { emoji: "🎁", name: "Gift", category: "Celebration" },
-  { emoji: "🎀", name: "Ribbon", category: "Celebration" },
-  { emoji: "🎆", name: "Fireworks", category: "Celebration" },
-  { emoji: "🎇", name: "Sparkler", category: "Celebration" },
-  { emoji: "🎤", name: "Microphone", category: "Celebration" },
-  { emoji: "🎸", name: "Guitar", category: "Celebration" },
-  { emoji: "🎹", name: "Musical Keyboard", category: "Celebration" },
-  { emoji: "🎺", name: "Trumpet", category: "Celebration" },
-  { emoji: "🎻", name: "Violin", category: "Celebration" },
-  
-  // Emotions
-  { emoji: "😊", name: "Smiling Face", category: "Emotions" },
-  { emoji: "😃", name: "Happy Face", category: "Emotions" },
-  { emoji: "🤗", name: "Hugging Face", category: "Emotions" },
-  { emoji: "🥳", name: "Party Face", category: "Emotions" },
-  { emoji: "🤩", name: "Starstruck", category: "Emotions" },
-  { emoji: "😍", name: "Heart Eyes", category: "Emotions" },
-  { emoji: "😎", name: "Cool Face", category: "Emotions" },
-  { emoji: "🤔", name: "Thinking Face", category: "Emotions" },
-  { emoji: "😴", name: "Sleepy Face", category: "Emotions" },
-  { emoji: "🥺", name: "Pleading Face", category: "Emotions" },
-  { emoji: "😭", name: "Crying Face", category: "Emotions" },
-  { emoji: "😂", name: "Joy Face", category: "Emotions" },
-  { emoji: "🤣", name: "Rolling on Floor", category: "Emotions" },
-  { emoji: "😁", name: "Grinning Face", category: "Emotions" },
-  { emoji: "😆", name: "Squinting Face", category: "Emotions" },
-  
-  // Objects
-  { emoji: "💎", name: "Diamond", category: "Objects" },
-  { emoji: "🔮", name: "Crystal Ball", category: "Objects" },
-  { emoji: "🏆", name: "Trophy", category: "Objects" },
-  { emoji: "💡", name: "Light Bulb", category: "Objects" },
-  { emoji: "🔑", name: "Key", category: "Objects" },
-  { emoji: "📚", name: "Books", category: "Objects" },
-  { emoji: "📱", name: "Phone", category: "Objects" },
-  { emoji: "💻", name: "Laptop", category: "Objects" },
-  { emoji: "🖥️", name: "Desktop", category: "Objects" },
-  { emoji: "⌨️", name: "Keyboard", category: "Objects" },
-  { emoji: "🖱️", name: "Mouse", category: "Objects" },
-  { emoji: "🕹️", name: "Joystick", category: "Objects" },
-  { emoji: "🎮", name: "Video Game", category: "Objects" },
-  { emoji: "🧸", name: "Teddy Bear", category: "Objects" },
-  { emoji: "🎯", name: "Target", category: "Objects" },
-  
-  // Sports
-  { emoji: "⚽", name: "Soccer Ball", category: "Sports" },
-  { emoji: "🏀", name: "Basketball", category: "Sports" },
-  { emoji: "🏈", name: "Football", category: "Sports" },
-  { emoji: "⚾", name: "Baseball", category: "Sports" },
-  { emoji: "🎾", name: "Tennis", category: "Sports" },
-  { emoji: "🏐", name: "Volleyball", category: "Sports" },
-  { emoji: "🏉", name: "Rugby", category: "Sports" },
-  { emoji: "🎱", name: "Pool Billiard", category: "Sports" },
-  { emoji: "🏓", name: "Ping Pong", category: "Sports" },
-  { emoji: "🏸", name: "Badminton", category: "Sports" },
-  { emoji: "🥊", name: "Boxing Glove", category: "Sports" },
-  { emoji: "🥋", name: "Martial Arts", category: "Sports" },
-  { emoji: "⛸️", name: "Ice Skate", category: "Sports" },
-  { emoji: "🏂", name: "Snowboard", category: "Sports" },
-  { emoji: "🏊", name: "Swimming", category: "Sports" },
-  { emoji: "🚴", name: "Cycling", category: "Sports" },
+// ---- GIFS ----
+const GIFS = [
+  { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Okay" },
+  { url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif", name: "Hi" },
+  { url: "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif", name: "Hello" },
+  { url: "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif", name: "Bye" },
+  { url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif", name: "Love" },
+  { url: "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif", name: "Happy" },
+  { url: "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif", name: "Sad" },
+  { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Cool" },
+];
+
+// ---- GIFS avec recherche ----
+const ALL_GIFS = [
+  "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif",
+  "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif",
+  "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif",
+  "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif",
+];
+
+// ---- GIFS avec noms ----
+const GIFS_WITH_NAMES = [
+  { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Okay" },
+  { url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif", name: "Hi" },
+  { url: "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif", name: "Hello" },
+  { url: "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif", name: "Bye" },
+  { url: "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif", name: "Love" },
+  { url: "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif", name: "Happy" },
+  { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Sad" },
+  { url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif", name: "Cool" },
+];
+
+// ---- GIFS par catégorie ----
+const GIFS_BY_CATEGORY = {
+  "Tendances": [
+    { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Okay" },
+    { url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif", name: "Hi" },
+  ],
+  "Réactions": [
+    { url: "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif", name: "Hello" },
+    { url: "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif", name: "Bye" },
+  ],
+  "Animaux": [
+    { url: "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif", name: "Love" },
+    { url: "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif", name: "Happy" },
+  ],
+  "Sports": [
+    { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Sad" },
+    { url: "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif", name: "Cool" },
+  ],
+};
+
+// ---- GIFS populaires ----
+const POPULAR_GIFS = [
+  "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.gif",
+  "https://media.giphy.com/media/26Fxy3Iz1ari8oytO/giphy.gif",
+  "https://media.giphy.com/media/3o6Zt8ySLe4CgG7XyY/giphy.gif",
 ];
 
 // ---- API helper ----
@@ -1137,13 +947,11 @@ function saveSession(){
 function showAuth(){
   document.getElementById("authScreen").classList.remove("hidden");
   document.getElementById("listScreen").classList.add("hidden");
-  document.getElementById("reelsScreen").classList.add("hidden");
   document.getElementById("chatScreen").classList.remove("active");
 }
 function showList(){
   document.getElementById("authScreen").classList.add("hidden");
   document.getElementById("listScreen").classList.remove("hidden");
-  document.getElementById("reelsScreen").classList.add("hidden");
   document.getElementById("chatScreen").classList.remove("active");
   setAvatarEl(document.getElementById("myAvatar"), ME);
   switchTab("chats");
@@ -1153,18 +961,11 @@ function showList(){
 
 function switchMainScreen(screen){
   const list = document.getElementById("listScreen");
-  const reels = document.getElementById("reelsScreen");
   document.querySelectorAll(".bn-item").forEach(el => el.classList.remove("active"));
   if (screen === "list") {
     list.classList.remove("hidden");
-    reels.classList.add("hidden");
     document.querySelector(".bn-item:first-child").classList.add("active");
     loadList();
-  } else {
-    list.classList.add("hidden");
-    reels.classList.remove("hidden");
-    document.querySelector(".bn-item:last-child").classList.add("active");
-    loadReels();
   }
 }
 
@@ -1411,7 +1212,7 @@ function enterChatScreen(){
   document.getElementById("listScreen").classList.add("hidden");
   document.getElementById("chatScreen").classList.add("active");
   document.getElementById("chatName").textContent = currentChat.name || "Chat";
-  document.getElementById("chatStatus").textContent = currentChat.type==="dm" ? (currentChat.status==="online"?"Online":"Offline") : "Group";
+  document.getElementById("chatStatus").textContent = currentChat.type==="dm" ? (currentChat.status==="online"?"En ligne":"Hors ligne") : "Groupe";
   setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:currentChat.avatar});
   document.getElementById("voiceCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
   document.getElementById("videoCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
@@ -1472,7 +1273,7 @@ function buildBubble(m){
   if (m.reply_to && !m.deleted) {
     const rt = m.reply_to;
     const preview = rt.msg_type === "text" ? rt.preview :
-      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[rt.msg_type] || rt.preview);
+      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift", gif:"GIF"}[rt.msg_type] || rt.preview);
     inner += `<div class="quoted-block" style="background:rgba(255,255,255,0.06);border-left:3px solid rgba(255,255,255,0.2);border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;" onclick="scrollToMessage(${rt.id})">
       <div style="font-weight:700;color:#8ecbff;">${escapeHtml(rt.sender_name)}</div>
       <div style="color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${escapeHtml(preview)}</div>
@@ -1481,9 +1282,11 @@ function buildBubble(m){
   if (m.deleted) {
     inner += "This message was deleted";
   } else if (m.msg_type === "gift") {
-    const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift", category: "Gift" };
-    inner += `<div class="gift-emoji">${gift.emoji}</div>`;
+    const gift = GIFS_WITH_NAMES.find(g => g.url === m.content) || { url: "https://media.giphy.com/media/3o7abKhOpu0N9H8aVW/giphy.gif", name: "Gift" };
+    inner += `<div class="gift-emoji">🎁</div>`;
     inner += `<div class="gift-label">🎁 ${escapeHtml(gift.name)}</div>`;
+  } else if (m.msg_type === "gif") {
+    inner += `<img src="${m.content}" style="max-width:100%;border-radius:12px;display:block;">`;
   } else if (m.msg_type === "image") {
     inner += `<img src="${m.media_path}" onclick="openMediaFull('${m.media_path}','image')">`;
   } else if (m.msg_type === "video") {
@@ -1563,7 +1366,7 @@ document.head.appendChild(styleSheet);
 function scrollToMessage(id){
   const row = document.querySelector(`.bubble-row[data-id="${id}"]`);
   if (row) {
-    row.scrollIntoView({behavior: ANIMATIONS_ON ? "smooth" : "auto", block:"center"});
+    row.scrollIntoView({behavior: "smooth", block:"center"});
     row.querySelector(".bubble").style.outline = "2px solid var(--accent)";
     setTimeout(() => { row.querySelector(".bubble").style.outline = "none"; }, 900);
   }
@@ -1593,9 +1396,6 @@ function onComposerKey(e){
 function makeClientId(){
   return "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
-
-let replyingTo = null;
-let editingMessageId = null;
 
 function startEditById(id){
   document.querySelector(".overlay")?.remove();
@@ -1627,7 +1427,7 @@ function startReply(m){
     sender_name: m.sender_id === ME.id ? "You" : m.sender_name,
     msg_type: m.msg_type,
     preview: m.msg_type === "text" ? (m.content || "") : 
-      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[m.msg_type] || "Message"),
+      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift", gif:"GIF"}[m.msg_type] || "Message"),
   };
   document.getElementById("replyPreviewName").textContent = "Replying to " + replyingTo.sender_name;
   document.getElementById("replyPreviewText").textContent = replyingTo.preview;
@@ -1694,26 +1494,25 @@ function sendTextMessage(){
   cancelReply();
 }
 
-function sendGift(emoji, name){
+function sendGif(url){
   if (!currentChat) return;
   if (document.getElementById("blockBanner")) { showToast("This conversation is unavailable"); return; }
   document.querySelector(".overlay")?.remove();
   
   const replyId = replyingTo ? replyingTo.id : null;
-  const clientId = appendOptimistic("gift", emoji, "");
+  const clientId = appendOptimistic("gif", url, "");
   socket.emit("send_message", {
     chat_type: currentChat.type,
     target: currentChat.id,
-    msg_type: "gift",
-    content: emoji,
+    msg_type: "gif",
+    content: url,
     client_id: clientId,
     reply_to_id: replyId
   });
   cancelReply();
-  showToast("🎁 Gift sent: " + name);
 }
 
-function openGiftPicker(){
+function openGifPicker(){
   if (!currentChat) return;
   const overlay = document.createElement("div");
   overlay.className = "overlay";
@@ -1721,28 +1520,42 @@ function openGiftPicker(){
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   
-  // Group gifts by category
-  const categories = {};
-  GIFTS.forEach(g => {
-    if (!categories[g.category]) categories[g.category] = [];
-    categories[g.category].push(g);
+  let html = `<h2>Rechercher dans GIPHY</h2>
+    <input class="gif-search" id="gifSearch" placeholder="Rechercher..." oninput="filterGifs(this.value)">
+    <div class="gif-picker" id="gifPickerContainer">`;
+  
+  // Show all GIFs
+  GIFS_WITH_NAMES.forEach(g => {
+    html += `<div class="gif-option" onclick="sendGif('${g.url}')">
+      <img src="${g.url}" alt="${escapeHtml(g.name)}" loading="lazy">
+    </div>`;
   });
   
-  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
-  Object.keys(categories).forEach(cat => {
-    html += `<div class="gift-category-header">${cat}</div>`;
-    categories[cat].forEach(g => {
-      html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
-        <span class="gift-emoji">${g.emoji}</span>
-        <span class="gift-name">${escapeHtml(g.name)}</span>
-        <span class="gift-category">${escapeHtml(g.category)}</span>
-      </div>`;
-    });
-  });
-  html += `</div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
+  html += `</div>
+    <button class="btn-primary" style="margin-top:12px;background:var(--bg-surface-2);box-shadow:none;" onclick="document.querySelector('.overlay')?.remove()"><span>Fermer</span></button>`;
+  
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
+  
+  // Make filter function global
+  window.filterGifs = function(query) {
+    const container = document.getElementById("gifPickerContainer");
+    if (!container) return;
+    const filtered = GIFS_WITH_NAMES.filter(g => 
+      g.name.toLowerCase().includes(query.toLowerCase()) ||
+      g.url.toLowerCase().includes(query.toLowerCase())
+    );
+    if (filtered.length === 0) {
+      container.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:var(--text-dim);padding:30px;">Aucun GIF trouvé</div>`;
+      return;
+    }
+    container.innerHTML = filtered.map(g => 
+      `<div class="gif-option" onclick="sendGif('${g.url}')">
+        <img src="${g.url}" alt="${escapeHtml(g.name)}" loading="lazy">
+      </div>`
+    ).join("");
+  };
 }
 
 function onTypingInput(){
@@ -2022,8 +1835,10 @@ function copyMessage(messageId) {
   if (m.msg_type === "text") {
     textToCopy = m.content || "";
   } else if (m.msg_type === "gift") {
-    const gift = GIFTS.find(g => g.emoji === m.content) || { name: "Gift" };
+    const gift = GIFS_WITH_NAMES.find(g => g.url === m.content) || { name: "Gift" };
     textToCopy = "🎁 " + gift.name;
+  } else if (m.msg_type === "gif") {
+    textToCopy = "[GIF] " + (m.content || "");
   } else if (m.msg_type === "image") {
     textToCopy = "[Image]";
   } else if (m.msg_type === "video") {
@@ -2491,7 +2306,7 @@ async function openSettings(){
         <div>Conversation animations</div>
         <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">Calm fade/slide effect when messages appear</div>
       </div>
-      <div class="toggle-switch ${ANIMATIONS_ON ? 'on' : ''}" style="width:44px;height:24px;border-radius:14px;background:#2a3a4d;position:relative;flex-shrink:0;transition:.2s;cursor:pointer;" onclick="toggleAnimations()"><div class="knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:.2s;"></div></div>
+      <div class="toggle-switch on" style="width:44px;height:24px;border-radius:14px;background:#2a3a4d;position:relative;flex-shrink:0;transition:.2s;cursor:pointer;" onclick="toggleAnimations()"><div class="knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:.2s;"></div></div>
     </div>
 
     <h2 style="margin-top:22px;">Server</h2>
@@ -2520,10 +2335,7 @@ async function openSettings(){
 }
 
 function toggleAnimations(){
-  ANIMATIONS_ON = !ANIMATIONS_ON;
-  localStorage.setItem("wg_animations", ANIMATIONS_ON ? "on" : "off");
-  const toggle = document.querySelector(".toggle-switch");
-  if (toggle) toggle.classList.toggle("on", ANIMATIONS_ON);
+  // Just a placeholder for animation toggle
 }
 
 async function saveProfile(){
@@ -2634,316 +2446,6 @@ async function submitJoinGroup(token){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== REELS ====================
-let reelsData = [];
-let reelViewObserver = null;
-
-async function loadReels(){
-  const feed = document.getElementById("reelsFeed");
-  try {
-    const r = await api("/api/reels");
-    reelsData = r.reels || [];
-    renderReelsFeed();
-  } catch(e){ showToast(e.message); }
-}
-
-function renderReelsFeed(){
-  const feed = document.getElementById("reelsFeed");
-  feed.innerHTML = "";
-  if (!reelsData || reelsData.length === 0) {
-    feed.innerHTML = `<div class="reel-item"><div class="reel-empty" style="color:#fff;text-align:center;padding:60px 30px;opacity:.7;font-size:14px;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
-      <div style="font-size:48px;">🎬</div>
-      <div>No reels yet.</div>
-      <div style="font-size:13px;opacity:0.6;">Tap the + button to share your first photo or video.</div>
-    </div></div>`;
-    return;
-  }
-  if (reelViewObserver) reelViewObserver.disconnect();
-  reelViewObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const id = entry.target.dataset.reelId;
-        if (id) registerReelView(id);
-        const video = entry.target.querySelector("video");
-        if (video) video.play().catch(()=>{});
-      } else {
-        const video = entry.target.querySelector("video");
-        if (video) video.pause();
-      }
-    });
-  }, {threshold: 0.5});
-
-  reelsData.forEach((reel, index) => {
-    const el = buildReelItem(reel, index);
-    feed.appendChild(el);
-    reelViewObserver.observe(el);
-  });
-}
-
-function buildReelItem(reel, index){
-  const el = document.createElement("div");
-  el.className = "reel-item";
-  el.dataset.reelId = reel.id;
-  el.style.background = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}`;
-
-  const media = reel.media_type === "video"
-    ? `<video src="${reel.media_path}" loop muted playsinline preload="metadata" poster="${reel.media_path}?v=${Date.now()}"></video>`
-    : `<img src="${reel.media_path}" loading="lazy">`;
-
-  const totalReactions = Object.values(reel.reaction_counts||{}).reduce((a,b)=>a+b,0);
-
-  const gradientColors = [
-    'linear-gradient(0deg, rgba(0,0,0,0.8) 10%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%)',
-    'linear-gradient(0deg, rgba(20,0,40,0.8) 10%, rgba(20,0,40,0.2) 40%, rgba(20,0,40,0.1) 60%)',
-    'linear-gradient(0deg, rgba(0,20,40,0.8) 10%, rgba(0,20,40,0.2) 40%, rgba(0,20,40,0.1) 60%)',
-  ];
-  const gradient = gradientColors[index % gradientColors.length];
-
-  el.innerHTML = `
-    ${media}
-    <div class="reel-overlay" style="background:${gradient};">
-      <div class="reel-info">
-        <div class="reel-author">
-          <div class="avatar" style="width:36px;height:36px;font-size:14px;border:2px solid rgba(255,255,255,0.3);">${reel.author_avatar ? `<img src="${reel.author_avatar}">` : (reel.author_name ? reel.author_name.charAt(0).toUpperCase() : "?")}</div>
-          <span style="font-size:16px;font-weight:600;">${escapeHtml(reel.author_name)}</span>
-          <span style="font-size:12px;opacity:0.6;margin-left:4px;">• ${formatRelativeTime(reel.timestamp)}</span>
-          ${reel.is_mine ? `<span onclick="event.stopPropagation();deleteReel(${reel.id})" style="margin-left:auto;font-size:18px;cursor:pointer;opacity:0.6;background:rgba(0,0,0,0.3);padding:4px 10px;border-radius:20px;">🗑️</span>` : ""}
-        </div>
-        ${reel.caption ? `<div class="reel-caption" style="font-size:15px;font-weight:400;margin-top:4px;">${escapeHtml(reel.caption)}</div>` : ""}
-        <div class="reel-views" style="margin-top:8px;font-size:13px;opacity:0.8;">
-          <span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${reel.view_count || 0} views</span>
-        </div>
-      </div>
-      <div class="reel-actions">
-        <div class="reel-action" onclick="toggleReelReaction(${reel.id})" style="transition:transform 0.2s;">
-          <span class="ricon" id="reelReactIcon${reel.id}" style="font-size:32px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">${reel.my_reaction || "🤍"}</span>
-          <span id="reelReactCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${totalReactions || ""}</span>
-        </div>
-        <div class="reel-action" onclick="openReelComments(${reel.id})">
-          <span class="ricon" style="font-size:28px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">💬</span>
-          <span id="reelCommentCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${reel.comment_count || ""}</span>
-        </div>
-        <div class="reel-action" onclick="openReelReactionPicker(${reel.id})">
-          <span class="ricon" style="font-size:26px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">😊</span>
-        </div>
-        <div class="reel-action" onclick="shareReel(${reel.id})">
-          <span class="ricon" style="font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">📤</span>
-        </div>
-      </div>
-    </div>
-    <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3;padding:4px 0;">
-      <span style="width:6px;height:6px;border-radius:50%;background:${index === 0 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
-      <span style="width:6px;height:6px;border-radius:50%;background:${index === 1 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
-      <span style="width:6px;height:6px;border-radius:50%;background:${index === 2 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
-    </div>
-  `;
-  return el;
-}
-
-function shareReel(reelId){
-  const reel = reelsData.find(r => r.id === reelId);
-  if (!reel) return;
-  const url = window.location.origin + "/?reel=" + reelId;
-  if (navigator.share) {
-    navigator.share({
-      title: reel.caption || "Check out this reel!",
-      text: reel.caption || "Check out this reel on Wavegram!",
-      url: url
-    }).catch(() => {});
-  } else {
-    navigator.clipboard.writeText(url).then(() => {
-      showToast("Reel link copied to clipboard!");
-    }).catch(() => {
-      showToast("Share: " + url);
-    });
-  }
-}
-
-async function registerReelView(id){
-  try {
-    const r = await api("/api/reels/"+id+"/view", {method:"POST"});
-    const reel = reelsData.find(x => x.id === id);
-    if (reel) reel.view_count = r.view_count;
-    const el = document.querySelector(`.reel-item[data-reel-id="${id}"] .reel-views`);
-    if (el) el.innerHTML = `<span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${r.view_count} views</span>`;
-  } catch(e){}
-}
-
-async function toggleReelReaction(id){
-  const reel = reelsData.find(x => x.id === id);
-  if (!reel) return;
-  const newEmoji = reel.my_reaction ? null : "❤️";
-  try {
-    const r = await api("/api/reels/"+id+"/react", {method:"POST", body: JSON.stringify({emoji: newEmoji})});
-    reel.my_reaction = newEmoji;
-    reel.reaction_counts = r.reaction_counts;
-    const total = Object.values(r.reaction_counts || {}).reduce((a,b)=>a+b,0);
-    const icon = document.getElementById("reelReactIcon"+id);
-    const count = document.getElementById("reelReactCount"+id);
-    if (icon) icon.textContent = newEmoji || "🤍";
-    if (count) count.textContent = total || "";
-    if (icon) {
-      icon.style.transform = "scale(1.3)";
-      setTimeout(() => icon.style.transform = "scale(1)", 200);
-    }
-  } catch(e){ showToast(e.message); }
-}
-
-function openReelReactionPicker(id){
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  sheet.innerHTML = `<h2>React</h2><div class="reaction-picker">
-    ${["❤️","👍","😂","😮","😢","🔥","💯","🎉"].map(e=>`<span onclick="setReelReaction(${id},'${e}')" style="font-size:32px;transition:transform 0.2s;">${e}</span>`).join("")}
-  </div>`;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-}
-async function setReelReaction(id, emoji){
-  const reel = reelsData.find(x => x.id === id);
-  try {
-    const r = await api("/api/reels/"+id+"/react", {method:"POST", body: JSON.stringify({emoji})});
-    if (reel) { reel.my_reaction = emoji; reel.reaction_counts = r.reaction_counts; }
-    const total = Object.values(r.reaction_counts || {}).reduce((a,b)=>a+b,0);
-    const icon = document.getElementById("reelReactIcon"+id);
-    const count = document.getElementById("reelReactCount"+id);
-    if (icon) { icon.textContent = emoji; icon.style.transform = "scale(1.3)"; setTimeout(() => icon.style.transform = "scale(1)", 200); }
-    if (count) count.textContent = total || "";
-  } catch(e){ showToast(e.message); }
-  document.querySelector(".overlay")?.remove();
-}
-
-async function deleteReel(id){
-  if (!confirm("Delete this reel?")) return;
-  try {
-    await api("/api/reels/"+id, {method:"DELETE"});
-    reelsData = reelsData.filter(x => x.id !== id);
-    renderReelsFeed();
-    showToast("Reel deleted");
-  } catch(e){ showToast(e.message); }
-}
-
-function openUploadReelSheet(){
-  const input = document.getElementById("reelFileInput");
-  input.onchange = () => {
-    if (!input.files[0]) return;
-    const file = input.files[0];
-    const overlay = document.createElement("div");
-    overlay.className = "overlay";
-    overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-    const sheet = document.createElement("div");
-    sheet.className = "sheet";
-    const isVideo = file.type.startsWith("video");
-    const previewUrl = URL.createObjectURL(file);
-    sheet.innerHTML = `
-      <h2>🎬 New Reel</h2>
-      <div style="width:100%;max-height:320px;border-radius:16px;overflow:hidden;margin-bottom:14px;background:#000;display:flex;align-items:center;justify-content:center;">
-        ${isVideo ? `<video src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;" controls></video>`
-                   : `<img src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;">`}
-      </div>
-      <div class="field"><label>Caption (optional)</label><input id="reelCaption" placeholder="Say something about this..." style="width:100%;padding:12px 16px;background:var(--bg-surface-2);border-radius:12px;font-size:14px;"></div>
-      <button class="btn-primary" onclick="publishReel()" style="margin-top:8px;"><span>📤 Share Reel</span></button>
-    `;
-    overlay.appendChild(sheet);
-    document.getElementById("app").appendChild(overlay);
-    window._pendingReelFile = file;
-  };
-  input.click();
-}
-
-async function publishReel(){
-  const file = window._pendingReelFile;
-  const caption = document.getElementById("reelCaption")?.value.trim() || "";
-  if (!file) return;
-  const fd = new FormData();
-  fd.append("file", file);
-  fd.append("caption", caption);
-  try {
-    const r = await api("/api/reels", {method:"POST", body: fd});
-    document.querySelector(".overlay")?.remove();
-    showToast("🎬 Reel shared!");
-    if (r.reel) {
-      reelsData.unshift(r.reel);
-      renderReelsFeed();
-    }
-  } catch(e){ showToast(e.message); }
-}
-
-async function openReelComments(reelId){
-  const r = await api("/api/reels/"+reelId+"/comments").catch(()=>({comments:[]}));
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  sheet.style.maxHeight = "80vh";
-  sheet.innerHTML = `<h2>💬 Comments</h2>
-    <div id="commentsList" style="max-height:300px;overflow-y:auto;"></div>
-    <div class="comment-input-row" style="display:flex;gap:8px;align-items:center;padding:12px 4px 4px;border-top:1px solid var(--border-subtle);margin-top:12px;">
-      <input id="commentInput" placeholder="Write a comment..." style="flex:1;background:var(--bg-surface-2);padding:10px 16px;border-radius:20px;font-size:14px;border:1.5px solid transparent;transition:var(--transition-smooth);">
-      <div class="round-btn send" style="width:38px;height:38px;" onclick="submitComment(${reelId})">➤</div>
-    </div>`;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-  window._currentReplyParent = null;
-  renderComments(r.comments || []);
-  setTimeout(() => document.getElementById("commentInput")?.focus(), 300);
-}
-
-function renderComments(comments){
-  const list = document.getElementById("commentsList");
-  if (!list) return;
-  const top = comments.filter(c => !c.parent_id);
-  const byParent = {};
-  comments.filter(c => c.parent_id).forEach(c => {
-    byParent[c.parent_id] = byParent[c.parent_id] || [];
-    byParent[c.parent_id].push(c);
-  });
-  if (top.length === 0){ list.innerHTML = "<div class='empty-state' style='padding:30px 10px;'><i>💬</i>No comments yet. Be the first!</div>"; return; }
-  list.innerHTML = "";
-  top.forEach(c => {
-    list.appendChild(buildCommentEl(c, false));
-    if (byParent[c.id]) {
-      byParent[c.id].forEach(reply => list.appendChild(buildCommentEl(reply, true)));
-    }
-  });
-}
-
-function buildCommentEl(c, isReply){
-  const el = document.createElement("div");
-  el.className = "comment-item" + (isReply ? " reply" : "");
-  el.style.cssText = `display:flex;gap:10px;padding:10px 4px;${isReply ? 'margin-left:38px;border-left:2px solid var(--accent);padding-left:12px;' : ''}`;
-  el.innerHTML = `
-    <div class="avatar" style="width:32px;height:32px;font-size:12px;flex-shrink:0;">${c.author_avatar ? `<img src="${c.author_avatar}">` : (c.author_name ? c.author_name.charAt(0).toUpperCase() : "?")}</div>
-    <div style="flex:1;min-width:0;">
-      <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
-        ${escapeHtml(c.author_name)}
-        <span style="font-size:10px;color:var(--text-dim);font-weight:400;">${formatRelativeTime(c.timestamp)}</span>
-      </div>
-      <div style="font-size:14px;color:var(--text-primary);margin-top:2px;word-wrap:break-word;">${escapeHtml(c.content)}</div>
-    </div>`;
-  return el;
-}
-
-async function submitComment(reelId){
-  const input = document.getElementById("commentInput");
-  const content = input?.value.trim();
-  if (!content) return;
-  try {
-    await api("/api/reels/"+reelId+"/comments", {method:"POST", body: JSON.stringify({content})});
-    if (input) input.value = "";
-    const r = await api("/api/reels/"+reelId+"/comments");
-    renderComments(r.comments || []);
-    const countEl = document.getElementById("reelCommentCount"+reelId);
-    if (countEl) {
-      const reel = reelsData.find(x => x.id === reelId);
-      if (reel) { reel.comment_count = (reel.comment_count||0)+1; countEl.textContent = reel.comment_count; }
-    }
-  } catch(e){ showToast(e.message); }
-}
-
 // ==================== CALLS (WebRTC) ====================
 let pc = null;
 let localStream = null;
@@ -2966,7 +2468,6 @@ const rtcConfig = {
 
 // Make sure call buttons are visible
 document.addEventListener("DOMContentLoaded", function() {
-  // Ensure call buttons are shown for DM
   const voiceBtn = document.getElementById("voiceCallBtn");
   const videoBtn = document.getElementById("videoCallBtn");
   if (voiceBtn) voiceBtn.classList.remove("hidden");
