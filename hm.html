@@ -1582,8 +1582,8 @@ function setAvatarEl(el, u){
   el.innerHTML = avatarInner(u);
 }
 function setCallAvatarEl(el, u){
-  if (!u) { el.querySelector("span").textContent = "?"; return; }
-  el.querySelector("span").textContent = avatarInner(u).replace(/<[^>]*>/g, '');
+  if (!u) { el.innerHTML = "<span>?</span>"; return; }
+  el.innerHTML = u.avatar ? `<img src="${u.avatar}">` : `<span>${(u.username||"?").charAt(0).toUpperCase()}</span>`;
 }
 
 function fabAction(){
@@ -1750,23 +1750,7 @@ function updateReactionsUI(messageId, userId, emoji){
 function quickHeartReact(m, bubble){
   if (typeof m.id !== "number") return;
   socket.emit("react_message", {message_id: m.id, emoji: "❤️"});
-  const pop = document.createElement("div");
-  pop.style.cssText = "position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:64px;pointer-events:none;z-index:3;filter:drop-shadow(0 2px 8px rgba(0,0,0,0.4));animation:heartPop 0.7s ease-out forwards;";
-  pop.textContent = "❤️";
-  bubble.style.position = "relative";
-  bubble.appendChild(pop);
-  setTimeout(() => pop.remove(), 700);
 }
-const styleSheet = document.createElement("style");
-styleSheet.textContent = `
-  @keyframes heartPop {
-    0% { transform: translate(-50%,-50%) scale(0); opacity:0; }
-    25% { transform: translate(-50%,-50%) scale(1.15); opacity:1; }
-    45% { transform: translate(-50%,-50%) scale(.95); }
-    100% { transform: translate(-50%,-50%) scale(1.3); opacity:0; }
-  }
-`;
-document.head.appendChild(styleSheet);
 
 function scrollToMessage(id){
   const row = document.querySelector(`.bubble-row[data-id="${id}"]`);
@@ -3234,6 +3218,7 @@ let callStartTime = null;
 let callTimerInterval = null;
 let isCallActive = false;
 let callRecordSaved = false;
+let pendingIceCandidates = []; // ICE candidates that arrive before the peer connection has a remote description
 
 const rtcConfig = {
   iceServers: [
@@ -3430,7 +3415,8 @@ async function acceptCall(){
     console.log("📥 Setting remote description");
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
     console.log("✅ Remote description set");
-    
+    await flushPendingIceCandidates();
+
     const answer = await pc.createAnswer();
     console.log("📤 Answer created");
     await pc.setLocalDescription(answer);
@@ -3459,6 +3445,7 @@ async function handleCallAnswer(data){
     console.log("📥 Setting remote description from answer");
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     console.log("✅ Remote description set from answer");
+    await flushPendingIceCandidates();
     document.getElementById("callStatus").textContent = "Connected";
     startCallTimer();
   } catch(e){
@@ -3467,16 +3454,39 @@ async function handleCallAnswer(data){
 }
 
 async function handleRemoteIce(data){
-  console.log("🧊 ICE candidate received");
-  if (!pc || !data.candidate) {
-    console.warn("⚠️ No PC or candidate");
-    return;
+  if (!data.candidate) return;
+
+  // The callee doesn't create its RTCPeerConnection until acceptCall() runs
+  // (i.e. until the person taps "Accept"), which can be several seconds
+  // after the caller already started sending ICE candidates. Any candidate
+  // that arrives before we have a peer connection with a remote description
+  // must be queued, not dropped — dropping them is what caused calls to
+  // connect in only one direction (or not connect audio/video at all).
+  if (pc && pc.remoteDescription && pc.remoteDescription.type) {
+    console.log("🧊 ICE candidate received, adding immediately");
+    try {
+      await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+      console.log("✅ ICE candidate added");
+    } catch(e){
+      console.warn("⚠️ Failed to add ICE candidate:", e);
+    }
+  } else {
+    console.log("🧊 ICE candidate received before remote description — queueing");
+    pendingIceCandidates.push(data.candidate);
   }
-  try {
-    await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-    console.log("✅ ICE candidate added");
-  } catch(e){
-    console.warn("⚠️ Failed to add ICE candidate:", e);
+}
+
+async function flushPendingIceCandidates(){
+  if (!pc || pendingIceCandidates.length === 0) return;
+  console.log(`🧊 Flushing ${pendingIceCandidates.length} queued ICE candidate(s)`);
+  const queued = pendingIceCandidates;
+  pendingIceCandidates = [];
+  for (const candidate of queued) {
+    try {
+      await pc.addIceCandidate(new RTCIceCandidate(candidate));
+    } catch(e){
+      console.warn("⚠️ Failed to add queued ICE candidate:", e);
+    }
   }
 }
 
@@ -3544,6 +3554,7 @@ function endCall(silent){
   currentCallTargetId = null;
   isCallActive = false;
   callStartTime = null;
+  pendingIceCandidates = [];
   document.getElementById("callOverlay").classList.add("hidden");
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
@@ -3556,35 +3567,14 @@ function saveCallRecord(status) {
   if (!currentChat || currentChat.type !== "dm") return;
   const callType = isVideoCall ? "video" : "audio";
   const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
-  
   const content = `${callType}:${status}:${duration}`;
-  const clientId = makeClientId();
-  
-  const m = {
-    id: clientId,
-    chat_type: "dm",
-    chat_id: null,
-    sender_id: ME.id,
-    sender_name: ME.username,
-    sender_avatar: ME.avatar,
-    msg_type: "call",
-    content: content,
-    media_path: "",
-    timestamp: Date.now()/1000,
-    deleted: false,
-    reactions: [],
-    client_id: clientId,
-  };
-  
-  const body = document.getElementById("messagesBody");
-  if (body) {
-    const row = buildBubble(m);
-    row.classList.add("pending");
-    row.dataset.id = clientId;
-    body.appendChild(row);
-    body.scrollTop = body.scrollHeight;
-  }
-  
+
+  // Use the same optimistic-send path as every other message type so the
+  // clientId is registered in pendingMessages. Without that registration,
+  // handleIncomingMessage() can't match the server's echo back to this
+  // local bubble and appends a second, duplicate bubble instead.
+  const clientId = appendOptimistic("call", content, "");
+
   socket.emit("send_message", {
     chat_type: "dm",
     target: currentChat.id,
@@ -3667,6 +3657,3 @@ function toggleCamera(){
   btn.textContent = isCameraOff ? "🎦" : "📷";
   console.log("📷 Camera toggled:", isCameraOff);
 }
-</script>
-</body>
-</html>
