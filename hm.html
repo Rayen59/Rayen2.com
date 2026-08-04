@@ -481,12 +481,15 @@
       50% { transform: translateY(-6px) scale(1.05); }
     }
     .composer {
-      display: flex; align-items: flex-end; gap: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
       padding: 10px 14px;
       background: var(--bg-surface);
       border-top: 1px solid var(--border-subtle);
       flex-shrink: 0;
       backdrop-filter: blur(12px);
+      min-height: 64px;
     }
     .composer textarea {
       flex: 1;
@@ -494,11 +497,13 @@
       border-radius: 24px;
       padding: 12px 18px;
       font-size: 14.5px;
-      max-height: 100px;
+      max-height: 140px;
+      min-height: 44px;
       resize: none;
-      line-height: 1.4;
+      line-height: 1.5;
       border: 1.5px solid transparent;
       transition: var(--transition-smooth);
+      overflow-y: auto;
     }
     .composer textarea:focus {
       border-color: var(--accent);
@@ -914,8 +919,8 @@
         <div class="n" id="chatName">Chat</div>
         <div class="s" id="chatStatus"></div>
       </div>
-      <div class="icon-btn hidden" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
-      <div class="icon-btn hidden" id="videoCallBtn" onclick="startCall('video')">🎥</div>
+      <div class="icon-btn" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
+      <div class="icon-btn" id="videoCallBtn" onclick="startCall('video')">🎥</div>
       <div class="icon-btn" onclick="openChatMenu()">⋮</div>
     </div>
     <div class="messages" id="messagesBody"></div>
@@ -2959,6 +2964,15 @@ const rtcConfig = {
   ]
 };
 
+// Make sure call buttons are visible
+document.addEventListener("DOMContentLoaded", function() {
+  // Ensure call buttons are shown for DM
+  const voiceBtn = document.getElementById("voiceCallBtn");
+  const videoBtn = document.getElementById("videoCallBtn");
+  if (voiceBtn) voiceBtn.classList.remove("hidden");
+  if (videoBtn) videoBtn.classList.remove("hidden");
+});
+
 async function startCall(type){
   console.log("startCall called with type:", type);
   
@@ -3345,6 +3359,40 @@ function toggleCamera(){
   btn.classList.toggle("active-toggle", isCameraOff);
   btn.textContent = isCameraOff ? "🎦" : "📷";
 }
+
+// Make sure the chat app bar call buttons are visible
+// Fix: remove hidden class from call buttons when entering chat
+const originalEnterChatScreen = enterChatScreen;
+enterChatScreen = function() {
+  originalEnterChatScreen();
+  // Ensure call buttons are visible for DM
+  if (currentChat && currentChat.type === "dm") {
+    document.getElementById("voiceCallBtn").classList.remove("hidden");
+    document.getElementById("videoCallBtn").classList.remove("hidden");
+  } else {
+    document.getElementById("voiceCallBtn").classList.add("hidden");
+    document.getElementById("videoCallBtn").classList.add("hidden");
+  }
+};
+
+// Fix: expose startCall globally
+window.startCall = startCall;
+
+// Fix: ensure voiceCallBtn and videoCallBtn are visible
+document.addEventListener("DOMContentLoaded", function() {
+  const voiceBtn = document.getElementById("voiceCallBtn");
+  const videoBtn = document.getElementById("videoCallBtn");
+  if (voiceBtn) {
+    voiceBtn.style.display = "flex";
+    voiceBtn.style.alignItems = "center";
+    voiceBtn.style.justifyContent = "center";
+  }
+  if (videoBtn) {
+    videoBtn.style.display = "flex";
+    videoBtn.style.alignItems = "center";
+    videoBtn.style.justifyContent = "center";
+  }
+});
 </script>
 </body>
 </html>
