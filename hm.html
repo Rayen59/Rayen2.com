@@ -36,6 +36,92 @@
       --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
     }
 
+    /* Background Animations */
+    .bg-love {
+      --chat-bg: radial-gradient(ellipse at 30% 40%, rgba(244, 114, 182, 0.08), rgba(236, 72, 153, 0.02), transparent 70%);
+    }
+    .bg-love .messages {
+      background: radial-gradient(ellipse at 30% 40%, rgba(244, 114, 182, 0.08), rgba(236, 72, 153, 0.02), transparent 70%);
+      animation: lovePulse 4s ease-in-out infinite alternate;
+    }
+    @keyframes lovePulse {
+      0% { opacity: 0.6; }
+      100% { opacity: 1; }
+    }
+
+    .bg-war {
+      --chat-bg: radial-gradient(ellipse at 40% 30%, rgba(255, 92, 122, 0.06), rgba(220, 38, 38, 0.02), transparent 70%);
+    }
+    .bg-war .messages {
+      background: radial-gradient(ellipse at 40% 30%, rgba(255, 92, 122, 0.06), rgba(220, 38, 38, 0.02), transparent 70%);
+      animation: warPulse 3s ease-in-out infinite alternate;
+    }
+    @keyframes warPulse {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.01); }
+    }
+
+    .bg-peace {
+      --chat-bg: radial-gradient(ellipse at 50% 50%, rgba(52, 211, 153, 0.06), rgba(16, 185, 129, 0.02), transparent 70%);
+    }
+    .bg-peace .messages {
+      background: radial-gradient(ellipse at 50% 50%, rgba(52, 211, 153, 0.06), rgba(16, 185, 129, 0.02), transparent 70%);
+      animation: peaceFloat 5s ease-in-out infinite alternate;
+    }
+    @keyframes peaceFloat {
+      0% { opacity: 0.6; transform: translateY(0); }
+      100% { opacity: 1; transform: translateY(-5px); }
+    }
+
+    .bg-cosmic {
+      --chat-bg: radial-gradient(ellipse at 30% 20%, rgba(124, 92, 255, 0.06), rgba(79, 70, 229, 0.02), transparent 70%);
+    }
+    .bg-cosmic .messages {
+      background: radial-gradient(ellipse at 30% 20%, rgba(124, 92, 255, 0.06), rgba(79, 70, 229, 0.02), transparent 70%);
+      animation: cosmicTwinkle 6s ease-in-out infinite alternate;
+    }
+    @keyframes cosmicTwinkle {
+      0% { opacity: 0.5; }
+      50% { opacity: 0.8; }
+      100% { opacity: 1; }
+    }
+
+    .bg-ocean {
+      --chat-bg: radial-gradient(ellipse at 40% 60%, rgba(14, 165, 233, 0.06), rgba(6, 182, 212, 0.02), transparent 70%);
+    }
+    .bg-ocean .messages {
+      background: radial-gradient(ellipse at 40% 60%, rgba(14, 165, 233, 0.06), rgba(6, 182, 212, 0.02), transparent 70%);
+      animation: oceanWave 4s ease-in-out infinite alternate;
+    }
+    @keyframes oceanWave {
+      0% { opacity: 0.6; transform: translateX(0); }
+      100% { opacity: 1; transform: translateX(5px); }
+    }
+
+    .bg-sunset {
+      --chat-bg: radial-gradient(ellipse at 60% 40%, rgba(251, 146, 60, 0.06), rgba(244, 114, 182, 0.02), transparent 70%);
+    }
+    .bg-sunset .messages {
+      background: radial-gradient(ellipse at 60% 40%, rgba(251, 146, 60, 0.06), rgba(244, 114, 182, 0.02), transparent 70%);
+      animation: sunsetGlow 5s ease-in-out infinite alternate;
+    }
+    @keyframes sunsetGlow {
+      0% { opacity: 0.5; filter: brightness(0.9); }
+      100% { opacity: 1; filter: brightness(1.1); }
+    }
+
+    .bg-midnight {
+      --chat-bg: radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.06), rgba(99, 102, 241, 0.02), transparent 70%);
+    }
+    .bg-midnight .messages {
+      background: radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.06), rgba(99, 102, 241, 0.02), transparent 70%);
+      animation: midnightPulse 4s ease-in-out infinite alternate;
+    }
+    @keyframes midnightPulse {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
     /* Theme: Cosmic */
     .theme-cosmic {
       --bg-primary: #0a0a1a;
@@ -50,7 +136,6 @@
       --accent-gradient: linear-gradient(145deg, #7c5cff, #4f9aff);
       --bubble-mine: #5c3cdf;
       --bubble-theirs: #1a1a3a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(124, 92, 255, 0.05), transparent 60%);
     }
 
     /* Theme: Aurora */
@@ -67,7 +152,6 @@
       --accent-gradient: linear-gradient(145deg, #34d399, #0ea5e9);
       --bubble-mine: #1a8a7a;
       --bubble-theirs: #0a2a2a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(52, 211, 153, 0.05), transparent 60%);
     }
 
     /* Theme: Sunset */
@@ -84,7 +168,6 @@
       --accent-gradient: linear-gradient(145deg, #f472b6, #fb923c);
       --bubble-mine: #c05070;
       --bubble-theirs: #2a1212;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
     }
 
     /* Theme: Ocean */
@@ -101,7 +184,6 @@
       --accent-gradient: linear-gradient(145deg, #0ea5e9, #06b6d4);
       --bubble-mine: #0a6a8a;
       --bubble-theirs: #0a1a2a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.05), transparent 60%);
     }
 
     /* Theme: Sakura */
@@ -118,7 +200,6 @@
       --accent-gradient: linear-gradient(145deg, #f472b6, #ec4899);
       --bubble-mine: #c05080;
       --bubble-theirs: #2a1018;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
     }
 
     /* Theme: Midnight */
@@ -135,7 +216,6 @@
       --accent-gradient: linear-gradient(145deg, #8b5cf6, #6366f1);
       --bubble-mine: #5b3cf6;
       --bubble-theirs: #12121a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.05), transparent 60%);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -810,7 +890,7 @@
     }
     .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
 
-    /* CALL OVERLAY - BEAUTIFUL DESIGN */
+    /* CALL OVERLAY - FIXED */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
@@ -933,7 +1013,7 @@
     .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
     .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* GIFT PICKER */
+    /* GIFT PICKER WITH SEARCH */
     .gift-picker {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -941,6 +1021,22 @@
       padding: 12px 0;
       max-height: 350px;
       overflow-y: auto;
+    }
+    .gift-search {
+      width: 100%;
+      padding: 10px 16px;
+      background: var(--bg-surface-2);
+      border-radius: 20px;
+      border: 1.5px solid transparent;
+      font-size: 14px;
+      color: var(--text-primary);
+      transition: var(--transition-smooth);
+      margin-bottom: 8px;
+    }
+    .gift-search:focus {
+      border-color: var(--accent);
+      background: var(--bg-surface-3);
+      box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .gift-picker .gift-option {
       display: flex;
@@ -969,42 +1065,31 @@
       grid-column: 1 / -1;
     }
 
-    /* RESTRICTION PICKER */
-    .restriction-picker {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    /* BACKGROUND SELECTOR */
+    .bg-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       padding: 8px 0;
     }
-    .restriction-picker button {
-      padding: 8px 16px;
-      border-radius: 20px;
+    .bg-selector .bg-option {
+      padding: 12px 8px;
+      border-radius: 14px;
       background: var(--bg-surface-2);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      font-size: 13px;
+      border: 2px solid transparent;
+      text-align: center;
       transition: var(--transition-smooth);
-    }
-    .restriction-picker button:hover, .restriction-picker button:active {
-      background: var(--bg-surface-3);
-      border-color: var(--accent);
-      color: var(--text-primary);
-    }
-    .member-role-select {
-      background: var(--bg-surface-2);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 6px 12px;
-      color: var(--text-primary);
-      font-size: 13px;
       cursor: pointer;
     }
-    .member-role-select option { background: var(--bg-surface); }
-    .restricted-badge {
-      font-size: 10px; padding: 2px 10px; border-radius: 12px;
-      background: rgba(255, 92, 122, 0.15); color: var(--danger);
-      margin-left: 8px;
+    .bg-selector .bg-option:hover { border-color: var(--accent); }
+    .bg-selector .bg-option.active { border-color: var(--accent); background: var(--bg-surface-3); }
+    .bg-selector .bg-option .bg-preview {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      margin: 0 auto 6px;
+      border: 1px solid rgba(255,255,255,0.05);
     }
+    .bg-selector .bg-option .bg-name { font-size: 11px; color: var(--text-dim); }
 
     /* THEME SELECTOR */
     .theme-selector {
@@ -1031,6 +1116,38 @@
       border: 1px solid rgba(255,255,255,0.05);
     }
     .theme-selector .theme-option .theme-name { font-size: 11px; color: var(--text-dim); }
+
+    .restriction-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 8px 0;
+    }
+    .restriction-picker button {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-size: 13px;
+      transition: var(--transition-smooth);
+    }
+    .restriction-picker button:hover { background: var(--bg-surface-3); border-color: var(--accent); color: var(--text-primary); }
+    .member-role-select {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 6px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .member-role-select option { background: var(--bg-surface); }
+    .restricted-badge {
+      font-size: 10px; padding: 2px 10px; border-radius: 12px;
+      background: rgba(255, 92, 122, 0.15); color: var(--danger);
+      margin-left: 8px;
+    }
 
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
@@ -1136,6 +1253,7 @@
         <div class="n" id="chatName">Chat</div>
         <div class="s" id="chatStatus"></div>
       </div>
+      <div class="icon-btn" onclick="openChatBgPicker()">🖼️</div>
       <div class="icon-btn" onclick="openChatThemePicker()">🎨</div>
       <div class="icon-btn hidden" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
       <div class="icon-btn hidden" id="videoCallBtn" onclick="startCall('video')">🎥</div>
@@ -1193,27 +1311,28 @@ let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
 let currentTheme = localStorage.getItem("wg_theme") || "default";
+let currentBg = localStorage.getItem("wg_bg") || "default";
 
 // ---- Apply Theme ----
 function applyTheme(theme) {
   const app = document.getElementById("app");
-  const chatScreen = document.getElementById("chatScreen");
-  const messages = document.getElementById("messagesBody");
-  
-  // Remove all theme classes
   app.classList.remove('theme-cosmic', 'theme-aurora', 'theme-sunset', 'theme-ocean', 'theme-sakura', 'theme-midnight');
-  
-  if (theme !== 'default') {
-    app.classList.add('theme-' + theme);
-  }
-  
+  if (theme !== 'default') app.classList.add('theme-' + theme);
   currentTheme = theme;
   localStorage.setItem("wg_theme", theme);
 }
 
-// ---- GIFTS (extended with categories) ----
+// ---- Apply Background ----
+function applyBg(bg) {
+  const chatScreen = document.getElementById("chatScreen");
+  chatScreen.classList.remove('bg-love', 'bg-war', 'bg-peace', 'bg-cosmic', 'bg-ocean', 'bg-sunset', 'bg-midnight');
+  if (bg !== 'default') chatScreen.classList.add('bg-' + bg);
+  currentBg = bg;
+  localStorage.setItem("wg_bg", bg);
+}
+
+// ---- GIFTS ----
 const GIFTS = [
-  // Love & Romance
   { emoji: "❤️", name: "Red Heart", category: "Love" },
   { emoji: "💕", name: "Two Hearts", category: "Love" },
   { emoji: "💗", name: "Growing Heart", category: "Love" },
@@ -1225,8 +1344,6 @@ const GIFTS = [
   { emoji: "💐", name: "Bouquet", category: "Love" },
   { emoji: "🥰", name: "Smiling Face with Hearts", category: "Love" },
   { emoji: "😘", name: "Face Blowing a Kiss", category: "Love" },
-  
-  // Food & Drink
   { emoji: "🎂", name: "Birthday Cake", category: "Food" },
   { emoji: "🍰", name: "Cake", category: "Food" },
   { emoji: "🧁", name: "Cupcake", category: "Food" },
@@ -1240,9 +1357,6 @@ const GIFTS = [
   { emoji: "🌮", name: "Taco", category: "Food" },
   { emoji: "🍾", name: "Champagne", category: "Food" },
   { emoji: "🥂", name: "Clinking Glasses", category: "Food" },
-  { emoji: "🍷", name: "Wine Glass", category: "Food" },
-  
-  // Animals
   { emoji: "🐶", name: "Dog", category: "Animals" },
   { emoji: "🐱", name: "Cat", category: "Animals" },
   { emoji: "🐭", name: "Mouse", category: "Animals" },
@@ -1256,10 +1370,7 @@ const GIFTS = [
   { emoji: "🐯", name: "Tiger", category: "Animals" },
   { emoji: "🦄", name: "Unicorn", category: "Animals" },
   { emoji: "🐧", name: "Penguin", category: "Animals" },
-  { emoji: "🐦", name: "Bird", category: "Animals" },
   { emoji: "🦋", name: "Butterfly", category: "Animals" },
-  
-  // Nature
   { emoji: "⭐", name: "Star", category: "Nature" },
   { emoji: "🌟", name: "Glowing Star", category: "Nature" },
   { emoji: "✨", name: "Sparkles", category: "Nature" },
@@ -1271,8 +1382,6 @@ const GIFTS = [
   { emoji: "🌻", name: "Sunflower", category: "Nature" },
   { emoji: "🌿", name: "Herb", category: "Nature" },
   { emoji: "🌴", name: "Palm Tree", category: "Nature" },
-  
-  // Celebrations
   { emoji: "🎉", name: "Party Popper", category: "Celebration" },
   { emoji: "🎊", name: "Confetti Ball", category: "Celebration" },
   { emoji: "🎈", name: "Balloon", category: "Celebration" },
@@ -1280,13 +1389,10 @@ const GIFTS = [
   { emoji: "🎀", name: "Ribbon", category: "Celebration" },
   { emoji: "🎆", name: "Fireworks", category: "Celebration" },
   { emoji: "🎇", name: "Sparkler", category: "Celebration" },
-  { emoji: "🎤", name: "Microphone", category: "Celebration" },
   { emoji: "🎸", name: "Guitar", category: "Celebration" },
   { emoji: "🎹", name: "Musical Keyboard", category: "Celebration" },
   { emoji: "🎺", name: "Trumpet", category: "Celebration" },
   { emoji: "🎻", name: "Violin", category: "Celebration" },
-  
-  // Emotions
   { emoji: "😊", name: "Smiling Face", category: "Emotions" },
   { emoji: "😃", name: "Happy Face", category: "Emotions" },
   { emoji: "🤗", name: "Hugging Face", category: "Emotions" },
@@ -1300,10 +1406,6 @@ const GIFTS = [
   { emoji: "😭", name: "Crying Face", category: "Emotions" },
   { emoji: "😂", name: "Joy Face", category: "Emotions" },
   { emoji: "🤣", name: "Rolling on Floor", category: "Emotions" },
-  { emoji: "😁", name: "Grinning Face", category: "Emotions" },
-  { emoji: "😆", name: "Squinting Face", category: "Emotions" },
-  
-  // Objects
   { emoji: "💎", name: "Diamond", category: "Objects" },
   { emoji: "🔮", name: "Crystal Ball", category: "Objects" },
   { emoji: "🏆", name: "Trophy", category: "Objects" },
@@ -1312,15 +1414,11 @@ const GIFTS = [
   { emoji: "📚", name: "Books", category: "Objects" },
   { emoji: "📱", name: "Phone", category: "Objects" },
   { emoji: "💻", name: "Laptop", category: "Objects" },
-  { emoji: "🖥️", name: "Desktop", category: "Objects" },
   { emoji: "⌨️", name: "Keyboard", category: "Objects" },
-  { emoji: "🖱️", name: "Mouse", category: "Objects" },
   { emoji: "🕹️", name: "Joystick", category: "Objects" },
   { emoji: "🎮", name: "Video Game", category: "Objects" },
   { emoji: "🧸", name: "Teddy Bear", category: "Objects" },
   { emoji: "🎯", name: "Target", category: "Objects" },
-  
-  // Sports
   { emoji: "⚽", name: "Soccer Ball", category: "Sports" },
   { emoji: "🏀", name: "Basketball", category: "Sports" },
   { emoji: "🏈", name: "Football", category: "Sports" },
@@ -1333,7 +1431,6 @@ const GIFTS = [
   { emoji: "🏸", name: "Badminton", category: "Sports" },
   { emoji: "🥊", name: "Boxing Glove", category: "Sports" },
   { emoji: "🥋", name: "Martial Arts", category: "Sports" },
-  { emoji: "⛸️", name: "Ice Skate", category: "Sports" },
   { emoji: "🏂", name: "Snowboard", category: "Sports" },
   { emoji: "🏊", name: "Swimming", category: "Sports" },
   { emoji: "🚴", name: "Cycling", category: "Sports" },
@@ -1356,6 +1453,7 @@ async function api(path, opts={}) {
 window.addEventListener("DOMContentLoaded", () => {
   api("/api/config").then(r => { PUBLIC_BASE_URL = r.public_base_url || ""; }).catch(()=>{});
   applyTheme(currentTheme);
+  applyBg(currentBg);
   if (TOKEN && ME) {
     api("/api/me").then(r => { ME = r.user; saveSession(); showList(); connectSocket(); })
       .catch(() => { logout(true); });
@@ -1960,17 +2058,20 @@ function openGiftPicker(){
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   
+  let html = `<h2>🎁 Send a Gift</h2>
+    <input class="gift-search" id="giftSearch" placeholder="Search gifts..." oninput="filterGifts(this.value)">
+    <div class="gift-picker" id="giftPicker">`;
+  
   const categories = {};
   GIFTS.forEach(g => {
     if (!categories[g.category]) categories[g.category] = [];
     categories[g.category].push(g);
   });
   
-  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
   Object.keys(categories).forEach(cat => {
-    html += `<div class="gift-category-header">${cat}</div>`;
+    html += `<div class="gift-category-header" data-category="${cat}">${cat}</div>`;
     categories[cat].forEach(g => {
-      html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
+      html += `<div class="gift-option" data-name="${g.name.toLowerCase()}" data-emoji="${g.emoji}" onclick="sendGift('${g.emoji}','${g.name}')">
         <span class="gift-emoji">${g.emoji}</span>
         <span class="gift-name">${escapeHtml(g.name)}</span>
         <span class="gift-category">${escapeHtml(g.category)}</span>
@@ -1981,6 +2082,35 @@ function openGiftPicker(){
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
+  
+  // Store gift elements for filtering
+  window._giftOptions = sheet.querySelectorAll('.gift-option');
+  window._giftCategories = sheet.querySelectorAll('.gift-category-header');
+}
+
+function filterGifts(query){
+  const q = query.toLowerCase().trim();
+  const options = window._giftOptions || [];
+  const categories = window._giftCategories || [];
+  
+  options.forEach(opt => {
+    const name = opt.dataset.name || '';
+    const emoji = opt.dataset.emoji || '';
+    const match = name.includes(q) || emoji.includes(q);
+    opt.style.display = match ? 'flex' : 'none';
+  });
+  
+  // Show/hide categories based on visible children
+  categories.forEach(cat => {
+    const container = cat.parentElement;
+    let hasVisible = false;
+    let next = cat.nextElementSibling;
+    while (next && next.classList.contains('gift-option')) {
+      if (next.style.display !== 'none') { hasVisible = true; break; }
+      next = next.nextElementSibling;
+    }
+    cat.style.display = hasVisible ? 'block' : 'none';
+  });
 }
 
 function onTypingInput(){
@@ -2560,7 +2690,40 @@ async function openChatMenu(){
   document.getElementById("app").appendChild(overlay);
 }
 
-// ---- Theme Picker for Chat ----
+// ---- Background Picker ----
+function openChatBgPicker() {
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  
+  const backgrounds = [
+    { id: 'default', name: 'Default', color: '#4f9aff' },
+    { id: 'love', name: '💕 Love', color: '#ec4899' },
+    { id: 'peace', name: '🕊️ Peace', color: '#34d399' },
+    { id: 'war', name: '⚔️ War', color: '#ff5c7a' },
+    { id: 'cosmic', name: '🌌 Cosmic', color: '#7c5cff' },
+    { id: 'ocean', name: '🌊 Ocean', color: '#0ea5e9' },
+    { id: 'sunset', name: '🌅 Sunset', color: '#f472b6' },
+    { id: 'midnight', name: '🌙 Midnight', color: '#8b5cf6' }
+  ];
+  
+  let html = `<h2>🖼️ Chat Backgrounds</h2><div class="bg-selector">`;
+  backgrounds.forEach(b => {
+    const active = currentBg === b.id ? 'active' : '';
+    html += `<div class="bg-option ${active}" onclick="applyBg('${b.id}');document.querySelector('.overlay')?.remove();">
+      <div class="bg-preview" style="background:${b.color};"></div>
+      <div class="bg-name">${b.name}</div>
+    </div>`;
+  });
+  html += `</div>`;
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+// ---- Theme Picker ----
 function openChatThemePicker() {
   const overlay = document.createElement("div");
   overlay.className = "overlay";
@@ -2762,6 +2925,16 @@ async function openSettings(){
         <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">Calm fade/slide effect when messages appear</div>
       </div>
       <div class="toggle-switch ${ANIMATIONS_ON ? 'on' : ''}" style="width:44px;height:24px;border-radius:14px;background:#2a3a4d;position:relative;flex-shrink:0;transition:.2s;cursor:pointer;" onclick="toggleAnimations()"><div class="knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:.2s;"></div></div>
+    </div>
+
+    <h2 style="margin-top:22px;">Chat Backgrounds</h2>
+    <div class="bg-selector" style="grid-template-columns:repeat(4,1fr);">
+      ${['default','love','peace','war','cosmic','ocean','sunset','midnight'].map(b => `
+        <div class="bg-option ${currentBg === b ? 'active' : ''}" onclick="applyBg('${b}');document.querySelector('.overlay')?.remove();">
+          <div class="bg-preview" style="background:${b === 'default' ? '#4f9aff' : b === 'love' ? '#ec4899' : b === 'peace' ? '#34d399' : b === 'war' ? '#ff5c7a' : b === 'cosmic' ? '#7c5cff' : b === 'ocean' ? '#0ea5e9' : b === 'sunset' ? '#f472b6' : '#8b5cf6'};"></div>
+          <div class="bg-name">${b.charAt(0).toUpperCase() + b.slice(1)}</div>
+        </div>
+      `).join('')}
     </div>
 
     <h2 style="margin-top:22px;">Chat Themes</h2>
@@ -3224,7 +3397,7 @@ async function submitComment(reelId){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== CALLS (WebRTC) - FIXED ====================
+// ==================== CALLS (WebRTC) - COMPLETELY FIXED ====================
 let pc = null;
 let localStream = null;
 let remoteStream = null;
@@ -3276,7 +3449,7 @@ async function startCall(type){
 
   console.log("📞 Starting call to:", currentCallTargetId, "video:", isVideoCall);
 
-  // Show call UI
+  // Show call UI - OUTGOING
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
@@ -3304,7 +3477,6 @@ async function startCall(type){
     createPeerConnection();
     console.log("🔗 Peer connection created");
 
-    // Add all tracks to the peer connection
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
@@ -3312,7 +3484,6 @@ async function startCall(type){
       }
     });
 
-    // Create and send offer
     const offer = await pc.createOffer({
       offerToReceiveAudio: true,
       offerToReceiveVideo: isVideoCall
@@ -3321,6 +3492,7 @@ async function startCall(type){
     await pc.setLocalDescription(offer);
     console.log("📝 Local description set");
 
+    // Send offer to the other user
     socket.emit("call_offer", {
       target: currentCallTargetId,
       offer: offer,
@@ -3374,6 +3546,7 @@ async function handleCallOffer(data){
   document.getElementById("callName").textContent = user.username;
   document.getElementById("callStatus").textContent = isVideoCall ? "📹 Incoming video call..." : "📞 Incoming voice call...";
 
+  // Show incoming call UI
   document.getElementById("callActionsIncoming").classList.remove("hidden");
   document.getElementById("callActionsActive").classList.add("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
@@ -3382,9 +3555,9 @@ async function handleCallOffer(data){
   window._callerInfo = user;
   console.log("📥 Incoming call offer stored");
   
-  // Play ringtone effect (vibration on mobile)
+  // Vibrate on mobile
   if (navigator.vibrate) {
-    navigator.vibrate([200, 100, 200]);
+    navigator.vibrate([200, 100, 200, 100, 200]);
   }
 }
 
@@ -3436,6 +3609,7 @@ async function acceptCall(){
     await pc.setLocalDescription(answer);
     console.log("📝 Local description set for answer");
 
+    // Send answer back to caller
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
     console.log("📨 Answer sent");
     
@@ -3449,7 +3623,7 @@ async function acceptCall(){
 }
 
 async function handleCallAnswer(data){
-  console.log("📥 Call answer received");
+  console.log("📥 Call answer received from:", data.from_user_id);
   if (!pc) {
     console.warn("⚠️ No peer connection for answer");
     return;
@@ -3467,7 +3641,10 @@ async function handleCallAnswer(data){
 
 async function handleRemoteIce(data){
   console.log("🧊 ICE candidate received");
-  if (!pc || !data.candidate) return;
+  if (!pc || !data.candidate) {
+    console.warn("⚠️ No PC or candidate");
+    return;
+  }
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
     console.log("✅ ICE candidate added");
