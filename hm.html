@@ -1,4 +1,3 @@
-Magica:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,12 +9,14 @@ Magica:
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
+    /* ============================================================
+       ROOT VARIABLES & THEMES
+    ============================================================ */
     :root {
       --bg-primary: #0c111b;
       --bg-surface: #141c2b;
       --bg-surface-2: #1c283c;
       --bg-surface-3: #25344d;
-      --bg-elevated: #1c283c;
       --text-primary: #f0f4fa;
       --text-secondary: #b2c9e8;
       --text-dim: #7b94b8;
@@ -32,7 +33,111 @@ Magica:
       --radius-card: 28px;
       --radius-bubble: 18px;
       --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
     }
+
+    /* Theme: Cosmic */
+    .theme-cosmic {
+      --bg-primary: #0a0a1a;
+      --bg-surface: #12122a;
+      --bg-surface-2: #1a1a3a;
+      --bg-surface-3: #2a2a4a;
+      --text-primary: #e8e0ff;
+      --text-secondary: #a090d0;
+      --text-dim: #7060a0;
+      --accent: #7c5cff;
+      --accent-glow: rgba(124, 92, 255, 0.3);
+      --accent-gradient: linear-gradient(145deg, #7c5cff, #4f9aff);
+      --bubble-mine: #5c3cdf;
+      --bubble-theirs: #1a1a3a;
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(124, 92, 255, 0.05), transparent 60%);
+    }
+
+    /* Theme: Aurora */
+    .theme-aurora {
+      --bg-primary: #0a1a1a;
+      --bg-surface: #0a2a2a;
+      --bg-surface-2: #0a3a3a;
+      --bg-surface-3: #1a4a4a;
+      --text-primary: #d0f0f0;
+      --text-secondary: #80c0c0;
+      --text-dim: #509090;
+      --accent: #34d399;
+      --accent-glow: rgba(52, 211, 153, 0.3);
+      --accent-gradient: linear-gradient(145deg, #34d399, #0ea5e9);
+      --bubble-mine: #1a8a7a;
+      --bubble-theirs: #0a2a2a;
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(52, 211, 153, 0.05), transparent 60%);
+    }
+
+    /* Theme: Sunset */
+    .theme-sunset {
+      --bg-primary: #1a0a0a;
+      --bg-surface: #2a1212;
+      --bg-surface-2: #3a1a1a;
+      --bg-surface-3: #4a2a2a;
+      --text-primary: #f0d0c0;
+      --text-secondary: #d09070;
+      --text-dim: #a06040;
+      --accent: #f472b6;
+      --accent-glow: rgba(244, 114, 182, 0.3);
+      --accent-gradient: linear-gradient(145deg, #f472b6, #fb923c);
+      --bubble-mine: #c05070;
+      --bubble-theirs: #2a1212;
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
+    }
+
+    /* Theme: Ocean */
+    .theme-ocean {
+      --bg-primary: #0a0a1a;
+      --bg-surface: #0a1a2a;
+      --bg-surface-2: #0a2a3a;
+      --bg-surface-3: #1a3a4a;
+      --text-primary: #c0e0f0;
+      --text-secondary: #70a0c0;
+      --text-dim: #4070a0;
+      --accent: #0ea5e9;
+      --accent-glow: rgba(14, 165, 233, 0.3);
+      --accent-gradient: linear-gradient(145deg, #0ea5e9, #06b6d4);
+      --bubble-mine: #0a6a8a;
+      --bubble-theirs: #0a1a2a;
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.05), transparent 60%);
+    }
+
+    /* Theme: Sakura */
+    .theme-sakura {
+      --bg-primary: #1a0a14;
+      --bg-surface: #2a1018;
+      --bg-surface-2: #3a1822;
+      --bg-surface-3: #4a202a;
+      --text-primary: #f0d0d8;
+      --text-secondary: #d090a0;
+      --text-dim: #a06070;
+      --accent: #f472b6;
+      --accent-glow: rgba(244, 114, 182, 0.3);
+      --accent-gradient: linear-gradient(145deg, #f472b6, #ec4899);
+      --bubble-mine: #c05080;
+      --bubble-theirs: #2a1018;
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
+    }
+
+    /* Theme: Midnight */
+    .theme-midnight {
+      --bg-primary: #0a0a0a;
+      --bg-surface: #0a0a12;
+      --bg-surface-2: #12121a;
+      --bg-surface-3: #1a1a22;
+      --text-primary: #e0e0e8;
+      --text-secondary: #8888a0;
+      --text-dim: #505068;
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.3);
+      --accent-gradient: linear-gradient(145deg, #8b5cf6, #6366f1);
+      --bubble-mine: #5b3cf6;
+      --bubble-theirs: #12121a;
+      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.05), transparent 60%);
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; }
     body {
@@ -41,10 +146,12 @@ Magica:
       color: var(--text-primary);
       overflow: hidden;
       -webkit-font-smoothing: antialiased;
+      transition: background 0.4s ease, color 0.4s ease;
     }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
     #app {
       height: 100vh; height: 100dvh;
       max-width: 480px;
@@ -55,10 +162,13 @@ Magica:
       flex-direction: column;
       box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
       overflow: hidden;
+      transition: background 0.4s ease;
     }
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
+
+    /* AUTH SCREEN */
     #authScreen {
       flex: 1;
       display: flex;
@@ -99,8 +209,7 @@ Magica:
       align-items: center;
       justify-content: center;
       font-size: 36px; font-weight: 800;
-
-margin: 0 auto 20px;
+      margin: 0 auto 20px;
       box-shadow: 0 12px 32px rgba(79, 154, 255, 0.35);
       position: relative;
       z-index: 1;
@@ -212,6 +321,8 @@ margin: 0 auto 20px;
       position: relative;
       z-index: 1;
     }
+
+    /* APP BAR */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -237,8 +348,7 @@ margin: 0 auto 20px;
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
       transition: var(--transition-smooth);
-
-background: rgba(255,255,255,0.03);
+      background: rgba(255,255,255,0.03);
       position: relative;
     }
     .icon-btn:active { background: rgba(255,255,255,0.08); transform: scale(0.92); }
@@ -265,6 +375,8 @@ background: rgba(255,255,255,0.03);
       transition: var(--transition-smooth);
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* TABS */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -287,6 +399,8 @@ background: rgba(255,255,255,0.03);
       border-color: var(--accent);
     }
     .tab:active { opacity: 0.6; }
+
+    /* SEARCH */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -308,6 +422,8 @@ background: rgba(255,255,255,0.03);
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .search-bar input::placeholder { color: var(--text-dim); }
+
+    /* LIST */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -357,8 +473,7 @@ background: rgba(255,255,255,0.03);
       color: #fff;
       font-size: 11px; font-weight: 700;
       min-width: 20px; height: 20px;
-
-border-radius: 12px;
+      border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       padding: 0 6px;
       box-shadow: 0 2px 8px rgba(79, 154, 255, 0.3);
@@ -371,6 +486,8 @@ border-radius: 12px;
       line-height: 1.7;
     }
     .empty-state i { display: block; font-size: 36px; margin-bottom: 16px; opacity: 0.4; }
+
+    /* FAB */
     .fab {
       position: absolute;
       bottom: 80px; right: 20px;
@@ -384,6 +501,8 @@ border-radius: 12px;
       transition: var(--transition-smooth);
     }
     .fab:active { transform: scale(0.9); }
+
+    /* BOTTOM NAV */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -404,12 +523,20 @@ border-radius: 12px;
     }
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
+
+    /* CHAT SCREEN */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
       background: var(--bg-primary);
+      transition: background 0.4s ease;
     }
     #chatScreen.active { display: flex; }
+    #chatScreen .messages {
+      background: var(--chat-bg);
+      transition: background 0.4s ease;
+    }
+
     .chat-appbar {
       display: flex; align-items: center; gap: 12px;
       padding: 12px 16px;
@@ -421,13 +548,14 @@ border-radius: 12px;
     .chat-appbar .name-block { flex: 1; min-width: 0; }
     .chat-appbar .name-block .n { font-size: 16px; font-weight: 700; }
     .chat-appbar .name-block .s { font-size: 12px; color: var(--text-secondary); }
+
     .messages {
       flex: 1;
       overflow-y: auto;
       padding: 16px 14px;
       display: flex; flex-direction: column; gap: 4px;
       -webkit-overflow-scrolling: touch;
-      background: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
+      transition: background 0.4s ease;
     }
     .bubble-row {
       display: flex;
@@ -477,14 +605,15 @@ border-radius: 12px;
       border: 1px dashed var(--border-subtle);
     }
     .bubble img, .bubble video { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 4px; }
-
-.bubble audio { width: 200px; max-width: 60vw; }
+    .bubble audio { width: 200px; max-width: 60vw; }
     .bubble .gift-emoji { font-size: 52px; display: block; text-align: center; margin: 4px 0; animation: giftFloat 2s ease-in-out infinite; }
     .bubble .gift-label { font-size: 11px; color: rgba(255,255,255,0.6); text-align: center; }
     @keyframes giftFloat {
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-6px) scale(1.05); }
     }
+
+    /* COMPOSER */
     .composer {
       display: flex; align-items: flex-end; gap: 8px;
       padding: 10px 14px;
@@ -532,6 +661,7 @@ border-radius: 12px;
       0%, 100% { opacity: 1; }
       50% { opacity: 0.5; }
     }
+
     .typing-indicator {
       padding: 4px 18px;
       font-size: 12px;
@@ -540,6 +670,8 @@ border-radius: 12px;
       height: 22px;
       transition: var(--transition-smooth);
     }
+
+    /* REELS */
     #reelsScreen {
       position: absolute; inset: 0;
       display: flex; flex-direction: column;
@@ -593,10 +725,11 @@ border-radius: 12px;
     .reel-action {
       color: #fff; text-align: center;
       font-size: 11px; display: flex; flex-direction: column;
-
-align-items: center; gap: 3px;
+      align-items: center; gap: 3px;
     }
     .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
+
+    /* OVERLAY & SHEET */
     .overlay {
       position: absolute; inset: 0;
       background: rgba(4, 8, 14, 0.65);
@@ -636,6 +769,7 @@ align-items: center; gap: 3px;
     }
     .sheet-item .role-badge.admin { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
     .sheet-item .role-badge.moderator { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+
     .reaction-picker {
       display: flex; gap: 12px;
       justify-content: space-around;
@@ -647,6 +781,8 @@ align-items: center; gap: 3px;
       cursor: pointer;
     }
     .reaction-picker span:active { transform: scale(1.4); }
+
+    /* TOAST */
     .toast {
       position: absolute; bottom: 100px; left: 50%;
       transform: translateX(-50%);
@@ -664,6 +800,7 @@ align-items: center; gap: 3px;
       0%, 70% { opacity: 1; transform: translateX(-50%) translateY(0); }
       100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
     }
+
     .link-box {
       display: flex; gap: 10px; align-items: center;
       background: var(--bg-surface-2);
@@ -672,14 +809,28 @@ align-items: center; gap: 3px;
       margin: 10px 0;
     }
     .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
+
+    /* CALL OVERLAY - BEAUTIFUL DESIGN */
     .call-overlay {
       position: absolute; inset: 0;
       z-index: 60;
-      background: radial-gradient(ellipse at 50% 40%, #1c2c42, #060a10);
+      background: radial-gradient(ellipse at 50% 30%, #1a2a3a, #060a10);
       display: flex; flex-direction: column;
       align-items: center; justify-content: flex-end;
       padding-bottom: 50px;
       overflow: hidden;
+    }
+    .call-overlay::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(79, 154, 255, 0.05), transparent 60%),
+                  radial-gradient(circle at 70% 80%, rgba(124, 92, 255, 0.05), transparent 60%);
+      animation: callPulse 4s ease-in-out infinite alternate;
+    }
+    @keyframes callPulse {
+      0% { opacity: 0.5; transform: scale(1); }
+      100% { opacity: 1; transform: scale(1.05); }
     }
     .remote-video {
       position: absolute; inset: 0;
@@ -688,45 +839,78 @@ align-items: center; gap: 3px;
       background: #000;
     }
     .local-video {
-      position: absolute; top: calc(16px + env(safe-area-inset-top)); right: 16px;
-      width: 100px; height: 140px;
-      border-radius: 16px;
+      position: absolute; top: calc(20px + env(safe-area-inset-top)); right: 16px;
+      width: 110px; height: 150px;
+      border-radius: 20px;
       object-fit: cover;
       background: #111;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-      border: 2px solid rgba(255,255,255,0.1);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+      border: 2px solid rgba(255,255,255,0.15);
       z-index: 2;
     }
     .call-info {
       position: relative; z-index: 1;
       text-align: center; color: #fff;
-
-margin-bottom: 48px; margin-top: auto;
+      margin-bottom: 40px; margin-top: auto;
       padding-top: 80px;
     }
-    .call-name { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
-    .call-status { font-size: 14px; opacity: 0.75; }
+    .call-info .call-avatar {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      border: 3px solid rgba(255,255,255,0.15);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px; font-weight: 700;
+      background: var(--accent-gradient);
+      position: relative;
+    }
+    .call-info .call-avatar .pulse-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px solid rgba(79, 154, 255, 0.3);
+      animation: ringPulse 2s ease-out infinite;
+    }
+    @keyframes ringPulse {
+      0% { transform: scale(0.8); opacity: 0.8; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+    .call-name { font-size: 26px; font-weight: 700; margin-bottom: 4px; text-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+    .call-status { 
+      font-size: 15px; 
+      opacity: 0.8; 
+      background: rgba(0,0,0,0.3); 
+      padding: 4px 16px; 
+      border-radius: 20px; 
+      display: inline-block;
+      backdrop-filter: blur(4px);
+    }
     .call-actions {
       position: relative; z-index: 2;
-      display: flex; gap: 34px; align-items: center;
+      display: flex; gap: 30px; align-items: center;
     }
     .call-btn {
       width: 68px; height: 68px;
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       font-size: 28px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
       transition: var(--transition-smooth);
+      border: 2px solid rgba(255,255,255,0.05);
     }
     .call-btn:active { transform: scale(0.9); }
-    .call-btn.accept { background: linear-gradient(135deg, #34d399, #17b862); }
-    .call-btn.decline { background: linear-gradient(135deg, #ff5c7a, #e0324a); }
+    .call-btn.accept { background: linear-gradient(135deg, #34d399, #059669); }
+    .call-btn.decline { background: linear-gradient(135deg, #ff5c7a, #dc2626); }
     .call-btn.secondary {
-      background: rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.08);
       width: 56px; height: 56px; font-size: 22px;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.08);
     }
     .call-btn.secondary.active-toggle { background: #fff; color: #111; }
+
+    /* REPLY & EDIT PREVIEW */
     .reply-preview {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
@@ -738,6 +922,7 @@ margin-bottom: 48px; margin-top: auto;
     .reply-preview .preview-content { flex: 1; min-width: 0; }
     .reply-preview .preview-name { font-size: 12px; font-weight: 700; color: var(--accent); }
     .reply-preview .preview-text { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
     .edit-banner {
       display: flex; align-items: center; gap: 10px;
       padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
@@ -747,6 +932,8 @@ margin-bottom: 48px; margin-top: auto;
     .edit-banner .edit-content { flex: 1; min-width: 0; }
     .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
     .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* GIFT PICKER */
     .gift-picker {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -781,6 +968,8 @@ margin-bottom: 48px; margin-top: auto;
       padding: 8px 4px 4px; border-bottom: 1px solid var(--border-subtle);
       grid-column: 1 / -1;
     }
+
+    /* RESTRICTION PICKER */
     .restriction-picker {
       display: flex;
       gap: 8px;
@@ -792,8 +981,7 @@ margin-bottom: 48px; margin-top: auto;
       border-radius: 20px;
       background: var(--bg-surface-2);
       border: 1px solid var(--border-subtle);
-
-color: var(--text-secondary);
+      color: var(--text-secondary);
       font-size: 13px;
       transition: var(--transition-smooth);
     }
@@ -801,11 +989,6 @@ color: var(--text-secondary);
       background: var(--bg-surface-3);
       border-color: var(--accent);
       color: var(--text-primary);
-    }
-    .restriction-picker button.selected {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
     }
     .member-role-select {
       background: var(--bg-surface-2);
@@ -822,10 +1005,38 @@ color: var(--text-secondary);
       background: rgba(255, 92, 122, 0.15); color: var(--danger);
       margin-left: 8px;
     }
+
+    /* THEME SELECTOR */
+    .theme-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .theme-selector .theme-option {
+      padding: 12px 8px;
+      border-radius: 14px;
+      background: var(--bg-surface-2);
+      border: 2px solid transparent;
+      text-align: center;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+    .theme-selector .theme-option:hover { border-color: var(--accent); }
+    .theme-selector .theme-option.active { border-color: var(--accent); background: var(--bg-surface-3); }
+    .theme-selector .theme-option .theme-preview {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      margin: 0 auto 6px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .theme-selector .theme-option .theme-name { font-size: 11px; color: var(--text-dim); }
+
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
       .sheet { padding: 20px 16px; }
+      .local-video { width: 80px; height: 110px; }
     }
   </style>
 </head>
@@ -881,8 +1092,7 @@ color: var(--text-secondary);
   <div id="reelsScreen" class="hidden">
     <div class="reels-feed" id="reelsFeed"></div>
     <div class="reels-topbar">
-
-<div class="reels-title">🎬 Reels</div>
+      <div class="reels-title">🎬 Reels</div>
       <div class="icon-btn" style="color:#fff;" onclick="openSettings()">⚙️</div>
     </div>
     <div class="fab" style="bottom:80px;z-index:15;" onclick="openUploadReelSheet()">＋</div>
@@ -899,9 +1109,12 @@ color: var(--text-secondary);
     <video id="remoteVideo" autoplay playsinline class="remote-video hidden"></video>
     <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
     <div class="call-info">
-      <div class="avatar" id="callAvatar" style="width:100px;height:100px;font-size:38px;margin:0 auto 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);"></div>
-      <div class="call-name" id="callName"></div>
-      <div class="call-status" id="callStatus">Calling...</div>
+      <div class="call-avatar" id="callAvatar">
+        <div class="pulse-ring"></div>
+        <span id="callAvatarText">?</span>
+      </div>
+      <div class="call-name" id="callName">Call</div>
+      <div class="call-status" id="callStatus">Connecting...</div>
     </div>
     <div class="call-actions" id="callActionsIncoming">
       <div class="call-btn decline" onclick="declineCall()">📵</div>
@@ -923,6 +1136,7 @@ color: var(--text-secondary);
         <div class="n" id="chatName">Chat</div>
         <div class="s" id="chatStatus"></div>
       </div>
+      <div class="icon-btn" onclick="openChatThemePicker()">🎨</div>
       <div class="icon-btn hidden" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
       <div class="icon-btn hidden" id="videoCallBtn" onclick="startCall('video')">🎥</div>
       <div class="icon-btn" onclick="openChatMenu()">⋮</div>
@@ -978,6 +1192,24 @@ let pendingMessages = {};
 let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
+let currentTheme = localStorage.getItem("wg_theme") || "default";
+
+// ---- Apply Theme ----
+function applyTheme(theme) {
+  const app = document.getElementById("app");
+  const chatScreen = document.getElementById("chatScreen");
+  const messages = document.getElementById("messagesBody");
+  
+  // Remove all theme classes
+  app.classList.remove('theme-cosmic', 'theme-aurora', 'theme-sunset', 'theme-ocean', 'theme-sakura', 'theme-midnight');
+  
+  if (theme !== 'default') {
+    app.classList.add('theme-' + theme);
+  }
+  
+  currentTheme = theme;
+  localStorage.setItem("wg_theme", theme);
+}
 
 // ---- GIFTS (extended with categories) ----
 const GIFTS = [
@@ -1035,10 +1267,8 @@ const GIFTS = [
   { emoji: "☀️", name: "Sun", category: "Nature" },
   { emoji: "🌙", name: "Moon", category: "Nature" },
   { emoji: "🌊", name: "Wave", category: "Nature" },
-  { emoji: "🌸", name: "Cherry Blossom", category: "Nature" },
   { emoji: "🌺", name: "Hibiscus", category: "Nature" },
   { emoji: "🌻", name: "Sunflower", category: "Nature" },
-  { emoji: "🌹", name: "Rose", category: "Nature" },
   { emoji: "🌿", name: "Herb", category: "Nature" },
   { emoji: "🌴", name: "Palm Tree", category: "Nature" },
   
@@ -1047,8 +1277,7 @@ const GIFTS = [
   { emoji: "🎊", name: "Confetti Ball", category: "Celebration" },
   { emoji: "🎈", name: "Balloon", category: "Celebration" },
   { emoji: "🎁", name: "Gift", category: "Celebration" },
-
-{ emoji: "🎀", name: "Ribbon", category: "Celebration" },
+  { emoji: "🎀", name: "Ribbon", category: "Celebration" },
   { emoji: "🎆", name: "Fireworks", category: "Celebration" },
   { emoji: "🎇", name: "Sparkler", category: "Celebration" },
   { emoji: "🎤", name: "Microphone", category: "Celebration" },
@@ -1126,6 +1355,7 @@ async function api(path, opts={}) {
 // ---- Boot ----
 window.addEventListener("DOMContentLoaded", () => {
   api("/api/config").then(r => { PUBLIC_BASE_URL = r.public_base_url || ""; }).catch(()=>{});
+  applyTheme(currentTheme);
   if (TOKEN && ME) {
     api("/api/me").then(r => { ME = r.user; saveSession(); showList(); connectSocket(); })
       .catch(() => { logout(true); });
@@ -1232,8 +1462,7 @@ function connectSocket(){
   socket.on("typing", handleTyping);
   socket.on("error_msg", (d) => showToast(d.error));
   socket.on("call_offer", handleCallOffer);
-
-socket.on("call_answer", handleCallAnswer);
+  socket.on("call_answer", handleCallAnswer);
   socket.on("call_ice_candidate", handleRemoteIce);
   socket.on("call_reject", handleCallReject);
   socket.on("call_end", handleRemoteEnd);
@@ -1312,16 +1541,16 @@ function renderConversations(convos){
     el.className = "list-item";
     el.onclick = () => c.type === "dm" ? openDM({id:c.id, username:c.name, avatar:c.avatar, status:c.status}) : openGroup(c);
     const preview = (c.last_is_mine ? "You: " : "") + escapeHtml(c.last_preview || "");
-    el.innerHTML = 
-      <div class="avatar">${c.avatar ? <img src="${c.avatar}"> : (c.name ? c.name.charAt(0).toUpperCase() : "?")}${c.type==='dm' ? <div class="status-dot ${c.status==='online'?'':'offline'}"></div> : ''}</div>
+    el.innerHTML = `
+      <div class="avatar">${c.avatar ? `<img src="${c.avatar}">` : (c.name ? c.name.charAt(0).toUpperCase() : "?")}${c.type==='dm' ? `<div class="status-dot ${c.status==='online'?'':'offline'}"></div>` : ''}</div>
       <div class="list-item-content">
         <div class="list-item-name">${escapeHtml(c.name || "Unknown")}</div>
         <div class="list-item-sub">${preview}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
         <div class="list-item-time">${formatRelativeTime(c.last_timestamp)}</div>
-        ${c.unread > 0 ? <div class="list-badge">${c.unread > 99 ? "99+" : c.unread}</div> : ""}
-      </div>;
+        ${c.unread > 0 ? `<div class="list-badge">${c.unread > 99 ? "99+" : c.unread}</div>` : ""}
+      </div>`;
     body.appendChild(el);
   });
 }
@@ -1329,8 +1558,7 @@ function renderConversations(convos){
 function formatRelativeTime(ts){
   if (!ts) return "now";
   const now = Date.now()/1000;
-
-const diff = now - ts;
+  const diff = now - ts;
   const d = new Date(ts*1000);
   if (diff < 60) return "now";
   if (diff < 3600) return Math.floor(diff/60) + "m";
@@ -1348,12 +1576,12 @@ function renderPeople(users){
     const el = document.createElement("div");
     el.className = "list-item";
     el.onclick = () => openDM(u);
-    el.innerHTML = 
+    el.innerHTML = `
       <div class="avatar">${avatarInner(u)}<div class="status-dot ${u.status==='online'?'':'offline'}"></div></div>
       <div class="list-item-content">
         <div class="list-item-name">${escapeHtml(u.username)}</div>
         <div class="list-item-sub">${u.status==='online'?'Online':'Offline'} · ${escapeHtml(u.email)}</div>
-      </div>;
+      </div>`;
     body.appendChild(el);
   });
 }
@@ -1367,22 +1595,26 @@ function renderGroups(groups){
     el.className = "list-item";
     el.onclick = () => openGroup(gr);
     const roleBadge = gr.role === 'admin' ? ' 👑' : (gr.role === 'moderator' ? ' 🛡️' : '');
-    el.innerHTML = 
-      <div class="avatar">${gr.avatar ? <img src="${gr.avatar}"> : (gr.name ? gr.name.charAt(0).toUpperCase() : "?")}</div>
+    el.innerHTML = `
+      <div class="avatar">${gr.avatar ? `<img src="${gr.avatar}">` : (gr.name ? gr.name.charAt(0).toUpperCase() : "?")}</div>
       <div class="list-item-content">
         <div class="list-item-name">${escapeHtml(gr.name || "Group")}${roleBadge}</div>
         <div class="list-item-sub">${gr.role==='admin'?'You are the admin':(gr.role==='moderator'?'You are a moderator':'Group chat')}${gr.has_password?' · 🔒':''}</div>
-      </div>;
+      </div>`;
     body.appendChild(el);
   });
 }
 
 function avatarInner(u){
-  return u.avatar ? <img src="${u.avatar}"> : (u.username||"?").charAt(0).toUpperCase();
+  return u.avatar ? `<img src="${u.avatar}">` : (u.username||"?").charAt(0).toUpperCase();
 }
 function setAvatarEl(el, u){
   if (!u) { el.innerHTML = "?"; return; }
   el.innerHTML = avatarInner(u);
+}
+function setCallAvatarEl(el, u){
+  if (!u) { el.querySelector("span").textContent = "?"; return; }
+  el.querySelector("span").textContent = avatarInner(u).replace(/<[^>]*>/g, '');
 }
 
 function fabAction(){
@@ -1419,8 +1651,7 @@ function enterChatScreen(){
   document.getElementById("chatScreen").classList.add("active");
   document.getElementById("chatName").textContent = currentChat.name || "Chat";
   document.getElementById("chatStatus").textContent = currentChat.type==="dm" ? (currentChat.status==="online"?"Online":"Offline") : "Group";
-
-setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:currentChat.avatar});
+  setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:currentChat.avatar});
   document.getElementById("voiceCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
   document.getElementById("videoCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
   document.getElementById("messagesBody").innerHTML = "";
@@ -1473,45 +1704,44 @@ function buildBubble(m){
   });
 
   let inner = "";
-  if (currentChat && currentChat.type === "group" && !mine) inner += <div class="sender">${escapeHtml(m.sender_name)}</div>;
+  if (currentChat && currentChat.type === "group" && !mine) inner += `<div class="sender">${escapeHtml(m.sender_name)}</div>`;
   if (m.forwarded_from_name && !m.deleted) {
-    inner += <div class="forwarded-label" style="font-size:11px;color:var(--text-dim);font-style:italic;margin-bottom:2px;">↪ Forwarded from ${escapeHtml(m.forwarded_from_name)}</div>;
+    inner += `<div class="forwarded-label" style="font-size:11px;color:var(--text-dim);font-style:italic;margin-bottom:2px;">↪ Forwarded from ${escapeHtml(m.forwarded_from_name)}</div>`;
   }
   if (m.reply_to && !m.deleted) {
     const rt = m.reply_to;
     const preview = rt.msg_type === "text" ? rt.preview :
       ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[rt.msg_type] || rt.preview);
-    inner += <div class="quoted-block" style="background:rgba(255,255,255,0.06);border-left:3px solid rgba(255,255,255,0.2);border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;" onclick="scrollToMessage(${rt.id})">
+    inner += `<div class="quoted-block" style="background:rgba(255,255,255,0.06);border-left:3px solid rgba(255,255,255,0.2);border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;" onclick="scrollToMessage(${rt.id})">
       <div style="font-weight:700;color:#8ecbff;">${escapeHtml(rt.sender_name)}</div>
       <div style="color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${escapeHtml(preview)}</div>
-    </div>;
+    </div>`;
   }
   if (m.deleted) {
     inner += "This message was deleted";
   } else if (m.msg_type === "gift") {
     const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift", category: "Gift" };
-    inner += <div class="gift-emoji">${gift.emoji}</div>;
-    inner += <div class="gift-label">🎁 ${escapeHtml(gift.name)}</div>;
+    inner += `<div class="gift-emoji">${gift.emoji}</div>`;
+    inner += `<div class="gift-label">🎁 ${escapeHtml(gift.name)}</div>`;
   } else if (m.msg_type === "image") {
-    inner += <img src="${m.media_path}" onclick="openMediaFull('${m.media_path}','image')">;
+    inner += `<img src="${m.media_path}" onclick="openMediaFull('${m.media_path}','image')">`;
   } else if (m.msg_type === "video") {
-    inner += <video src="${m.media_path}" controls></video>;
+    inner += `<video src="${m.media_path}" controls></video>`;
   } else if (m.msg_type === "voice") {
-    inner += <audio src="${m.media_path}" controls></audio>;
+    inner += `<audio src="${m.media_path}" controls></audio>`;
   } else if (m.msg_type === "call") {
     const [ctype, status, dur] = (m.content || "audio:missed:0").split(":");
-
-const isVideo = ctype === "video";
+    const isVideo = ctype === "video";
     const icon = isVideo ? "🎥" : "📞";
     let label;
-    if (status === "completed") label = ${isVideo ? "Video" : "Voice"} call · ${formatDuration(parseInt(dur) || 0)};
-    else if (status === "declined") label = ${isVideo ? "Video" : "Voice"} call declined;
-    else label = Missed ${isVideo ? "video" : "voice"} call;
-    inner += <div style="display:flex;align-items:center;gap:7px;font-size:13.5px;color:${mine ? 'rgba(255,255,255,0.85)' : 'var(--text-dim)'}"><span style="font-size:15px;">${icon}</span> ${label}</div>;
+    if (status === "completed") label = `${isVideo ? "Video" : "Voice"} call · ${formatDuration(parseInt(dur) || 0)}`;
+    else if (status === "declined") label = `${isVideo ? "Video" : "Voice"} call declined`;
+    else label = `Missed ${isVideo ? "video" : "voice"} call`;
+    inner += `<div style="display:flex;align-items:center;gap:7px;font-size:13.5px;color:${mine ? 'rgba(255,255,255,0.85)' : 'var(--text-dim)'}"><span style="font-size:15px;">${icon}</span> ${label}</div>`;
   } else {
     inner += escapeHtml(m.content || "");
   }
-  inner += <div class="time">${m.edited && !m.deleted ? "edited · " : ""}${formatTime(m.timestamp)}</div>;
+  inner += `<div class="time">${m.edited && !m.deleted ? "edited · " : ""}${formatTime(m.timestamp)}</div>`;
   bubble.innerHTML = inner;
   renderReactionsInto(bubble, m);
 
@@ -1521,7 +1751,7 @@ const isVideo = ctype === "video";
 
 function renderReactionsInto(bubble, m){
   bubble.querySelector(".reactions-row")?.remove();
-  if (m.deleted  !m.reactions  !m.reactions.length) return;
+  if (m.deleted || !m.reactions || !m.reactions.length) return;
   const rr = document.createElement("div");
   rr.className = "reactions-row";
   rr.style.cssText = "display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;";
@@ -1544,7 +1774,7 @@ function updateReactionsUI(messageId, userId, emoji){
   const existing = m.reactions.find(r => r.user_id === userId);
   if (existing) existing.emoji = emoji;
   else m.reactions.push({user_id: userId, emoji});
-  const row = document.querySelector(.bubble-row[data-id="${messageId}"]);
+  const row = document.querySelector(`.bubble-row[data-id="${messageId}"]`);
   if (row) renderReactionsInto(row.querySelector(".bubble"), m);
 }
 
@@ -1559,18 +1789,18 @@ function quickHeartReact(m, bubble){
   setTimeout(() => pop.remove(), 700);
 }
 const styleSheet = document.createElement("style");
-styleSheet.textContent = 
+styleSheet.textContent = `
   @keyframes heartPop {
     0% { transform: translate(-50%,-50%) scale(0); opacity:0; }
     25% { transform: translate(-50%,-50%) scale(1.15); opacity:1; }
     45% { transform: translate(-50%,-50%) scale(.95); }
     100% { transform: translate(-50%,-50%) scale(1.3); opacity:0; }
   }
-;
+`;
 document.head.appendChild(styleSheet);
 
 function scrollToMessage(id){
-  const row = document.querySelector(.bubble-row[data-id="${id}"]);
+  const row = document.querySelector(`.bubble-row[data-id="${id}"]`);
   if (row) {
     row.scrollIntoView({behavior: ANIMATIONS_ON ? "smooth" : "auto", block:"center"});
     row.querySelector(".bubble").style.outline = "2px solid var(--accent)";
@@ -1592,7 +1822,7 @@ function escapeHtml(s){
 function formatDuration(totalSeconds){
   if (!totalSeconds) return "0:00";
   const m = Math.floor(totalSeconds / 60), s = totalSeconds % 60;
-  return ${m}:${s.toString().padStart(2,"0")};
+  return `${m}:${s.toString().padStart(2,"0")}`;
 }
 
 // ---- Sending ----
@@ -1730,25 +1960,24 @@ function openGiftPicker(){
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   
-  // Group gifts by category
   const categories = {};
   GIFTS.forEach(g => {
     if (!categories[g.category]) categories[g.category] = [];
     categories[g.category].push(g);
   });
   
-  let html = <h2>🎁 Send a Gift</h2><div class="gift-picker">;
+  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
   Object.keys(categories).forEach(cat => {
-    html += <div class="gift-category-header">${cat}</div>;
+    html += `<div class="gift-category-header">${cat}</div>`;
     categories[cat].forEach(g => {
-      html += <div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
+      html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
         <span class="gift-emoji">${g.emoji}</span>
         <span class="gift-name">${escapeHtml(g.name)}</span>
         <span class="gift-category">${escapeHtml(g.category)}</span>
-      </div>;
+      </div>`;
     });
   });
-  html += </div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>;
+  html += `</div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
@@ -1818,7 +2047,7 @@ function stopRecording(e){
 // ---- Realtime Handlers ----
 function handleIncomingMessage(m){
   const belongsToOpenChat = currentChat && (
-    (currentChat.type === "dm" && m.chat_type === "dm" && (m.sender_id === currentChat.id  m.sender_id === ME.id)) 
+    (currentChat.type === "dm" && m.chat_type === "dm" && (m.sender_id === currentChat.id || m.sender_id === ME.id)) ||
     (currentChat.type === "group" && m.chat_type === "group" && String(currentChat.id) === m.chat_id)
   );
 
@@ -1834,7 +2063,7 @@ function handleIncomingMessage(m){
     return;
   }
 
-if (m.sender_id !== ME.id) {
+  if (m.sender_id !== ME.id) {
     socket.emit("mark_read", {chat_type: currentChat.type, target: currentChat.id});
   }
 
@@ -1875,14 +2104,14 @@ async function openNotifications(){
     html += "<div class='empty-state'><i>🎉</i>You're all caught up</div>";
   } else {
     unread.forEach(c => {
-      html += <div class="notif-item" style="display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--border-subtle);" onclick='closeNotifAndOpen("${c.type}", ${c.id})'>
-        <div class="avatar">${c.avatar ? <img src="${c.avatar}"> : (c.name ? c.name.charAt(0).toUpperCase() : "?")}</div>
+      html += `<div class="notif-item" style="display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--border-subtle);" onclick='closeNotifAndOpen("${c.type}", ${c.id})'>
+        <div class="avatar">${c.avatar ? `<img src="${c.avatar}">` : (c.name ? c.name.charAt(0).toUpperCase() : "?")}</div>
         <div class="list-item-content">
           <div class="list-item-name">${escapeHtml(c.name)}</div>
           <div class="list-item-sub">${escapeHtml(c.last_preview)}</div>
         </div>
         <div class="list-badge">${c.unread}</div>
-      </div>;
+      </div>`;
     });
   }
   sheet.innerHTML = html;
@@ -1926,20 +2155,19 @@ function refreshConversationsIfListVisible(){
 function handleMessageDeleted(d){
   const m = messageCache[d.message_id];
   if (m) { m.deleted = true; m.content = ""; m.media_path = ""; }
-  const row = document.querySelector(.bubble-row[data-id="${d.message_id}"]);
+  const row = document.querySelector(`.bubble-row[data-id="${d.message_id}"]`);
   if (row) {
     const bubble = row.querySelector(".bubble");
     bubble.className = "bubble deleted";
     bubble.innerHTML = "This message was deleted";
-
-}
+  }
 }
 function handleMessageEdited(d){
   const m = messageCache[d.message_id];
   if (!m) return;
   m.content = d.content;
   m.edited = true;
-  const row = document.querySelector(.bubble-row[data-id="${d.message_id}"]);
+  const row = document.querySelector(`.bubble-row[data-id="${d.message_id}"]`);
   if (row) {
     const newRow = buildBubble(m);
     row.replaceWith(newRow);
@@ -1959,7 +2187,7 @@ function handleTyping(d){
 function handleGroupMemberUpdate(data){
   if (currentChat && currentChat.type === "group" && String(currentChat.id) === data.group_id) {
     if (data.action === "role_changed") {
-      showToast(${data.username} is now ${data.new_role});
+      showToast(`${data.username} is now ${data.new_role}`);
       if (data.target_id === ME.id) {
         currentChat.role = data.new_role;
         document.getElementById("chatStatus").textContent = "Group · " + data.new_role;
@@ -1969,12 +2197,12 @@ function handleGroupMemberUpdate(data){
         showToast("You were removed from the group");
         closeChat();
       } else {
-        showToast(${data.username} was removed from the group);
+        showToast(`${data.username} was removed from the group`);
       }
     } else if (data.action === "restricted") {
-      showToast(${data.username} was restricted for ${data.duration});
+      showToast(`${data.username} was restricted for ${data.duration}`);
     } else if (data.action === "unrestricted") {
-      showToast(${data.username} is no longer restricted);
+      showToast(`${data.username} is no longer restricted`);
     }
     loadGroupMembers(currentChat.id);
   }
@@ -1988,28 +2216,28 @@ function openMessageMenu(m, mine){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  let html = <h2>Message</h2><div class="reaction-picker">
-    ${["❤️","👍","😂","😮","😢","🙏","😡","🎉"].map(e=><span onclick="reactToMessage(${m.id},'${e}')">${e}</span>).join("")}
-  </div>;
+  let html = `<h2>Message</h2><div class="reaction-picker">
+    ${["❤️","👍","😂","😮","😢","🙏","😡","🎉"].map(e=>`<span onclick="reactToMessage(${m.id},'${e}')">${e}</span>`).join("")}
+  </div>`;
   if (!m.deleted) {
-    html += <div class="sheet-item" onclick="copyMessage(${m.id})"><span class="ic">📋</span> Copy text</div>;
-    html += <div class="sheet-item" onclick="startReplyById(${m.id})"><span class="ic">↩️</span> Reply</div>;
-    html += <div class="sheet-item" onclick="openForwardPicker(${m.id})"><span class="ic">➡️</span> Forward</div>;
+    html += `<div class="sheet-item" onclick="copyMessage(${m.id})"><span class="ic">📋</span> Copy text</div>`;
+    html += `<div class="sheet-item" onclick="startReplyById(${m.id})"><span class="ic">↩️</span> Reply</div>`;
+    html += `<div class="sheet-item" onclick="openForwardPicker(${m.id})"><span class="ic">➡️</span> Forward</div>`;
   }
   if (mine && !m.deleted && m.msg_type === "text") {
-    html += <div class="sheet-item" onclick="startEditById(${m.id})"><span class="ic">✏️</span> Edit message</div>;
+    html += `<div class="sheet-item" onclick="startEditById(${m.id})"><span class="ic">✏️</span> Edit message</div>`;
   }
   if (!m.deleted) {
-    html += <div class="sheet-item" onclick="hideMessageForMe(${m.id})"><span class="ic">🙈</span> Delete for me</div>;
+    html += `<div class="sheet-item" onclick="hideMessageForMe(${m.id})"><span class="ic">🙈</span> Delete for me</div>`;
   }
   if (mine && !m.deleted) {
-    html += <div class="sheet-item" style="color:var(--danger);" onclick="deleteMessage(${m.id})"><span class="ic">🗑️</span> Delete for everyone</div>;
+    html += `<div class="sheet-item" style="color:var(--danger);" onclick="deleteMessage(${m.id})"><span class="ic">🗑️</span> Delete for everyone</div>`;
   }
   if (currentChat && currentChat.type === "group" && currentChat.role === "admin" && !mine && !m.deleted) {
-    html += <div style="border-top:1px solid var(--border-subtle);margin:8px 0;padding-top:8px;">;
-    html += <div class="sheet-item" style="color:var(--danger);" onclick="removeUserFromGroup(${m.sender_id})"><span class="ic">🚫</span> Remove user from group</div>;
-    html += <div class="sheet-item" onclick="restrictUserFromGroup(${m.sender_id})"><span class="ic">⏰</span> Restrict user</div>;
-    html += </div>;
+    html += `<div style="border-top:1px solid var(--border-subtle);margin:8px 0;padding-top:8px;">`;
+    html += `<div class="sheet-item" style="color:var(--danger);" onclick="removeUserFromGroup(${m.sender_id})"><span class="ic">🚫</span> Remove user from group</div>`;
+    html += `<div class="sheet-item" onclick="restrictUserFromGroup(${m.sender_id})"><span class="ic">⏰</span> Restrict user</div>`;
+    html += `</div>`;
   }
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
@@ -2022,8 +2250,7 @@ function copyMessage(messageId) {
   if (!m) {
     showToast("Message not found");
     return;
-
-}
+  }
   if (m.deleted) {
     showToast("Cannot copy a deleted message");
     return;
@@ -2044,7 +2271,7 @@ function copyMessage(messageId) {
   } else if (m.msg_type === "call") {
     const [ctype, status, dur] = (m.content || "audio:missed:0").split(":");
     const isVideo = ctype === "video";
-    textToCopy = ${isVideo ? "Video" : "Voice"} call - ${status};
+    textToCopy = `${isVideo ? "Video" : "Voice"} call - ${status}`;
   } else {
     textToCopy = m.content || "";
   }
@@ -2091,7 +2318,7 @@ async function hideMessageForMe(id){
   document.querySelector(".overlay")?.remove();
   try {
     await api("/api/messages/"+id+"/hide", {method:"POST"});
-    document.querySelector(.bubble-row[data-id="${id}"])?.remove();
+    document.querySelector(`.bubble-row[data-id="${id}"]`)?.remove();
     delete messageCache[id];
     showToast("Message deleted for you");
   } catch(e){ showToast(e.message); }
@@ -2115,7 +2342,7 @@ async function openForwardPicker(messageId){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  let html = <h2>Forward to...</h2><div class="search-bar" style="padding:0 0 12px;"><input id="forwardSearch" placeholder="Search..." oninput="filterForwardList(this.value)"></div><div id="forwardList"></div>;
+  let html = `<h2>Forward to...</h2><div class="search-bar" style="padding:0 0 12px;"><input id="forwardSearch" placeholder="Search..." oninput="filterForwardList(this.value)"></div><div id="forwardList"></div>`;
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
@@ -2148,10 +2375,10 @@ function renderForwardList(targets){
     const el = document.createElement("div");
     el.className = "list-item";
     el.onclick = () => confirmForward(t);
-    el.innerHTML = 
-      <div class="avatar">${t.avatar ? <img src="${t.avatar}"> : (t.name ? t.name.charAt(0).toUpperCase() : "?")}</div>
+    el.innerHTML = `
+      <div class="avatar">${t.avatar ? `<img src="${t.avatar}">` : (t.name ? t.name.charAt(0).toUpperCase() : "?")}</div>
       <div class="list-item-content"><div class="list-item-name">${escapeHtml(t.name)}</div>
-      <div class="list-item-sub">${t.type==="group" ? "Group" : "Direct message"}</div></div>;
+      <div class="list-item-sub">${t.type==="group" ? "Group" : "Direct message"}</div></div>`;
     body.appendChild(el);
   });
 }
@@ -2181,33 +2408,33 @@ async function openGroupManageMenu() {
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   
-  let html = <h2>👥 Manage Group</h2>;
+  let html = `<h2>👥 Manage Group</h2>`;
   
-  html += <div style="max-height:300px;overflow-y:auto;">;
+  html += `<div style="max-height:300px;overflow-y:auto;">`;
   members.forEach(m => {
     const isSelf = m.user_id === ME.id;
     const isAdmin = m.role === 'admin';
     const isModerator = m.role === 'moderator';
     const isRestricted = m.restricted_until && new Date(m.restricted_until) > new Date();
     
-    html += <div class="sheet-item" style="flex-wrap:wrap;gap:8px;">
+    html += `<div class="sheet-item" style="flex-wrap:wrap;gap:8px;">
       <span class="ic">${avatarInner(m)}</span>
       <span style="flex:1;">${escapeHtml(m.username)}</span>
       ${isAdmin ? '<span class="role-badge admin">👑 Admin</span>' : ''}
       ${isModerator ? '<span class="role-badge moderator">🛡️ Mod</span>' : ''}
-      ${isRestricted ? <span class="restricted-badge">⏰ Restricted</span> : ''}
-      ${!isSelf && !isAdmin ? 
+      ${isRestricted ? `<span class="restricted-badge">⏰ Restricted</span>` : ''}
+      ${!isSelf && !isAdmin ? `
         <select class="member-role-select" onchange="changeMemberRole(${m.user_id}, this.value)">
           <option value="member" ${!isModerator ? 'selected' : ''}>Member</option>
           <option value="moderator" ${isModerator ? 'selected' : ''}>Moderator</option>
           <option value="admin" ${isAdmin ? 'selected' : ''}>Admin</option>
         </select>
         <button onclick="removeUserFromGroup(${m.user_id})" style="color:var(--danger);font-size:16px;">🗑️</button>
-        ${!isRestricted ? <button onclick="restrictUserFromGroup(${m.user_id})" style="color:var(--accent);font-size:16px;">⏰</button> : <button onclick="unrestrictUser(${m.user_id})" style="color:#34d399;font-size:16px;">✅</button>}
-       : ''}
-    </div>;
+        ${!isRestricted ? `<button onclick="restrictUserFromGroup(${m.user_id})" style="color:var(--accent);font-size:16px;">⏰</button>` : `<button onclick="unrestrictUser(${m.user_id})" style="color:#34d399;font-size:16px;">✅</button>`}
+      ` : ''}
+    </div>`;
   });
-  html += </div>;
+  html += `</div>`;
   
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
@@ -2232,8 +2459,7 @@ async function changeMemberRole(userId, newRole) {
 
 async function removeUserFromGroup(userId) {
   if (!currentChat || currentChat.type !== "group") return;
-
-if (!confirm("Are you sure you want to remove this user from the group?")) return;
+  if (!confirm("Are you sure you want to remove this user from the group?")) return;
   try {
     await api("/api/groups/"+currentChat.id+"/remove", {
       method: "POST",
@@ -2255,7 +2481,7 @@ async function restrictUserFromGroup(userId) {
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = 
+  sheet.innerHTML = `
     <h2>⏰ Restrict User</h2>
     <p style="color:var(--text-secondary);margin-bottom:12px;">Choose restriction duration:</p>
     <div class="restriction-picker">
@@ -2266,7 +2492,7 @@ async function restrictUserFromGroup(userId) {
       <button onclick="confirmRestrict(${userId}, 2592000)">30 days</button>
     </div>
     <button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()" style="background:var(--bg-surface-2);box-shadow:none;margin-top:8px;"><span>Cancel</span></button>
-  ;
+  `;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
@@ -2279,7 +2505,7 @@ async function confirmRestrict(userId, durationSeconds) {
       method: "POST",
       body: JSON.stringify({user_id: userId, duration: durationSeconds})
     });
-    showToast(User restricted for ${formatDuration(durationSeconds)});
+    showToast(`User restricted for ${formatDuration(durationSeconds)}`);
     loadGroupMembers(currentChat.id);
     document.querySelector(".overlay")?.remove();
   } catch(e) {
@@ -2315,21 +2541,52 @@ async function openChatMenu(){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  let html = <h2>${escapeHtml(currentChat ? currentChat.name : "")}</h2>;
+  let html = `<h2>${escapeHtml(currentChat ? currentChat.name : "")}</h2>`;
 
   if (currentChat && currentChat.type === "group") {
-    html += <div class="sheet-item" onclick="viewGroupMembers()"><span class="ic">👥</span> View members</div>;
+    html += `<div class="sheet-item" onclick="viewGroupMembers()"><span class="ic">👥</span> View members</div>`;
     if (currentChat.role === "admin") {
-      html += <div class="sheet-item" onclick="openGroupManageMenu()"><span class="ic">⚙️</span> Manage group</div>;
-      html += <div class="sheet-item" onclick="changeGroupAvatarPrompt()"><span class="ic">🖼️</span> Change group photo</div>;
+      html += `<div class="sheet-item" onclick="openGroupManageMenu()"><span class="ic">⚙️</span> Manage group</div>`;
+      html += `<div class="sheet-item" onclick="changeGroupAvatarPrompt()"><span class="ic">🖼️</span> Change group photo</div>`;
     }
-    html += <div class="sheet-item" onclick="shareInviteLink()"><span class="ic">🔗</span> Share invite link</div>;
+    html += `<div class="sheet-item" onclick="shareInviteLink()"><span class="ic">🔗</span> Share invite link</div>`;
   } else if (blockStatus.i_blocked) {
-    html += <div class="sheet-item" onclick="unblockFromChat()"><span class="ic">✅</span> Unblock user</div>;
-
-} else if (currentChat && currentChat.type === "dm") {
-    html += <div class="sheet-item" onclick="blockCurrentUser()"><span class="ic">🚫</span> Block user</div>;
+    html += `<div class="sheet-item" onclick="unblockFromChat()"><span class="ic">✅</span> Unblock user</div>`;
+  } else if (currentChat && currentChat.type === "dm") {
+    html += `<div class="sheet-item" onclick="blockCurrentUser()"><span class="ic">🚫</span> Block user</div>`;
   }
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+// ---- Theme Picker for Chat ----
+function openChatThemePicker() {
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  
+  const themes = [
+    { id: 'default', name: 'Default', color: '#4f9aff' },
+    { id: 'cosmic', name: 'Cosmic', color: '#7c5cff' },
+    { id: 'aurora', name: 'Aurora', color: '#34d399' },
+    { id: 'sunset', name: 'Sunset', color: '#f472b6' },
+    { id: 'ocean', name: 'Ocean', color: '#0ea5e9' },
+    { id: 'sakura', name: 'Sakura', color: '#ec4899' },
+    { id: 'midnight', name: 'Midnight', color: '#8b5cf6' }
+  ];
+  
+  let html = `<h2>🎨 Chat Themes</h2><div class="theme-selector">`;
+  themes.forEach(t => {
+    const active = currentTheme === t.id ? 'active' : '';
+    html += `<div class="theme-option ${active}" onclick="applyTheme('${t.id}');document.querySelector('.overlay')?.remove();">
+      <div class="theme-preview" style="background:${t.color};"></div>
+      <div class="theme-name">${t.name}</div>
+    </div>`;
+  });
+  html += `</div>`;
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
@@ -2378,7 +2635,7 @@ async function viewGroupMembers(){
       const isRestricted = m.restricted_until && new Date(m.restricted_until) > new Date();
       const roleBadge = m.role === 'admin' ? ' 👑' : (m.role === 'moderator' ? ' 🛡️' : '');
       const restrictBadge = isRestricted ? ' ⏰' : '';
-      html += <div class="sheet-item"><span class="ic">${avatarInner(m)}</span> ${escapeHtml(m.username)}${roleBadge}${restrictBadge}</div>;
+      html += `<div class="sheet-item"><span class="ic">${avatarInner(m)}</span> ${escapeHtml(m.username)}${roleBadge}${restrictBadge}</div>`;
     });
   }
   sheet.innerHTML = html;
@@ -2404,13 +2661,13 @@ async function shareInviteLink(){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = <h2>Invite link</h2>
+  sheet.innerHTML = `<h2>Invite link</h2>
     <div class="link-box"><input readonly value="${link}" id="inviteLinkInput"></div>
     <button class="btn-primary" onclick="copyInviteLink()"><span>Copy link</span></button>
-    ${usingPublicUrl ? "" : <div class="settings-row desc" style="border:none;padding-top:14px;line-height:1.5;color:var(--text-dim);font-size:13px;">
+    ${usingPublicUrl ? "" : `<div class="settings-row desc" style="border:none;padding-top:14px;line-height:1.5;color:var(--text-dim);font-size:13px;">
        ⚠️ No public internet address is active yet, so this link currently only opens for people on the same local network as you.
        The server automatically tries to create one on startup (via cloudflared) — check the server console, or install cloudflared and restart. This banner disappears once a public link is ready.
-    </div>};
+    </div>`}`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
@@ -2460,11 +2717,11 @@ function openCreateGroupSheet(){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = 
+  sheet.innerHTML = `
     <h2>New group</h2>
     <div class="field"><label>Group name</label><input id="newGroupName" placeholder="e.g. Weekend Trip"></div>
     <div class="field"><label>Admin password (optional)</label><input id="newGroupPass" type="password" placeholder="Required to join via link"></div>
-    <button class="btn-primary" onclick="submitCreateGroup()"><span>Create group</span></button>;
+    <button class="btn-primary" onclick="submitCreateGroup()"><span>Create group</span></button>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
@@ -2502,10 +2759,19 @@ async function openSettings(){
     <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--border-subtle);font-size:15px;">
       <div>
         <div>Conversation animations</div>
-
-<div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">Calm fade/slide effect when messages appear</div>
+        <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">Calm fade/slide effect when messages appear</div>
       </div>
       <div class="toggle-switch ${ANIMATIONS_ON ? 'on' : ''}" style="width:44px;height:24px;border-radius:14px;background:#2a3a4d;position:relative;flex-shrink:0;transition:.2s;cursor:pointer;" onclick="toggleAnimations()"><div class="knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:.2s;"></div></div>
+    </div>
+
+    <h2 style="margin-top:22px;">Chat Themes</h2>
+    <div class="theme-selector" style="grid-template-columns:repeat(4,1fr);">
+      ${['default','cosmic','aurora','sunset','ocean','sakura','midnight'].map(t => `
+        <div class="theme-option ${currentTheme === t ? 'active' : ''}" onclick="applyTheme('${t}');document.querySelector('.overlay')?.remove();">
+          <div class="theme-preview" style="background:${t === 'default' ? '#4f9aff' : t === 'cosmic' ? '#7c5cff' : t === 'aurora' ? '#34d399' : t === 'sunset' ? '#f472b6' : t === 'ocean' ? '#0ea5e9' : t === 'sakura' ? '#ec4899' : '#8b5cf6'};"></div>
+          <div class="theme-name">${t.charAt(0).toUpperCase() + t.slice(1)}</div>
+        </div>
+      `).join('')}
     </div>
 
     <h2 style="margin-top:22px;">Server</h2>
@@ -2515,12 +2781,12 @@ async function openSettings(){
     </div>
     <div class="settings-row" style="display:block;padding:13px 4px;border-bottom:1px solid var(--border-subtle);">
       <div>Voice &amp; video calls</div>
-      <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">${window.isSecureContext ? "This connection supports calls." : "⚠️ Calls are blocked on this connection because it isn't secure (HTTPS). Open the app using its public link" + (PUBLIC_BASE_URL ? " (" + escapeHtml(PUBLIC_BASE_URL) + ")" : "") + ", or via 127.0.0.1/localhost on this device, for calls to work."}</div>
+      <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">${window.isSecureContext ? "✅ This connection supports calls." : "⚠️ Calls require HTTPS or localhost."}</div>
     </div>
 
     <div class="sheet-item" onclick="viewBlockedList()"><span class="ic">🚫</span> Blocked users</div>
     <div class="sheet-item" style="color:var(--danger);" onclick="logout()"><span class="ic">🚪</span> Log out</div>
-    <div class="sheet-item" style="color:var(--danger);" onclick="openDeleteAccountSheet()"><span class="ic">⚠️</span> Delete account</div>;
+    <div class="sheet-item" style="color:var(--danger);" onclick="openDeleteAccountSheet()"><span class="ic">⚠️</span> Delete account</div>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 
@@ -2557,15 +2823,14 @@ function openDeleteAccountSheet(){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = 
+  sheet.innerHTML = `
     <h2 style="color:var(--danger);">Delete account</h2>
     <div class="settings-row desc" style="border:none;line-height:1.6;padding:0 0 16px;color:var(--text-dim);font-size:13px;">
       This permanently deletes your account and everything you've posted — messages, reels, comments and reactions.
       This cannot be undone: your old email and password will stop working immediately, and the only way to use Wavegram again is signing up as a brand new account. Nobody will be able to message you either, because the account will no longer exist.
-
-</div>
+    </div>
     <div class="field"><label>Confirm your password</label><input type="password" id="deleteAccountPassword" placeholder="••••••••"></div>
-    <button class="btn-primary" style="background:var(--danger);box-shadow:none;" onclick="confirmDeleteAccount()"><span>Permanently delete my account</span></button>;
+    <button class="btn-primary" style="background:var(--danger);box-shadow:none;" onclick="confirmDeleteAccount()"><span>Permanently delete my account</span></button>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
@@ -2596,8 +2861,8 @@ async function viewBlockedList(){
   if (!r.users || r.users.length===0) html += "<div class='empty-state'>No blocked users</div>";
   if (r.users) {
     r.users.forEach(u => {
-      html += <div class="sheet-item">${escapeHtml(u.username)}
-        <button style="margin-left:auto;color:var(--accent);font-size:13px;" onclick="unblockUser(${u.id})">Unblock</button></div>;
+      html += `<div class="sheet-item">${escapeHtml(u.username)}
+        <button style="margin-left:auto;color:var(--accent);font-size:13px;" onclick="unblockUser(${u.id})">Unblock</button></div>`;
     });
   }
   sheet.innerHTML = html;
@@ -2632,7 +2897,7 @@ function promptJoinGroup(token){
   overlay.className = "overlay";
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = 
+  sheet.innerHTML = `
     <h2>Join group</h2>
     <div class="field"><label>Group password (if any)</label><input type="password" id="joinPass"></div>
     <button class="btn-primary" onclick="submitJoinGroup('${token}')"><span>Join</span></button>`;
@@ -2665,13 +2930,12 @@ async function loadReels(){
 function renderReelsFeed(){
   const feed = document.getElementById("reelsFeed");
   feed.innerHTML = "";
-
-if (!reelsData || reelsData.length === 0) {
-    feed.innerHTML = <div class="reel-item"><div class="reel-empty" style="color:#fff;text-align:center;padding:60px 30px;opacity:.7;font-size:14px;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+  if (!reelsData || reelsData.length === 0) {
+    feed.innerHTML = `<div class="reel-item"><div class="reel-empty" style="color:#fff;text-align:center;padding:60px 30px;opacity:.7;font-size:14px;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
       <div style="font-size:48px;">🎬</div>
       <div>No reels yet.</div>
       <div style="font-size:13px;opacity:0.6;">Tap the + button to share your first photo or video.</div>
-    </div></div>;
+    </div></div>`;
     return;
   }
   if (reelViewObserver) reelViewObserver.disconnect();
@@ -2700,11 +2964,11 @@ function buildReelItem(reel, index){
   const el = document.createElement("div");
   el.className = "reel-item";
   el.dataset.reelId = reel.id;
-  el.style.background = #${Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')};
+  el.style.background = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')}`;
 
   const media = reel.media_type === "video"
-    ? <video src="${reel.media_path}" loop muted playsinline preload="metadata" poster="${reel.media_path}?v=${Date.now()}"></video>
-    : <img src="${reel.media_path}" loading="lazy">;
+    ? `<video src="${reel.media_path}" loop muted playsinline preload="metadata" poster="${reel.media_path}?v=${Date.now()}"></video>`
+    : `<img src="${reel.media_path}" loading="lazy">`;
 
   const totalReactions = Object.values(reel.reaction_counts||{}).reduce((a,b)=>a+b,0);
 
@@ -2715,17 +2979,17 @@ function buildReelItem(reel, index){
   ];
   const gradient = gradientColors[index % gradientColors.length];
 
-  el.innerHTML = 
+  el.innerHTML = `
     ${media}
     <div class="reel-overlay" style="background:${gradient};">
       <div class="reel-info">
         <div class="reel-author">
-          <div class="avatar" style="width:36px;height:36px;font-size:14px;border:2px solid rgba(255,255,255,0.3);">${reel.author_avatar ? <img src="${reel.author_avatar}"> : (reel.author_name ? reel.author_name.charAt(0).toUpperCase() : "?")}</div>
+          <div class="avatar" style="width:36px;height:36px;font-size:14px;border:2px solid rgba(255,255,255,0.3);">${reel.author_avatar ? `<img src="${reel.author_avatar}">` : (reel.author_name ? reel.author_name.charAt(0).toUpperCase() : "?")}</div>
           <span style="font-size:16px;font-weight:600;">${escapeHtml(reel.author_name)}</span>
           <span style="font-size:12px;opacity:0.6;margin-left:4px;">• ${formatRelativeTime(reel.timestamp)}</span>
-          ${reel.is_mine ? <span onclick="event.stopPropagation();deleteReel(${reel.id})" style="margin-left:auto;font-size:18px;cursor:pointer;opacity:0.6;background:rgba(0,0,0,0.3);padding:4px 10px;border-radius:20px;">🗑️</span> : ""}
+          ${reel.is_mine ? `<span onclick="event.stopPropagation();deleteReel(${reel.id})" style="margin-left:auto;font-size:18px;cursor:pointer;opacity:0.6;background:rgba(0,0,0,0.3);padding:4px 10px;border-radius:20px;">🗑️</span>` : ""}
         </div>
-        ${reel.caption ? <div class="reel-caption" style="font-size:15px;font-weight:400;margin-top:4px;">${escapeHtml(reel.caption)}</div>` : ""}
+        ${reel.caption ? `<div class="reel-caption" style="font-size:15px;font-weight:400;margin-top:4px;">${escapeHtml(reel.caption)}</div>` : ""}
         <div class="reel-views" style="margin-top:8px;font-size:13px;opacity:0.8;">
           <span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${reel.view_count || 0} views</span>
         </div>
@@ -2734,8 +2998,7 @@ function buildReelItem(reel, index){
         <div class="reel-action" onclick="toggleReelReaction(${reel.id})" style="transition:transform 0.2s;">
           <span class="ricon" id="reelReactIcon${reel.id}" style="font-size:32px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">${reel.my_reaction || "🤍"}</span>
           <span id="reelReactCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${totalReactions || ""}</span>
-
-</div>
+        </div>
         <div class="reel-action" onclick="openReelComments(${reel.id})">
           <span class="ricon" style="font-size:28px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">💬</span>
           <span id="reelCommentCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${reel.comment_count || ""}</span>
@@ -2753,7 +3016,7 @@ function buildReelItem(reel, index){
       <span style="width:6px;height:6px;border-radius:50%;background:${index === 1 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
       <span style="width:6px;height:6px;border-radius:50%;background:${index === 2 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
     </div>
-  ;
+  `;
   return el;
 }
 
@@ -2781,8 +3044,8 @@ async function registerReelView(id){
     const r = await api("/api/reels/"+id+"/view", {method:"POST"});
     const reel = reelsData.find(x => x.id === id);
     if (reel) reel.view_count = r.view_count;
-    const el = document.querySelector(.reel-item[data-reel-id="${id}"] .reel-views);
-    if (el) el.innerHTML = <span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${r.view_count} views</span>;
+    const el = document.querySelector(`.reel-item[data-reel-id="${id}"] .reel-views`);
+    if (el) el.innerHTML = `<span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${r.view_count} views</span>`;
   } catch(e){}
 }
 
@@ -2812,15 +3075,14 @@ function openReelReactionPicker(id){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = <h2>React</h2><div class="reaction-picker">
-    ${["❤️","👍","😂","😮","😢","🔥","💯","🎉"].map(e=><span onclick="setReelReaction(${id},'${e}')" style="font-size:32px;transition:transform 0.2s;">${e}</span>).join("")}
+  sheet.innerHTML = `<h2>React</h2><div class="reaction-picker">
+    ${["❤️","👍","😂","😮","😢","🔥","💯","🎉"].map(e=>`<span onclick="setReelReaction(${id},'${e}')" style="font-size:32px;transition:transform 0.2s;">${e}</span>`).join("")}
   </div>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
 async function setReelReaction(id, emoji){
-
-const reel = reelsData.find(x => x.id === id);
+  const reel = reelsData.find(x => x.id === id);
   try {
     const r = await api("/api/reels/"+id+"/react", {method:"POST", body: JSON.stringify({emoji})});
     if (reel) { reel.my_reaction = emoji; reel.reaction_counts = r.reaction_counts; }
@@ -2855,15 +3117,15 @@ function openUploadReelSheet(){
     sheet.className = "sheet";
     const isVideo = file.type.startsWith("video");
     const previewUrl = URL.createObjectURL(file);
-    sheet.innerHTML = 
+    sheet.innerHTML = `
       <h2>🎬 New Reel</h2>
       <div style="width:100%;max-height:320px;border-radius:16px;overflow:hidden;margin-bottom:14px;background:#000;display:flex;align-items:center;justify-content:center;">
-        ${isVideo ? <video src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;" controls></video>
-                   : <img src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;">}
+        ${isVideo ? `<video src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;" controls></video>`
+                   : `<img src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;">`}
       </div>
       <div class="field"><label>Caption (optional)</label><input id="reelCaption" placeholder="Say something about this..." style="width:100%;padding:12px 16px;background:var(--bg-surface-2);border-radius:12px;font-size:14px;"></div>
       <button class="btn-primary" onclick="publishReel()" style="margin-top:8px;"><span>📤 Share Reel</span></button>
-    ;
+    `;
     overlay.appendChild(sheet);
     document.getElementById("app").appendChild(overlay);
     window._pendingReelFile = file;
@@ -2901,9 +3163,8 @@ async function openReelComments(reelId){
     <div id="commentsList" style="max-height:300px;overflow-y:auto;"></div>
     <div class="comment-input-row" style="display:flex;gap:8px;align-items:center;padding:12px 4px 4px;border-top:1px solid var(--border-subtle);margin-top:12px;">
       <input id="commentInput" placeholder="Write a comment..." style="flex:1;background:var(--bg-surface-2);padding:10px 16px;border-radius:20px;font-size:14px;border:1.5px solid transparent;transition:var(--transition-smooth);">
-
-<div class="round-btn send" style="width:38px;height:38px;" onclick="submitComment(${reelId})">➤</div>
-    </div>;
+      <div class="round-btn send" style="width:38px;height:38px;" onclick="submitComment(${reelId})">➤</div>
+    </div>`;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
   window._currentReplyParent = null;
@@ -2933,9 +3194,9 @@ function renderComments(comments){
 function buildCommentEl(c, isReply){
   const el = document.createElement("div");
   el.className = "comment-item" + (isReply ? " reply" : "");
-  el.style.cssText = display:flex;gap:10px;padding:10px 4px;${isReply ? 'margin-left:38px;border-left:2px solid var(--accent);padding-left:12px;' : ''};
-  el.innerHTML = 
-    <div class="avatar" style="width:32px;height:32px;font-size:12px;flex-shrink:0;">${c.author_avatar ? <img src="${c.author_avatar}"> : (c.author_name ? c.author_name.charAt(0).toUpperCase() : "?")}</div>
+  el.style.cssText = `display:flex;gap:10px;padding:10px 4px;${isReply ? 'margin-left:38px;border-left:2px solid var(--accent);padding-left:12px;' : ''}`;
+  el.innerHTML = `
+    <div class="avatar" style="width:32px;height:32px;font-size:12px;flex-shrink:0;">${c.author_avatar ? `<img src="${c.author_avatar}">` : (c.author_name ? c.author_name.charAt(0).toUpperCase() : "?")}</div>
     <div style="flex:1;min-width:0;">
       <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
         ${escapeHtml(c.author_name)}
@@ -2963,7 +3224,7 @@ async function submitComment(reelId){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== CALLS (WebRTC) ====================
+// ==================== CALLS (WebRTC) - FIXED ====================
 let pc = null;
 let localStream = null;
 let remoteStream = null;
@@ -2978,13 +3239,17 @@ let callRecordSaved = false;
 
 const rtcConfig = {
   iceServers: [
-    {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]},
-    {urls: ["stun:stun2.l.google.com:19302"]}
-  ]
+    { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
+    { urls: "stun:stun2.l.google.com:19302" },
+    { urls: "stun:stun3.l.google.com:19302" },
+    { urls: "stun:stun4.l.google.com:19302" }
+  ],
+  iceCandidatePoolSize: 10
 };
 
 async function startCall(type){
-  console.log("startCall called with type:", type);
+  console.log("🔵 startCall called with type:", type);
   
   if (!window.isSecureContext) {
     showToast("Calls require HTTPS or localhost");
@@ -3009,21 +3274,24 @@ async function startCall(type){
   callRecordSaved = false;
   isCallActive = true;
 
-  console.log("Starting call to:", currentCallTargetId, "video:", isVideoCall);
+  console.log("📞 Starting call to:", currentCallTargetId, "video:", isVideoCall);
 
-// Show call UI
+  // Show call UI
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
   document.getElementById("callStatus").textContent = "Calling...";
   document.getElementById("callName").textContent = currentChat.name;
-  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat.name, avatar: currentChat.avatar});
+  setCallAvatarEl(document.getElementById("callAvatar"), {username: currentChat.name, avatar: currentChat.avatar});
   
   try {
-    const constraints = {audio: true, video: isVideoCall};
-    console.log("Getting user media with constraints:", constraints);
+    const constraints = { 
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      video: isVideoCall ? { width: { ideal: 640 }, height: { ideal: 480 } } : false
+    };
+    console.log("🎤 Getting user media with constraints:", constraints);
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-    console.log("Local stream obtained");
+    console.log("✅ Local stream obtained");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -3034,31 +3302,36 @@ async function startCall(type){
     }
     
     createPeerConnection();
-    console.log("Peer connection created");
+    console.log("🔗 Peer connection created");
 
+    // Add all tracks to the peer connection
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
-        console.log("Track added:", track.kind);
+        console.log("➕ Track added:", track.kind);
       }
     });
 
-    const offer = await pc.createOffer();
-    console.log("Offer created:", offer);
+    // Create and send offer
+    const offer = await pc.createOffer({
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: isVideoCall
+    });
+    console.log("📤 Offer created:", offer);
     await pc.setLocalDescription(offer);
-    console.log("Local description set");
+    console.log("📝 Local description set");
 
     socket.emit("call_offer", {
       target: currentCallTargetId,
       offer: offer,
       video: isVideoCall
     });
-    console.log("Call offer sent");
+    console.log("📨 Call offer sent");
     
     startCallTimer();
     
   } catch(err){
-    console.error("Error starting call:", err);
+    console.error("❌ Error starting call:", err);
     showToast("Could not start call: " + err.message);
     endCall(true);
   }
@@ -3072,20 +3345,23 @@ function startCallTimer() {
       const mins = Math.floor(elapsed / 60);
       const secs = elapsed % 60;
       document.getElementById("callStatus").textContent = 
-        ${mins}:${secs.toString().padStart(2, '0')};
+        `${mins}:${secs.toString().padStart(2, '0')}`;
     }
   }, 1000);
 }
 
 async function handleCallOffer(data){
-  console.log("Call offer received from:", data.from_user_id);
+  console.log("📥 Call offer received from:", data.from_user_id);
   
   if (isCallActive || currentCallTargetId) {
-    console.log("Already in a call, rejecting");
+    console.log("⛔ Already in a call, rejecting");
     socket.emit("call_reject", {target: data.from_user_id});
     return;
   }
-  if (!data.from_user_id) return;
+  if (!data.from_user_id) {
+    console.warn("⚠️ Invalid call offer: missing from_user_id");
+    return;
+  }
   
   currentCallTargetId = data.from_user_id;
   isVideoCall = data.video || false;
@@ -3093,10 +3369,10 @@ async function handleCallOffer(data){
   callRecordSaved = false;
   isCallActive = true;
 
-  const user = {username: data.from_username  "Unknown", avatar: data.from_avatar  null};
-  setAvatarEl(document.getElementById("callAvatar"), user);
+  const user = {username: data.from_username || "Unknown", avatar: data.from_avatar || null};
+  setCallAvatarEl(document.getElementById("callAvatar"), user);
   document.getElementById("callName").textContent = user.username;
-  document.getElementById("callStatus").textContent = isVideoCall ? "Incoming video call..." : "Incoming voice call...";
+  document.getElementById("callStatus").textContent = isVideoCall ? "📹 Incoming video call..." : "📞 Incoming voice call...";
 
   document.getElementById("callActionsIncoming").classList.remove("hidden");
   document.getElementById("callActionsActive").classList.add("hidden");
@@ -3104,11 +3380,16 @@ async function handleCallOffer(data){
 
   window._incomingOffer = data.offer;
   window._callerInfo = user;
-  console.log("Incoming call offer stored");
+  console.log("📥 Incoming call offer stored");
+  
+  // Play ringtone effect (vibration on mobile)
+  if (navigator.vibrate) {
+    navigator.vibrate([200, 100, 200]);
+  }
 }
 
 async function acceptCall(){
-  console.log("Accepting call");
+  console.log("✅ Accepting call");
   
   if (!window._incomingOffer) {
     showToast("No incoming call to accept");
@@ -3120,11 +3401,13 @@ async function acceptCall(){
   document.getElementById("callStatus").textContent = "Connecting...";
 
   try {
-    const constraints = {audio: true, video: isVideoCall};
-    console.log("Getting user media for answer");
+    const constraints = { 
+      audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      video: isVideoCall ? { width: { ideal: 640 }, height: { ideal: 480 } } : false
+    };
+    console.log("🎤 Getting user media for answer");
     localStream = await navigator.mediaDevices.getUserMedia(constraints);
-
-console.log("Local stream obtained for answer");
+    console.log("✅ Local stream obtained for answer");
     
     const lv = document.getElementById("localVideo");
     if (isVideoCall) {
@@ -3135,66 +3418,66 @@ console.log("Local stream obtained for answer");
     }
     
     createPeerConnection();
-    console.log("Peer connection created for answer");
+    console.log("🔗 Peer connection created for answer");
 
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
-        console.log("Track added for answer:", track.kind);
+        console.log("➕ Track added for answer:", track.kind);
       }
     });
 
-    console.log("Setting remote description");
+    console.log("📥 Setting remote description");
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
-    console.log("Remote description set");
+    console.log("✅ Remote description set");
     
     const answer = await pc.createAnswer();
-    console.log("Answer created");
+    console.log("📤 Answer created");
     await pc.setLocalDescription(answer);
-    console.log("Local description set for answer");
+    console.log("📝 Local description set for answer");
 
     socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
-    console.log("Answer sent");
+    console.log("📨 Answer sent");
     
     startCallTimer();
     
   } catch(err){
-    console.error("Error accepting call:", err);
+    console.error("❌ Error accepting call:", err);
     showToast("Failed to accept call: " + err.message);
     endCall(true);
   }
 }
 
 async function handleCallAnswer(data){
-  console.log("Call answer received");
+  console.log("📥 Call answer received");
   if (!pc) {
-    console.warn("No peer connection for answer");
+    console.warn("⚠️ No peer connection for answer");
     return;
   }
   try {
-    console.log("Setting remote description from answer");
+    console.log("📥 Setting remote description from answer");
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
-    console.log("Remote description set from answer");
+    console.log("✅ Remote description set from answer");
     document.getElementById("callStatus").textContent = "Connected";
     startCallTimer();
   } catch(e){
-    console.error("Error handling call answer:", e);
+    console.error("❌ Error handling call answer:", e);
   }
 }
 
 async function handleRemoteIce(data){
-  console.log("ICE candidate received");
+  console.log("🧊 ICE candidate received");
   if (!pc || !data.candidate) return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-    console.log("ICE candidate added");
+    console.log("✅ ICE candidate added");
   } catch(e){
-    console.warn("Failed to add ICE candidate:", e);
+    console.warn("⚠️ Failed to add ICE candidate:", e);
   }
 }
 
 function handleCallReject(data){
-  console.log("Call rejected");
+  console.log("📵 Call rejected");
   showToast("Call declined");
   if (!callRecordSaved) {
     saveCallRecord("declined");
@@ -3204,7 +3487,7 @@ function handleCallReject(data){
 }
 
 function handleRemoteEnd(data){
-  console.log("Remote end received");
+  console.log("📵 Remote end received");
   showToast("Call ended");
   if (!callRecordSaved && callStartTime) {
     saveCallRecord("completed");
@@ -3214,7 +3497,7 @@ function handleRemoteEnd(data){
 }
 
 function declineCall(){
-  console.log("Declining call");
+  console.log("📵 Declining call");
   if (currentCallTargetId) {
     socket.emit("call_reject", {target: currentCallTargetId});
   }
@@ -3226,7 +3509,7 @@ function declineCall(){
 }
 
 function endCall(silent){
-  console.log("Ending call, silent:", silent);
+  console.log("🔴 Ending call, silent:", silent);
   
   if (callTimerInterval) {
     clearInterval(callTimerInterval);
@@ -3242,14 +3525,17 @@ function endCall(silent){
   }
   
   if (localStream) {
-    localStream.getTracks().forEach(t => t.stop());
+    localStream.getTracks().forEach(t => {
+      t.stop();
+      console.log("⏹️ Track stopped:", t.kind);
+    });
     localStream = null;
-    console.log("Local stream stopped");
+    console.log("✅ Local stream stopped");
   }
   if (pc) {
     pc.close();
     pc = null;
-    console.log("Peer connection closed");
+    console.log("✅ Peer connection closed");
   }
   currentCallTargetId = null;
   isCallActive = false;
@@ -3258,17 +3544,16 @@ function endCall(silent){
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
   document.getElementById("cameraBtn").classList.add("hidden");
-  console.log("Call ended and UI cleaned up");
+  console.log("✅ Call ended and UI cleaned up");
 }
 
 function saveCallRecord(status) {
-  console.log("Saving call record with status:", status);
-
-if (!currentChat || currentChat.type !== "dm") return;
+  console.log("💾 Saving call record with status:", status);
+  if (!currentChat || currentChat.type !== "dm") return;
   const callType = isVideoCall ? "video" : "audio";
   const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
   
-  const content = ${callType}:${status}:${duration};
+  const content = `${callType}:${status}:${duration}`;
   const clientId = makeClientId();
   
   const m = {
@@ -3304,22 +3589,22 @@ if (!currentChat || currentChat.type !== "dm") return;
     client_id: clientId,
     reply_to_id: null
   });
-  console.log("Call record saved");
+  console.log("💾 Call record saved");
 }
 
 function createPeerConnection(){
-  console.log("Creating peer connection");
+  console.log("🔗 Creating peer connection");
   pc = new RTCPeerConnection(rtcConfig);
   
   pc.onicecandidate = (event) => {
     if (event.candidate && currentCallTargetId && socket) {
-      console.log("Sending ICE candidate");
+      console.log("🧊 Sending ICE candidate");
       socket.emit("call_ice_candidate", {target: currentCallTargetId, candidate: event.candidate});
     }
   };
   
   pc.ontrack = (event) => {
-    console.log("Track received from remote");
+    console.log("📺 Track received from remote:", event.track.kind);
     remoteStream = event.streams[0];
     const rv = document.getElementById("remoteVideo");
     rv.srcObject = remoteStream;
@@ -3329,8 +3614,9 @@ function createPeerConnection(){
   };
   
   pc.oniceconnectionstatechange = () => {
-    console.log("ICE connection state:", pc?.iceConnectionState);
-    if (pc && pc.iceConnectionState === "failed") {
+    const state = pc?.iceConnectionState;
+    console.log("🧊 ICE connection state:", state);
+    if (state === "failed") {
       showToast("Connection failed");
       if (!callRecordSaved) {
         saveCallRecord("missed");
@@ -3338,10 +3624,10 @@ function createPeerConnection(){
       }
       endCall(true);
     }
-    if (pc && pc.iceConnectionState === "connected") {
+    if (state === "connected") {
       document.getElementById("callStatus").textContent = "Connected";
     }
-    if (pc && pc.iceConnectionState === "disconnected") {
+    if (state === "disconnected") {
       showToast("Disconnected");
       if (!callRecordSaved) {
         saveCallRecord("missed");
@@ -3351,7 +3637,11 @@ function createPeerConnection(){
     }
   };
   
-  console.log("Peer connection created");
+  pc.onconnectionstatechange = () => {
+    console.log("🔗 Connection state:", pc?.connectionState);
+  };
+  
+  console.log("✅ Peer connection created");
 }
 
 function toggleMute(){
@@ -3361,6 +3651,7 @@ function toggleMute(){
   const btn = document.getElementById("muteBtn");
   btn.classList.toggle("active-toggle", isMuted);
   btn.textContent = isMuted ? "🔇" : "🎤";
+  console.log("🎤 Mute toggled:", isMuted);
 }
 
 function toggleCamera(){
@@ -3370,6 +3661,7 @@ function toggleCamera(){
   const btn = document.getElementById("cameraBtn");
   btn.classList.toggle("active-toggle", isCameraOff);
   btn.textContent = isCameraOff ? "🎦" : "📷";
+  console.log("📷 Camera toggled:", isCameraOff);
 }
 </script>
 </body>
