@@ -1,11 +1,11 @@
+Magica:
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Wavegram Premium · Analytics & Profiles</title>
+  <title>Wavegram · Chat</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
@@ -27,8 +27,6 @@
       --bubble-theirs: #1c283c;
       --online: #34d399;
       --danger: #ff5c7a;
-      --success: #34d399;
-      --gold: #fbbf24;
       --border-subtle: rgba(255, 255, 255, 0.04);
       --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.5);
       --radius-card: 28px;
@@ -61,8 +59,6 @@
     .hidden { display: none !important; }
     button { font-family: inherit; cursor: pointer; border: none; outline: none; background: none; color: inherit; }
     input, textarea { font-family: inherit; outline: none; border: none; background: none; color: inherit; }
-    
-    /* Auth Screen */
     #authScreen {
       flex: 1;
       display: flex;
@@ -103,7 +99,8 @@
       align-items: center;
       justify-content: center;
       font-size: 36px; font-weight: 800;
-      margin: 0 auto 20px;
+
+margin: 0 auto 20px;
       box-shadow: 0 12px 32px rgba(79, 154, 255, 0.35);
       position: relative;
       z-index: 1;
@@ -147,7 +144,7 @@
       text-transform: uppercase;
       letter-spacing: 0.6px;
     }
-    .field input, .field select, .field textarea {
+    .field input {
       width: 100%;
       padding: 16px 18px;
       background: var(--bg-surface);
@@ -158,13 +155,12 @@
       color: var(--text-primary);
       backdrop-filter: blur(4px);
     }
-    .field input:focus, .field select:focus, .field textarea:focus {
+    .field input:focus {
       border-color: var(--accent);
       background: var(--bg-surface-2);
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
-    .field input::placeholder, .field textarea::placeholder { color: var(--text-dim); }
-    .field textarea { resize: vertical; min-height: 80px; }
+    .field input::placeholder { color: var(--text-dim); }
     .btn-primary {
       width: 100%;
       padding: 16px;
@@ -216,8 +212,6 @@
       position: relative;
       z-index: 1;
     }
-    
-    /* App Bar */
     .appbar {
       display: flex; align-items: center; gap: 10px;
       padding: 14px 18px;
@@ -243,7 +237,8 @@
       display: flex; align-items: center; justify-content: center;
       font-size: 20px;
       transition: var(--transition-smooth);
-      background: rgba(255,255,255,0.03);
+
+background: rgba(255,255,255,0.03);
       position: relative;
     }
     .icon-btn:active { background: rgba(255,255,255,0.08); transform: scale(0.92); }
@@ -268,26 +263,8 @@
       flex-shrink: 0;
       box-shadow: 0 2px 12px rgba(0,0,0,0.25);
       transition: var(--transition-smooth);
-      position: relative;
     }
     .avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .avatar .boost-badge {
-      position: absolute;
-      bottom: -2px; right: -2px;
-      background: var(--gold);
-      color: #000;
-      font-size: 10px;
-      font-weight: 800;
-      width: 18px; height: 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid var(--bg-surface);
-      box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
-    }
-    
-    /* Tabs */
     .tabs {
       display: flex;
       background: var(--bg-surface);
@@ -310,8 +287,6 @@
       border-color: var(--accent);
     }
     .tab:active { opacity: 0.6; }
-    
-    /* Search */
     .search-bar {
       padding: 12px 16px;
       background: var(--bg-surface);
@@ -333,8 +308,6 @@
       box-shadow: 0 0 0 4px var(--accent-glow);
     }
     .search-bar input::placeholder { color: var(--text-dim); }
-    
-    /* List Screen */
     #listScreen { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
     .list-body {
       flex: 1;
@@ -384,7 +357,8 @@
       color: #fff;
       font-size: 11px; font-weight: 700;
       min-width: 20px; height: 20px;
-      border-radius: 12px;
+
+border-radius: 12px;
       display: flex; align-items: center; justify-content: center;
       padding: 0 6px;
       box-shadow: 0 2px 8px rgba(79, 154, 255, 0.3);
@@ -410,8 +384,6 @@
       transition: var(--transition-smooth);
     }
     .fab:active { transform: scale(0.9); }
-    
-    /* Bottom Nav */
     .bottom-nav {
       display: flex;
       background: var(--bg-surface);
@@ -432,8 +404,6 @@
     }
     .bn-item.active { color: var(--accent); }
     .bn-ic { font-size: 22px; }
-    
-    /* Chat Screen */
     #chatScreen {
       flex: 1; display: none; flex-direction: column;
       overflow: hidden;
@@ -451,8 +421,6 @@
     .chat-appbar .name-block { flex: 1; min-width: 0; }
     .chat-appbar .name-block .n { font-size: 16px; font-weight: 700; }
     .chat-appbar .name-block .s { font-size: 12px; color: var(--text-secondary); }
-    
-    /* Messages */
     .messages {
       flex: 1;
       overflow-y: auto;
@@ -509,254 +477,14 @@
       border: 1px dashed var(--border-subtle);
     }
     .bubble img, .bubble video { max-width: 100%; border-radius: 12px; display: block; margin-bottom: 4px; }
-    .bubble audio { width: 200px; max-width: 60vw; }
-    
-    /* Profile Screen */
-    #profileScreen {
-      position: absolute; inset: 0;
-      background: var(--bg-primary);
-      z-index: 30;
-      display: none;
-      flex-direction: column;
-      overflow-y: auto;
+
+.bubble audio { width: 200px; max-width: 60vw; }
+    .bubble .gift-emoji { font-size: 52px; display: block; text-align: center; margin: 4px 0; animation: giftFloat 2s ease-in-out infinite; }
+    .bubble .gift-label { font-size: 11px; color: rgba(255,255,255,0.6); text-align: center; }
+    @keyframes giftFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.05); }
     }
-    #profileScreen.active { display: flex; }
-    .profile-header {
-      background: var(--bg-surface);
-      padding: 20px 20px 16px;
-      text-align: center;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .profile-header .avatar {
-      width: 100px; height: 100px;
-      font-size: 36px;
-      margin: 0 auto 12px;
-      border: 3px solid var(--accent);
-      box-shadow: 0 8px 32px rgba(79, 154, 255, 0.2);
-    }
-    .profile-header .username {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
-    .profile-header .bio {
-      color: var(--text-secondary);
-      font-size: 14px;
-      line-height: 1.5;
-      max-width: 300px;
-      margin: 4px auto;
-    }
-    .profile-header .links {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-top: 8px;
-    }
-    .profile-header .links a {
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 13px;
-      padding: 4px 12px;
-      border-radius: 12px;
-      background: var(--bg-surface-2);
-      transition: var(--transition-smooth);
-    }
-    .profile-header .links a:active { transform: scale(0.95); }
-    .profile-header .stats {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin-top: 12px;
-    }
-    .profile-header .stats div {
-      text-align: center;
-    }
-    .profile-header .stats .num {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-    .profile-header .stats .label {
-      font-size: 11px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-    }
-    .profile-actions {
-      display: flex;
-      gap: 10px;
-      padding: 12px 20px;
-      justify-content: center;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-    .profile-actions button {
-      padding: 8px 20px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      transition: var(--transition-smooth);
-      background: var(--bg-surface-2);
-    }
-    .profile-actions button:active { transform: scale(0.95); }
-    .profile-actions .follow-btn {
-      background: var(--accent-gradient);
-      color: #fff;
-    }
-    .profile-actions .follow-btn.following {
-      background: var(--bg-surface-2);
-    }
-    .profile-actions .boost-btn {
-      background: var(--gold);
-      color: #000;
-    }
-    .profile-actions .boost-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-    .profile-content {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px 20px 100px;
-    }
-    .profile-content .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: var(--text-secondary);
-    }
-    .profile-post {
-      background: var(--bg-surface);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-      border: 1px solid var(--border-subtle);
-    }
-    .profile-post .post-header {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-    .profile-post .post-content {
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    .profile-post .post-content img {
-      max-width: 100%;
-      border-radius: 12px;
-      margin-top: 8px;
-    }
-    .profile-post .post-actions {
-      display: flex;
-      gap: 16px;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--border-subtle);
-      font-size: 13px;
-      color: var(--text-dim);
-    }
-    .profile-post .post-actions span {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      transition: var(--transition-smooth);
-    }
-    .profile-post .post-actions span:active { transform: scale(0.9); }
-    
-    /* Analytics Charts */
-    .chart-container {
-      background: var(--bg-surface);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 16px;
-      border: 1px solid var(--border-subtle);
-    }
-    .chart-container h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-    .chart-container canvas {
-      width: 100% !important;
-      max-height: 200px;
-    }
-    .analytics-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .analytics-card {
-      background: var(--bg-surface);
-      border-radius: 12px;
-      padding: 14px;
-      text-align: center;
-      border: 1px solid var(--border-subtle);
-    }
-    .analytics-card .value {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--text-primary);
-    }
-    .analytics-card .value.positive { color: var(--success); }
-    .analytics-card .value.negative { color: var(--danger); }
-    .analytics-card .label {
-      font-size: 11px;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      margin-top: 2px;
-    }
-    .analytics-tips {
-      background: var(--bg-surface);
-      border-radius: 16px;
-      padding: 16px;
-      border: 1px solid var(--border-subtle);
-      margin-bottom: 16px;
-    }
-    .analytics-tips h3 {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--gold);
-      margin-bottom: 8px;
-    }
-    .analytics-tips ul {
-      list-style: none;
-      padding: 0;
-    }
-    .analytics-tips li {
-      padding: 6px 0;
-      font-size: 13px;
-      color: var(--text-secondary);
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .analytics-tips li:last-child { border-bottom: none; }
-    .analytics-tips li .tip-icon { font-size: 16px; }
-    
-    /* Edit Profile Sheet */
-    .bio-edit, .links-edit {
-      margin: 8px 0;
-    }
-    .bio-edit textarea, .links-edit input {
-      width: 100%;
-      padding: 12px 16px;
-      background: var(--bg-surface-2);
-      border-radius: 12px;
-      font-size: 14px;
-      border: 1.5px solid transparent;
-      transition: var(--transition-smooth);
-      color: var(--text-primary);
-    }
-    .bio-edit textarea:focus, .links-edit input:focus {
-      border-color: var(--accent);
-    }
-    
-    /* Composer */
     .composer {
       display: flex; align-items: flex-end; gap: 8px;
       padding: 10px 14px;
@@ -812,8 +540,63 @@
       height: 22px;
       transition: var(--transition-smooth);
     }
-    
-    /* Overlay & Sheet */
+    #reelsScreen {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      background: #000;
+      z-index: 10;
+    }
+    .reels-topbar {
+      position: absolute; top: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 18px;
+      z-index: 5;
+      background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent);
+    }
+    .reels-title { font-size: 20px; font-weight: 700; color: #fff; }
+    .reels-feed {
+      flex: 1;
+      overflow-y: scroll;
+      scroll-snap-type: y mandatory;
+      -webkit-overflow-scrolling: touch;
+    }
+    .reel-item {
+      scroll-snap-align: start;
+      height: 100%; width: 100%;
+      position: relative;
+      display: flex; align-items: flex-end;
+      background: #000;
+    }
+    .reel-item img, .reel-item video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+    .reel-item video::-webkit-media-controls { display: none !important; }
+    .reel-overlay {
+      position: relative; z-index: 2;
+      width: 100%;
+      padding: 16px 14px calc(90px + env(safe-area-inset-bottom));
+      background: linear-gradient(0deg, rgba(0,0,0,0.7) 10%, transparent 55%);
+    }
+    .reel-info { flex: 1; color: #fff; min-width: 0; }
+    .reel-author {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 15px; margin-bottom: 6px;
+    }
+    .reel-caption { font-size: 14px; line-height: 1.4; opacity: 0.9; }
+    .reel-views { font-size: 12px; opacity: 0.7; margin-top: 6px; }
+    .reel-actions {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 18px; padding-bottom: 4px; margin-left: 12px;
+    }
+    .reel-action {
+      color: #fff; text-align: center;
+      font-size: 11px; display: flex; flex-direction: column;
+
+align-items: center; gap: 3px;
+    }
+    .reel-action .ricon { font-size: 28px; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
     .overlay {
       position: absolute; inset: 0;
       background: rgba(4, 8, 14, 0.65);
@@ -846,6 +629,24 @@
     .sheet-item:last-child { border-bottom: none; }
     .sheet-item:active { background: rgba(255,255,255,0.04); border-radius: 12px; }
     .sheet-item .ic { font-size: 20px; width: 28px; text-align: center; }
+    .sheet-item .role-badge {
+      font-size: 10px; padding: 2px 10px; border-radius: 12px;
+      background: rgba(79, 154, 255, 0.15); color: var(--accent);
+      margin-left: auto;
+    }
+    .sheet-item .role-badge.admin { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+    .sheet-item .role-badge.moderator { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+    .reaction-picker {
+      display: flex; gap: 12px;
+      justify-content: space-around;
+      padding: 8px 0 16px;
+      font-size: 28px;
+    }
+    .reaction-picker span {
+      transition: var(--transition-smooth);
+      cursor: pointer;
+    }
+    .reaction-picker span:active { transform: scale(1.4); }
     .toast {
       position: absolute; bottom: 100px; left: 50%;
       transform: translateX(-50%);
@@ -863,14 +664,168 @@
       0%, 70% { opacity: 1; transform: translateX(-50%) translateY(0); }
       100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
     }
-    
-    /* Responsive */
+    .link-box {
+      display: flex; gap: 10px; align-items: center;
+      background: var(--bg-surface-2);
+      padding: 12px 16px;
+      border-radius: 14px;
+      margin: 10px 0;
+    }
+    .link-box input { flex: 1; font-size: 13px; color: var(--text-secondary); }
+    .call-overlay {
+      position: absolute; inset: 0;
+      z-index: 60;
+      background: radial-gradient(ellipse at 50% 40%, #1c2c42, #060a10);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end;
+      padding-bottom: 50px;
+      overflow: hidden;
+    }
+    .remote-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      background: #000;
+    }
+    .local-video {
+      position: absolute; top: calc(16px + env(safe-area-inset-top)); right: 16px;
+      width: 100px; height: 140px;
+      border-radius: 16px;
+      object-fit: cover;
+      background: #111;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+      border: 2px solid rgba(255,255,255,0.1);
+      z-index: 2;
+    }
+    .call-info {
+      position: relative; z-index: 1;
+      text-align: center; color: #fff;
+
+margin-bottom: 48px; margin-top: auto;
+      padding-top: 80px;
+    }
+    .call-name { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    .call-status { font-size: 14px; opacity: 0.75; }
+    .call-actions {
+      position: relative; z-index: 2;
+      display: flex; gap: 34px; align-items: center;
+    }
+    .call-btn {
+      width: 68px; height: 68px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+      transition: var(--transition-smooth);
+    }
+    .call-btn:active { transform: scale(0.9); }
+    .call-btn.accept { background: linear-gradient(135deg, #34d399, #17b862); }
+    .call-btn.decline { background: linear-gradient(135deg, #ff5c7a, #e0324a); }
+    .call-btn.secondary {
+      background: rgba(255,255,255,0.12);
+      width: 56px; height: 56px; font-size: 22px;
+      backdrop-filter: blur(4px);
+    }
+    .call-btn.secondary.active-toggle { background: #fff; color: #111; }
+    .reply-preview {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .reply-preview .preview-bar {
+      width: 3px; align-self: stretch; background: var(--accent); border-radius: 2px;
+    }
+    .reply-preview .preview-content { flex: 1; min-width: 0; }
+    .reply-preview .preview-name { font-size: 12px; font-weight: 700; color: var(--accent); }
+    .reply-preview .preview-text { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .edit-banner {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; background: var(--bg-surface-2); flex-shrink: 0;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .edit-banner .edit-bar { width: 3px; align-self: stretch; background: #ffb84d; border-radius: 2px; }
+    .edit-banner .edit-content { flex: 1; min-width: 0; }
+    .edit-banner .edit-label { font-size: 12px; font-weight: 700; color: #ffb84d; }
+    .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .gift-picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 12px 0;
+      max-height: 350px;
+      overflow-y: auto;
+    }
+    .gift-picker .gift-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 8px;
+      border-radius: 14px;
+      background: var(--bg-surface-2);
+      border: 2px solid transparent;
+      transition: var(--transition-smooth);
+      cursor: pointer;
+      min-height: 80px;
+      justify-content: center;
+    }
+    .gift-picker .gift-option:hover, .gift-picker .gift-option:active {
+      border-color: var(--accent);
+      background: var(--bg-surface-3);
+      transform: scale(0.96);
+    }
+    .gift-picker .gift-option .gift-emoji { font-size: 40px; line-height: 1.2; }
+    .gift-picker .gift-option .gift-name { font-size: 9px; color: var(--text-dim); margin-top: 4px; text-align: center; }
+    .gift-picker .gift-option .gift-category { font-size: 7px; color: var(--text-dim); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px; }
+    .gift-category-header {
+      font-size: 12px; font-weight: 600; color: var(--text-secondary);
+      padding: 8px 4px 4px; border-bottom: 1px solid var(--border-subtle);
+      grid-column: 1 / -1;
+    }
+    .restriction-picker {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 8px 0;
+    }
+    .restriction-picker button {
+      padding: 8px 16px;
+      border-radius: 20px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+
+color: var(--text-secondary);
+      font-size: 13px;
+      transition: var(--transition-smooth);
+    }
+    .restriction-picker button:hover, .restriction-picker button:active {
+      background: var(--bg-surface-3);
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    .restriction-picker button.selected {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .member-role-select {
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 6px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .member-role-select option { background: var(--bg-surface); }
+    .restricted-badge {
+      font-size: 10px; padding: 2px 10px; border-radius: 12px;
+      background: rgba(255, 92, 122, 0.15); color: var(--danger);
+      margin-left: 8px;
+    }
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
       .sheet { padding: 20px 16px; }
-      .profile-header .stats { gap: 20px; }
-      .analytics-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -903,14 +858,13 @@
     <div class="appbar">
       <h1>Wavegram</h1>
       <div class="icon-btn" onclick="openNotifications()">🔔<span class="badge hidden" id="notifBadge">0</span></div>
-      <div class="icon-btn" onclick="openWallet()">💰</div>
       <div class="icon-btn" onclick="openSettings()">⚙️</div>
-      <div class="avatar" id="myAvatar" onclick="viewProfile(ME?.id)">?</div>
+      <div class="avatar" id="myAvatar" onclick="openSettings()">?</div>
     </div>
     <div class="tabs">
       <div class="tab active" id="tabChats" onclick="switchTab('chats')">Chats</div>
-      <div class="tab" id="tabMarket" onclick="switchTab('market')">🛒 Market</div>
       <div class="tab" id="tabPeople" onclick="switchTab('people')">People</div>
+      <div class="tab" id="tabGroups" onclick="switchTab('groups')">Groups</div>
     </div>
     <div class="search-bar">
       <input type="text" id="searchBox" placeholder="Search..." oninput="onSearch(this.value)">
@@ -919,59 +873,54 @@
     <div class="fab" onclick="fabAction()">＋</div>
     <div class="bottom-nav">
       <div class="bn-item active" onclick="switchMainScreen('list')"><span class="bn-ic">💬</span>Chats</div>
-      <div class="bn-item" onclick="switchMainScreen('analytics')"><span class="bn-ic">📊</span>Analytics</div>
-      <div class="bn-item" onclick="switchMainScreen('market')"><span class="bn-ic">🛒</span>Market</div>
+      <div class="bn-item" onclick="switchMainScreen('reels')"><span class="bn-ic">🎬</span>Reels</div>
     </div>
   </div>
 
-  <!-- ANALYTICS SCREEN -->
-  <div id="analyticsScreen" class="hidden" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
-    <div class="appbar">
-      <h1>📊 Analytics</h1>
-      <div class="icon-btn" onclick="refreshAnalytics()">🔄</div>
-      <div class="icon-btn" onclick="openSettings()">⚙️</div>
+  <!-- REELS SCREEN -->
+  <div id="reelsScreen" class="hidden">
+    <div class="reels-feed" id="reelsFeed"></div>
+    <div class="reels-topbar">
+
+<div class="reels-title">🎬 Reels</div>
+      <div class="icon-btn" style="color:#fff;" onclick="openSettings()">⚙️</div>
     </div>
-    <div class="list-body" id="analyticsBody" style="padding:0 16px 80px;">
-      <div id="analyticsContent"></div>
-    </div>
-    <div class="bottom-nav">
+    <div class="fab" style="bottom:80px;z-index:15;" onclick="openUploadReelSheet()">＋</div>
+    <div class="bottom-nav" style="position:absolute;bottom:0;left:0;right:0;">
       <div class="bn-item" onclick="switchMainScreen('list')"><span class="bn-ic">💬</span>Chats</div>
-      <div class="bn-item active" onclick="switchMainScreen('analytics')"><span class="bn-ic">📊</span>Analytics</div>
-      <div class="bn-item" onclick="switchMainScreen('market')"><span class="bn-ic">🛒</span>Market</div>
+      <div class="bn-item active" onclick="switchMainScreen('reels')"><span class="bn-ic">🎬</span>Reels</div>
     </div>
   </div>
 
-  <!-- MARKETPLACE SCREEN -->
-  <div id="marketScreen" class="hidden" style="flex:1;display:none;flex-direction:column;overflow:hidden;">
-    <div class="appbar">
-      <h1>🛒 Marketplace</h1>
-      <div class="icon-btn" onclick="openSellSheet()">➕</div>
-      <div class="icon-btn" onclick="openWallet()">💰</div>
-    </div>
-    <div class="search-bar">
-      <input type="text" id="marketSearch" placeholder="Search products..." oninput="filterMarket(this.value)">
-    </div>
-    <div class="list-body" id="marketBody"></div>
-  </div>
+  <input type="file" id="reelFileInput" class="hidden" accept="image/*,video/*">
 
-  <!-- PROFILE SCREEN -->
-  <div id="profileScreen">
-    <div class="appbar" style="position:sticky;top:0;z-index:5;">
-      <div class="icon-btn" onclick="closeProfile()">←</div>
-      <h1 style="flex:1;">Profile</h1>
-      <div class="icon-btn" onclick="editProfile()">✏️</div>
-      <div class="icon-btn" onclick="reportProfile()">🚨</div>
+  <!-- CALL OVERLAY -->
+  <div id="callOverlay" class="call-overlay hidden">
+    <video id="remoteVideo" autoplay playsinline class="remote-video hidden"></video>
+    <video id="localVideo" autoplay playsinline muted class="local-video hidden"></video>
+    <div class="call-info">
+      <div class="avatar" id="callAvatar" style="width:100px;height:100px;font-size:38px;margin:0 auto 16px;box-shadow:0 6px 24px rgba(0,0,0,0.4);"></div>
+      <div class="call-name" id="callName"></div>
+      <div class="call-status" id="callStatus">Calling...</div>
     </div>
-    <div id="profileContent"></div>
+    <div class="call-actions" id="callActionsIncoming">
+      <div class="call-btn decline" onclick="declineCall()">📵</div>
+      <div class="call-btn accept" onclick="acceptCall()">📞</div>
+    </div>
+    <div class="call-actions hidden" id="callActionsActive">
+      <div class="call-btn secondary" id="muteBtn" onclick="toggleMute()">🎤</div>
+      <div class="call-btn secondary hidden" id="cameraBtn" onclick="toggleCamera()">📷</div>
+      <div class="call-btn decline" onclick="endCall()">📵</div>
+    </div>
   </div>
 
   <!-- CHAT SCREEN -->
   <div id="chatScreen">
     <div class="chat-appbar">
       <div class="icon-btn" onclick="closeChat()">←</div>
-      <div class="avatar" id="chatAvatar" onclick="viewProfile(currentChat?.id)">?</div>
+      <div class="avatar" id="chatAvatar">?</div>
       <div class="name-block">
-        <div class="n" id="chatName" onclick="viewProfile(currentChat?.id)">Chat</div>
+        <div class="n" id="chatName">Chat</div>
         <div class="s" id="chatStatus"></div>
       </div>
       <div class="icon-btn hidden" id="voiceCallBtn" onclick="startCall('audio')">📞</div>
@@ -998,7 +947,6 @@
     </div>
     <div class="composer">
       <div class="round-btn" onclick="openGiftPicker()">🎁</div>
-      <div class="round-btn" onclick="openProductPicker()">🛒</div>
       <div class="round-btn" onclick="triggerFile('image')">📷</div>
       <div class="round-btn" onclick="triggerFile('video')">🎬</div>
       <textarea id="msgInput" rows="1" placeholder="Message" oninput="onTypingInput()" onkeydown="onComposerKey(event)"></textarea>
@@ -1009,13 +957,12 @@
 
   <input type="file" id="fileInput" class="hidden" accept="image/*">
   <input type="file" id="fileInputVideo" class="hidden" accept="video/*">
-  <input type="file" id="reelFileInput" class="hidden" accept="image/*,video/*">
 
 </div>
 
 <script>
 // ============================================================
-//  WAVEGRAM PREMIUM – PROFILES & ANALYTICS
+//  WAVEGRAM – FULL CLIENT LOGIC
 // ============================================================
 
 const API = "";
@@ -1031,48 +978,139 @@ let pendingMessages = {};
 let PUBLIC_BASE_URL = "";
 let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
-let currentTab = "chats";
-let allConversations = [];
-let allProducts = [];
-let walletBalance = 0;
-let viewingProfileId = null;
-let isMyProfile = false;
-let chartInstances = {};
 
-// GIFTS
+// ---- GIFTS (extended with categories) ----
 const GIFTS = [
+  // Love & Romance
   { emoji: "❤️", name: "Red Heart", category: "Love" },
   { emoji: "💕", name: "Two Hearts", category: "Love" },
   { emoji: "💗", name: "Growing Heart", category: "Love" },
   { emoji: "💖", name: "Sparkling Heart", category: "Love" },
+  { emoji: "💝", name: "Heart with Ribbon", category: "Love" },
   { emoji: "🌹", name: "Rose", category: "Love" },
+  { emoji: "🌷", name: "Tulip", category: "Love" },
+  { emoji: "🌸", name: "Cherry Blossom", category: "Love" },
+  { emoji: "💐", name: "Bouquet", category: "Love" },
+  { emoji: "🥰", name: "Smiling Face with Hearts", category: "Love" },
+  { emoji: "😘", name: "Face Blowing a Kiss", category: "Love" },
+  
+  // Food & Drink
   { emoji: "🎂", name: "Birthday Cake", category: "Food" },
   { emoji: "🍰", name: "Cake", category: "Food" },
+  { emoji: "🧁", name: "Cupcake", category: "Food" },
   { emoji: "🍫", name: "Chocolate", category: "Food" },
+  { emoji: "🍭", name: "Lollipop", category: "Food" },
+  { emoji: "🍩", name: "Donut", category: "Food" },
+  { emoji: "🍪", name: "Cookie", category: "Food" },
+  { emoji: "🍣", name: "Sushi", category: "Food" },
+  { emoji: "🍕", name: "Pizza", category: "Food" },
+  { emoji: "🍔", name: "Burger", category: "Food" },
+  { emoji: "🌮", name: "Taco", category: "Food" },
+  { emoji: "🍾", name: "Champagne", category: "Food" },
+  { emoji: "🥂", name: "Clinking Glasses", category: "Food" },
+  { emoji: "🍷", name: "Wine Glass", category: "Food" },
+  
+  // Animals
   { emoji: "🐶", name: "Dog", category: "Animals" },
   { emoji: "🐱", name: "Cat", category: "Animals" },
+  { emoji: "🐭", name: "Mouse", category: "Animals" },
+  { emoji: "🐹", name: "Hamster", category: "Animals" },
+  { emoji: "🐰", name: "Rabbit", category: "Animals" },
+  { emoji: "🦊", name: "Fox", category: "Animals" },
+  { emoji: "🐻", name: "Bear", category: "Animals" },
+  { emoji: "🐼", name: "Panda", category: "Animals" },
+  { emoji: "🐨", name: "Koala", category: "Animals" },
+  { emoji: "🦁", name: "Lion", category: "Animals" },
+  { emoji: "🐯", name: "Tiger", category: "Animals" },
+  { emoji: "🦄", name: "Unicorn", category: "Animals" },
+  { emoji: "🐧", name: "Penguin", category: "Animals" },
+  { emoji: "🐦", name: "Bird", category: "Animals" },
+  { emoji: "🦋", name: "Butterfly", category: "Animals" },
+  
+  // Nature
   { emoji: "⭐", name: "Star", category: "Nature" },
   { emoji: "🌟", name: "Glowing Star", category: "Nature" },
   { emoji: "✨", name: "Sparkles", category: "Nature" },
   { emoji: "🌈", name: "Rainbow", category: "Nature" },
+  { emoji: "☀️", name: "Sun", category: "Nature" },
+  { emoji: "🌙", name: "Moon", category: "Nature" },
+  { emoji: "🌊", name: "Wave", category: "Nature" },
+  { emoji: "🌸", name: "Cherry Blossom", category: "Nature" },
+  { emoji: "🌺", name: "Hibiscus", category: "Nature" },
+  { emoji: "🌻", name: "Sunflower", category: "Nature" },
+  { emoji: "🌹", name: "Rose", category: "Nature" },
+  { emoji: "🌿", name: "Herb", category: "Nature" },
+  { emoji: "🌴", name: "Palm Tree", category: "Nature" },
+  
+  // Celebrations
   { emoji: "🎉", name: "Party Popper", category: "Celebration" },
   { emoji: "🎊", name: "Confetti Ball", category: "Celebration" },
   { emoji: "🎈", name: "Balloon", category: "Celebration" },
   { emoji: "🎁", name: "Gift", category: "Celebration" },
+
+{ emoji: "🎀", name: "Ribbon", category: "Celebration" },
+  { emoji: "🎆", name: "Fireworks", category: "Celebration" },
+  { emoji: "🎇", name: "Sparkler", category: "Celebration" },
+  { emoji: "🎤", name: "Microphone", category: "Celebration" },
+  { emoji: "🎸", name: "Guitar", category: "Celebration" },
+  { emoji: "🎹", name: "Musical Keyboard", category: "Celebration" },
+  { emoji: "🎺", name: "Trumpet", category: "Celebration" },
+  { emoji: "🎻", name: "Violin", category: "Celebration" },
+  
+  // Emotions
   { emoji: "😊", name: "Smiling Face", category: "Emotions" },
   { emoji: "😃", name: "Happy Face", category: "Emotions" },
   { emoji: "🤗", name: "Hugging Face", category: "Emotions" },
   { emoji: "🥳", name: "Party Face", category: "Emotions" },
+  { emoji: "🤩", name: "Starstruck", category: "Emotions" },
+  { emoji: "😍", name: "Heart Eyes", category: "Emotions" },
+  { emoji: "😎", name: "Cool Face", category: "Emotions" },
+  { emoji: "🤔", name: "Thinking Face", category: "Emotions" },
+  { emoji: "😴", name: "Sleepy Face", category: "Emotions" },
+  { emoji: "🥺", name: "Pleading Face", category: "Emotions" },
+  { emoji: "😭", name: "Crying Face", category: "Emotions" },
+  { emoji: "😂", name: "Joy Face", category: "Emotions" },
+  { emoji: "🤣", name: "Rolling on Floor", category: "Emotions" },
+  { emoji: "😁", name: "Grinning Face", category: "Emotions" },
+  { emoji: "😆", name: "Squinting Face", category: "Emotions" },
+  
+  // Objects
   { emoji: "💎", name: "Diamond", category: "Objects" },
   { emoji: "🔮", name: "Crystal Ball", category: "Objects" },
   { emoji: "🏆", name: "Trophy", category: "Objects" },
+  { emoji: "💡", name: "Light Bulb", category: "Objects" },
+  { emoji: "🔑", name: "Key", category: "Objects" },
+  { emoji: "📚", name: "Books", category: "Objects" },
+  { emoji: "📱", name: "Phone", category: "Objects" },
+  { emoji: "💻", name: "Laptop", category: "Objects" },
+  { emoji: "🖥️", name: "Desktop", category: "Objects" },
+  { emoji: "⌨️", name: "Keyboard", category: "Objects" },
+  { emoji: "🖱️", name: "Mouse", category: "Objects" },
+  { emoji: "🕹️", name: "Joystick", category: "Objects" },
+  { emoji: "🎮", name: "Video Game", category: "Objects" },
+  { emoji: "🧸", name: "Teddy Bear", category: "Objects" },
+  { emoji: "🎯", name: "Target", category: "Objects" },
+  
+  // Sports
   { emoji: "⚽", name: "Soccer Ball", category: "Sports" },
   { emoji: "🏀", name: "Basketball", category: "Sports" },
+  { emoji: "🏈", name: "Football", category: "Sports" },
+  { emoji: "⚾", name: "Baseball", category: "Sports" },
+  { emoji: "🎾", name: "Tennis", category: "Sports" },
+  { emoji: "🏐", name: "Volleyball", category: "Sports" },
+  { emoji: "🏉", name: "Rugby", category: "Sports" },
+  { emoji: "🎱", name: "Pool Billiard", category: "Sports" },
+  { emoji: "🏓", name: "Ping Pong", category: "Sports" },
+  { emoji: "🏸", name: "Badminton", category: "Sports" },
+  { emoji: "🥊", name: "Boxing Glove", category: "Sports" },
+  { emoji: "🥋", name: "Martial Arts", category: "Sports" },
+  { emoji: "⛸️", name: "Ice Skate", category: "Sports" },
+  { emoji: "🏂", name: "Snowboard", category: "Sports" },
+  { emoji: "🏊", name: "Swimming", category: "Sports" },
+  { emoji: "🚴", name: "Cycling", category: "Sports" },
 ];
 
-// ============================================================
-// API HELPER
-// ============================================================
+// ---- API helper ----
 async function api(path, opts={}) {
   opts.headers = opts.headers || {};
   if (TOKEN) opts.headers["Authorization"] = "Bearer " + TOKEN;
@@ -1085,9 +1123,7 @@ async function api(path, opts={}) {
   return data;
 }
 
-// ============================================================
-// BOOT
-// ============================================================
+// ---- Boot ----
 window.addEventListener("DOMContentLoaded", () => {
   api("/api/config").then(r => { PUBLIC_BASE_URL = r.public_base_url || ""; }).catch(()=>{});
   if (TOKEN && ME) {
@@ -1106,50 +1142,34 @@ function saveSession(){
 function showAuth(){
   document.getElementById("authScreen").classList.remove("hidden");
   document.getElementById("listScreen").classList.add("hidden");
-  document.getElementById("profileScreen").classList.remove("active");
+  document.getElementById("reelsScreen").classList.add("hidden");
   document.getElementById("chatScreen").classList.remove("active");
-  document.getElementById("marketScreen").classList.add("hidden");
-  document.getElementById("analyticsScreen").classList.add("hidden");
 }
-
 function showList(){
   document.getElementById("authScreen").classList.add("hidden");
   document.getElementById("listScreen").classList.remove("hidden");
-  document.getElementById("profileScreen").classList.remove("active");
+  document.getElementById("reelsScreen").classList.add("hidden");
   document.getElementById("chatScreen").classList.remove("active");
-  document.getElementById("marketScreen").classList.add("hidden");
-  document.getElementById("analyticsScreen").classList.add("hidden");
   setAvatarEl(document.getElementById("myAvatar"), ME);
   switchTab("chats");
   refreshUnreadBadge();
   maybeAskNotificationPermission();
-  loadWalletBalance();
 }
 
 function switchMainScreen(screen){
   const list = document.getElementById("listScreen");
-  const market = document.getElementById("marketScreen");
-  const analytics = document.getElementById("analyticsScreen");
+  const reels = document.getElementById("reelsScreen");
   document.querySelectorAll(".bn-item").forEach(el => el.classList.remove("active"));
-  
   if (screen === "list") {
     list.classList.remove("hidden");
-    market.classList.add("hidden");
-    analytics.classList.add("hidden");
-    document.querySelectorAll(".bn-item")[0]?.classList.add("active");
+    reels.classList.add("hidden");
+    document.querySelector(".bn-item:first-child").classList.add("active");
     loadList();
-  } else if (screen === "market") {
+  } else {
     list.classList.add("hidden");
-    market.classList.remove("hidden");
-    analytics.classList.add("hidden");
-    document.querySelectorAll(".bn-item")[2]?.classList.add("active");
-    loadMarketplace();
-  } else if (screen === "analytics") {
-    list.classList.add("hidden");
-    market.classList.add("hidden");
-    analytics.classList.remove("hidden");
-    document.querySelectorAll(".bn-item")[1]?.classList.add("active");
-    loadAnalytics();
+    reels.classList.remove("hidden");
+    document.querySelector(".bn-item:last-child").classList.add("active");
+    loadReels();
   }
 }
 
@@ -1197,7 +1217,9 @@ function logout(silent){
 function connectSocket(){
   socket = io({transports:["websocket","polling"]});
   socket.on("connect", () => socket.emit("auth", {token: TOKEN}));
-  socket.on("auth_ok", (data) => { console.log("Socket authenticated:", data); });
+  socket.on("auth_ok", (data) => {
+    console.log("Socket authenticated:", data);
+  });
   socket.on("auth_error", (data) => {
     console.error("Socket auth error:", data);
     showToast("Session expired, please login again");
@@ -1210,7 +1232,8 @@ function connectSocket(){
   socket.on("typing", handleTyping);
   socket.on("error_msg", (d) => showToast(d.error));
   socket.on("call_offer", handleCallOffer);
-  socket.on("call_answer", handleCallAnswer);
+
+socket.on("call_answer", handleCallAnswer);
   socket.on("call_ice_candidate", handleRemoteIce);
   socket.on("call_reject", handleCallReject);
   socket.on("call_end", handleRemoteEnd);
@@ -1228,348 +1251,146 @@ function connectSocket(){
   });
 }
 
-// ============================================================
-// WALLET
-// ============================================================
-async function loadWalletBalance(){
-  try {
-    const r = await api("/api/wallet/balance");
-    walletBalance = r.balance || 0;
-  } catch(e){ walletBalance = 0; }
-}
+// ---- Tabs & Lists ----
+let currentTab = "chats";
+let allConversations = [];
 
-function openWallet(){
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  sheet.innerHTML = `
-    <h2>💰 Wallet</h2>
-    <div style="text-align:center;padding:20px 0;">
-      <div style="font-size:48px;font-weight:800;color:var(--gold);">$${walletBalance.toFixed(2)}</div>
-      <div style="color:var(--text-secondary);font-size:14px;">Available balance</div>
-    </div>
-    <div style="display:flex;gap:10px;flex-direction:column;">
-      <button class="btn-primary" onclick="addFunds(10)"><span>Add $10</span></button>
-      <button class="btn-primary" onclick="addFunds(25)"><span>Add $25</span></button>
-      <button class="btn-primary" onclick="addFunds(50)"><span>Add $50</span></button>
-      <button class="btn-primary" onclick="addFunds(100)"><span>Add $100</span></button>
-    </div>
-  `;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-}
-
-async function addFunds(amount){
-  try {
-    const r = await api("/api/wallet/add", {method:"POST", body: JSON.stringify({amount})});
-    walletBalance = r.new_balance;
-    showToast(`$${amount} added to wallet`);
-    document.querySelector(".overlay")?.remove();
-  } catch(e){ showToast(e.message); }
-}
-
-// ============================================================
-// PROFILES
-// ============================================================
-async function viewProfile(userId){
-  if (!userId) return;
-  viewingProfileId = userId;
-  isMyProfile = userId === ME?.id;
-  
-  document.getElementById("profileScreen").classList.add("active");
-  document.getElementById("listScreen").classList.add("hidden");
-  document.getElementById("chatScreen").classList.remove("active");
-  
-  await renderProfile(userId);
-}
-
-async function renderProfile(userId){
-  const content = document.getElementById("profileContent");
-  content.innerHTML = "<div class='empty-state'><i>⏳</i>Loading profile...</div>";
-  
-  try {
-    const r = await api("/api/users/"+userId+"/profile");
-    const user = r.user;
-    const posts = r.posts || [];
-    const analytics = r.analytics || {};
-    const isFollowing = r.is_following || false;
-    const isBoosted = r.is_boosted || false;
-    const boostAvailable = r.boost_available || false;
-    const canBoost = r.can_boost || false;
-    
-    content.innerHTML = `
-      <div class="profile-header">
-        <div class="avatar" style="width:100px;height:100px;font-size:36px;margin:0 auto 12px;border:3px solid var(--accent);">
-          ${user.avatar ? `<img src="${user.avatar}">` : (user.username ? user.username.charAt(0).toUpperCase() : "?")}
-          ${isBoosted ? `<div class="boost-badge">⭐</div>` : ''}
-        </div>
-        <div class="username">${escapeHtml(user.username)} ${isBoosted ? '⭐' : ''}</div>
-        ${user.bio ? `<div class="bio">${escapeHtml(user.bio)}</div>` : ''}
-        ${user.links && user.links.length > 0 ? `<div class="links">${user.links.map(l => `<a href="${escapeHtml(l)}" target="_blank">${escapeHtml(l)}</a>`).join('')}</div>` : ''}
-        <div class="stats">
-          <div><div class="num">${user.followers || 0}</div><div class="label">Followers</div></div>
-          <div><div class="num">${user.following || 0}</div><div class="label">Following</div></div>
-          <div><div class="num">${user.posts_count || 0}</div><div class="label">Posts</div></div>
-        </div>
-      </div>
-      
-      <div class="profile-actions">
-        ${!isMyProfile ? `
-          <button class="follow-btn ${isFollowing ? 'following' : ''}" onclick="toggleFollow(${user.id})">
-            ${isFollowing ? '✓ Following' : '+ Follow'}
-          </button>
-          <button onclick="openDM(${user.id}, '${escapeHtml(user.username)}')">💬</button>
-        ` : ''}
-        ${isMyProfile ? `
-          <button onclick="editProfile()">✏️ Edit Profile</button>
-        ` : ''}
-        ${!isMyProfile && canBoost ? `
-          <button class="boost-btn" onclick="boostProfile(${user.id})" ${boostAvailable ? '' : 'disabled'}>
-            ⭐ Boost ${boostAvailable ? '(1x/week)' : '(used)'}
-          </button>
-        ` : ''}
-      </div>
-      
-      ${!isMyProfile && analytics ? `
-        <div style="padding:0 16px;margin-top:8px;">
-          <div class="section-title">📊 Analytics</div>
-          ${renderAnalyticsCharts(analytics)}
-        </div>
-      ` : ''}
-      
-      <div class="profile-content">
-        <div class="section-title">📝 Posts</div>
-        ${posts.length === 0 ? '<div class="empty-state"><i>📝</i>No posts yet</div>' : posts.map(p => `
-          <div class="profile-post">
-            <div class="post-header">
-              <span>${formatRelativeTime(p.timestamp)}</span>
-              ${p.is_mine ? `<span onclick="deletePost(${p.id})" style="color:var(--danger);cursor:pointer;">🗑️</span>` : ''}
-            </div>
-            <div class="post-content">
-              ${escapeHtml(p.content || '')}
-              ${p.image_path ? `<img src="${p.image_path}" onerror="this.style.display='none'">` : ''}
-              ${p.video_path ? `<video src="${p.video_path}" controls style="max-width:100%;border-radius:12px;margin-top:8px;"></video>` : ''}
-            </div>
-            <div class="post-actions">
-              <span onclick="reactPost(${p.id}, '❤️')">❤️ ${p.likes || 0}</span>
-              <span onclick="reactPost(${p.id}, '😊')">😊 ${p.smiles || 0}</span>
-              <span onclick="toggleComments(${p.id})">💬 ${p.comments || 0}</span>
-              <span onclick="sharePost(${p.id})">📤</span>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    `;
-    
-    // Initialize charts if analytics available and not my profile
-    if (!isMyProfile && analytics && Object.keys(analytics).length > 0) {
-      setTimeout(() => initAnalyticsCharts(analytics), 300);
-    }
-  } catch(e) {
-    content.innerHTML = `<div class='empty-state'><i>⚠️</i>${escapeHtml(e.message)}</div>`;
-  }
-}
-
-function renderAnalyticsCharts(analytics){
-  let html = `
-    <div class="analytics-grid">
-      <div class="analytics-card">
-        <div class="value ${analytics.profit && analytics.profit >= 0 ? 'positive' : 'negative'}">
-          ${analytics.profit ? '$' + analytics.profit.toFixed(2) : '$0.00'}
-        </div>
-        <div class="label">Profit</div>
-      </div>
-      <div class="analytics-card">
-        <div class="value positive">${analytics.sales || 0}</div>
-        <div class="label">Sales</div>
-      </div>
-      <div class="analytics-card">
-        <div class="value">${analytics.revenue ? '$' + analytics.revenue.toFixed(2) : '$0.00'}</div>
-        <div class="label">Revenue</div>
-      </div>
-      <div class="analytics-card">
-        <div class="value">${analytics.expenses ? '$' + analytics.expenses.toFixed(2) : '$0.00'}</div>
-        <div class="label">Expenses</div>
-      </div>
-    </div>
-    
-    <div class="chart-container">
-      <h3>📈 Sales History</h3>
-      <canvas id="salesChart"></canvas>
-    </div>
-    
-    <div class="chart-container">
-      <h3>📊 Profit & Loss</h3>
-      <canvas id="profitLossChart"></canvas>
-    </div>
-  `;
-  
-  if (analytics.tips && analytics.tips.length > 0) {
-    html += `
-      <div class="analytics-tips">
-        <h3>💡 Insights & Tips</h3>
-        <ul>
-          ${analytics.tips.map(t => `<li><span class="tip-icon">📌</span> ${escapeHtml(t)}</li>`).join('')}
-        </ul>
-      </div>
-    `;
-  }
-  
-  return html;
-}
-
-function initAnalyticsCharts(analytics){
-  // Destroy existing charts
-  Object.keys(chartInstances).forEach(key => {
-    if (chartInstances[key]) {
-      chartInstances[key].destroy();
-      delete chartInstances[key];
-    }
+function switchTab(tab){
+  ["chats","people","groups"].forEach(t => {
+    const el = document.getElementById("tab"+cap(t));
+    if (el) el.classList.toggle("active", t===tab);
   });
-  
-  // Sales Chart
-  const salesCtx = document.getElementById('salesChart');
-  if (salesCtx && analytics.sales_data) {
-    chartInstances.sales = new Chart(salesCtx, {
-      type: 'line',
-      data: {
-        labels: analytics.sales_data.map(d => d.label || ''),
-        datasets: [{
-          label: 'Sales',
-          data: analytics.sales_data.map(d => d.value || 0),
-          borderColor: '#4f9aff',
-          backgroundColor: 'rgba(79, 154, 255, 0.1)',
-          fill: true,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-          x: { grid: { display: false } }
-        }
-      }
-    });
-  }
-  
-  // Profit & Loss Chart
-  const plCtx = document.getElementById('profitLossChart');
-  if (plCtx && analytics.pl_data) {
-    chartInstances.pl = new Chart(plCtx, {
-      type: 'bar',
-      data: {
-        labels: analytics.pl_data.map(d => d.label || ''),
-        datasets: [
-          {
-            label: 'Revenue',
-            data: analytics.pl_data.map(d => d.revenue || 0),
-            backgroundColor: 'rgba(52, 211, 153, 0.6)',
-            borderColor: '#34d399',
-            borderWidth: 1
-          },
-          {
-            label: 'Expenses',
-            data: analytics.pl_data.map(d => d.expenses || 0),
-            backgroundColor: 'rgba(255, 92, 122, 0.6)',
-            borderColor: '#ff5c7a',
-            borderWidth: 1
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        plugins: {
-          legend: { 
-            labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } }
-          }
-        },
-        scales: {
-          y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-          x: { grid: { display: false } }
-        }
-      }
-    });
-  }
-}
-
-function closeProfile(){
-  document.getElementById("profileScreen").classList.remove("active");
-  document.getElementById("listScreen").classList.remove("hidden");
-  viewingProfileId = null;
+  document.getElementById("searchBox").placeholder = tab==="people" ? "Search people..." : (tab==="groups" ? "Search groups..." : "Search...");
+  currentTab = tab;
   loadList();
 }
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
 
-async function toggleFollow(userId){
+async function loadList(){
+  const body = document.getElementById("listBody");
+  body.innerHTML = "<div class='empty-state'><i>⏳</i>Loading...</div>";
   try {
-    const r = await api("/api/users/"+userId+"/follow", {method:"POST"});
-    showToast(r.following ? "Following!" : "Unfollowed");
-    renderProfile(userId);
-  } catch(e){ showToast(e.message); }
+    if (currentTab === "people") {
+      const r = await api("/api/users/search?q=" + encodeURIComponent(document.getElementById("searchBox").value));
+      renderPeople(r.users);
+    } else if (currentTab === "groups") {
+      const r = await api("/api/groups/mine");
+      allGroups = r.groups || [];
+      renderGroups(allGroups);
+    } else {
+      const r = await api("/api/conversations");
+      allConversations = r.conversations || [];
+      renderConversations(filterConversations(document.getElementById("searchBox").value));
+    }
+  } catch(e){
+    body.innerHTML = "<div class='empty-state'><i>⚠️</i>Failed to load</div>";
+    showToast(e.message);
+  }
 }
 
-async function boostProfile(userId){
-  try {
-    const r = await api("/api/users/"+userId+"/boost", {method:"POST"});
-    showToast("⭐ Profile boosted! (once per week)");
-    renderProfile(userId);
-  } catch(e){ showToast(e.message); }
+function filterConversations(q){
+  q = (q||"").toLowerCase().trim();
+  if (!q) return allConversations;
+  return allConversations.filter(c => c.name && c.name.toLowerCase().includes(q));
 }
 
-async function editProfile(){
-  const user = await api("/api/me").then(r => r.user).catch(()=>ME);
-  
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  sheet.innerHTML = `
-    <h2>✏️ Edit Profile</h2>
-    <div class="bio-edit">
-      <label style="font-size:12px;color:var(--text-dim);text-transform:uppercase;">Bio</label>
-      <textarea id="editBio" rows="3" placeholder="Tell us about yourself...">${escapeHtml(user.bio || '')}</textarea>
-    </div>
-    <div class="links-edit">
-      <label style="font-size:12px;color:var(--text-dim);text-transform:uppercase;">Links (one per line)</label>
-      <textarea id="editLinks" rows="3" placeholder="https://example.com&#10;https://twitter.com/you">${(user.links || []).join('\n')}</textarea>
-    </div>
-    <button class="btn-primary" onclick="saveProfileEdit()"><span>Save Profile</span></button>
-  `;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
+function onSearch(val){
+  if (currentTab === "people") loadList();
+  else if (currentTab === "groups") renderGroups(allGroups.filter(g => g.name && g.name.toLowerCase().includes(val.toLowerCase())));
+  else renderConversations(filterConversations(val));
 }
 
-async function saveProfileEdit(){
-  const bio = document.getElementById("editBio").value.trim();
-  const links = document.getElementById("editLinks").value.split('\n').filter(l => l.trim());
-  try {
-    const r = await api("/api/profile", {
-      method: "POST",
-      body: JSON.stringify({ bio, links })
-    });
-    ME = r.user;
-    saveSession();
-    showToast("Profile updated!");
-    document.querySelector(".overlay")?.remove();
-    if (viewingProfileId === ME.id) renderProfile(ME.id);
-  } catch(e){ showToast(e.message); }
+function renderConversations(convos){
+  const body = document.getElementById("listBody");
+  if (!convos || convos.length === 0){
+    body.innerHTML = "<div class='empty-state'><i>💬</i>No conversations yet.<br>Tap <b>People</b> to start a DM, or use ＋ to create a group.</div>";
+    return;
+  }
+  body.innerHTML = "";
+  convos.forEach(c => {
+    const el = document.createElement("div");
+    el.className = "list-item";
+    el.onclick = () => c.type === "dm" ? openDM({id:c.id, username:c.name, avatar:c.avatar, status:c.status}) : openGroup(c);
+    const preview = (c.last_is_mine ? "You: " : "") + escapeHtml(c.last_preview || "");
+    el.innerHTML = 
+      <div class="avatar">${c.avatar ? <img src="${c.avatar}"> : (c.name ? c.name.charAt(0).toUpperCase() : "?")}${c.type==='dm' ? <div class="status-dot ${c.status==='online'?'':'offline'}"></div> : ''}</div>
+      <div class="list-item-content">
+        <div class="list-item-name">${escapeHtml(c.name || "Unknown")}</div>
+        <div class="list-item-sub">${preview}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+        <div class="list-item-time">${formatRelativeTime(c.last_timestamp)}</div>
+        ${c.unread > 0 ? <div class="list-badge">${c.unread > 99 ? "99+" : c.unread}</div> : ""}
+      </div>;
+    body.appendChild(el);
+  });
 }
 
-function reportProfile(){
-  showToast("Profile reported for review");
+function formatRelativeTime(ts){
+  if (!ts) return "now";
+  const now = Date.now()/1000;
+
+const diff = now - ts;
+  const d = new Date(ts*1000);
+  if (diff < 60) return "now";
+  if (diff < 3600) return Math.floor(diff/60) + "m";
+  if (diff < 86400 && d.getDate() === new Date().getDate()) return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  if (diff < 172800) return "Yesterday";
+  if (diff < 604800) return d.toLocaleDateString([], {weekday:'short'});
+  return d.toLocaleDateString([], {day:'2-digit', month:'2-digit', year:'2-digit'});
 }
 
-function openDM(userId, username){
-  closeProfile();
-  openDM({id: userId, username: username || "User", avatar: null, status: "online"});
+function renderPeople(users){
+  const body = document.getElementById("listBody");
+  if (!users || users.length===0){ body.innerHTML="<div class='empty-state'><i>🔍</i>No users found.</div>"; return; }
+  body.innerHTML = "";
+  users.forEach(u => {
+    const el = document.createElement("div");
+    el.className = "list-item";
+    el.onclick = () => openDM(u);
+    el.innerHTML = 
+      <div class="avatar">${avatarInner(u)}<div class="status-dot ${u.status==='online'?'':'offline'}"></div></div>
+      <div class="list-item-content">
+        <div class="list-item-name">${escapeHtml(u.username)}</div>
+        <div class="list-item-sub">${u.status==='online'?'Online':'Offline'} · ${escapeHtml(u.email)}</div>
+      </div>;
+    body.appendChild(el);
+  });
 }
 
+function renderGroups(groups){
+  const body = document.getElementById("listBody");
+  if (!groups || groups.length===0){ body.innerHTML="<div class='empty-state'><i>👥</i>No groups yet. Tap ＋ to create one.</div>"; return; }
+  body.innerHTML = "";
+  groups.forEach(gr => {
+    const el = document.createElement("div");
+    el.className = "list-item";
+    el.onclick = () => openGroup(gr);
+    const roleBadge = gr.role === 'admin' ? ' 👑' : (gr.role === 'moderator' ? ' 🛡️' : '');
+    el.innerHTML = 
+      <div class="avatar">${gr.avatar ? <img src="${gr.avatar}"> : (gr.name ? gr.name.charAt(0).toUpperCase() : "?")}</div>
+      <div class="list-item-content">
+        <div class="list-item-name">${escapeHtml(gr.name || "Group")}${roleBadge}</div>
+        <div class="list-item-sub">${gr.role==='admin'?'You are the admin':(gr.role==='moderator'?'You are a moderator':'Group chat')}${gr.has_password?' · 🔒':''}</div>
+      </div>;
+    body.appendChild(el);
+  });
+}
+
+function avatarInner(u){
+  return u.avatar ? <img src="${u.avatar}"> : (u.username||"?").charAt(0).toUpperCase();
+}
+function setAvatarEl(el, u){
+  if (!u) { el.innerHTML = "?"; return; }
+  el.innerHTML = avatarInner(u);
+}
+
+function fabAction(){
+  if (currentTab === "groups") openCreateGroupSheet();
+  else switchTab("people");
+}
+
+// ---- Open Chat ----
 function openDM(user){
   currentChat = {type:"dm", id:user.id, name:user.username, avatar:user.avatar, status:user.status};
   enterChatScreen();
@@ -1578,15 +1399,28 @@ function openDM(user){
   socket.emit("mark_read", {chat_type:"dm", target:user.id});
 }
 
+function openGroup(gr){
+  currentChat = {type:"group", id:gr.id, name:gr.name, avatar:gr.avatar, role:gr.role, invite_token:gr.invite_token};
+  enterChatScreen();
+  api("/api/messages/group/"+gr.id).then(r => renderMessages(r.messages)).catch(e => showToast(e.message));
+  socket.emit("mark_read", {chat_type:"group", target:gr.id});
+  loadGroupMembers(gr.id);
+}
+
+async function loadGroupMembers(groupId){
+  try {
+    const r = await api("/api/groups/"+groupId+"/members");
+    groupMembersCache[groupId] = r.members || [];
+  } catch(e){}
+}
+
 function enterChatScreen(){
-  document.getElementById("profileScreen").classList.remove("active");
   document.getElementById("listScreen").classList.add("hidden");
-  document.getElementById("marketScreen").classList.add("hidden");
-  document.getElementById("analyticsScreen").classList.add("hidden");
   document.getElementById("chatScreen").classList.add("active");
   document.getElementById("chatName").textContent = currentChat.name || "Chat";
   document.getElementById("chatStatus").textContent = currentChat.type==="dm" ? (currentChat.status==="online"?"Online":"Offline") : "Group";
-  setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:currentChat.avatar});
+
+setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:currentChat.avatar});
   document.getElementById("voiceCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
   document.getElementById("videoCallBtn").classList.toggle("hidden", currentChat.type !== "dm");
   document.getElementById("messagesBody").innerHTML = "";
@@ -1607,507 +1441,7 @@ function closeChat(){
   loadList();
 }
 
-// ============================================================
-// POSTS
-// ============================================================
-async function deletePost(postId){
-  if (!confirm("Delete this post?")) return;
-  try {
-    await api("/api/posts/"+postId, {method:"DELETE"});
-    showToast("Post deleted");
-    if (viewingProfileId) renderProfile(viewingProfileId);
-  } catch(e){ showToast(e.message); }
-}
-
-async function reactPost(postId, emoji){
-  try {
-    await api("/api/posts/"+postId+"/react", {method:"POST", body: JSON.stringify({emoji})});
-    if (viewingProfileId) renderProfile(viewingProfileId);
-  } catch(e){ showToast(e.message); }
-}
-
-function toggleComments(postId){
-  showToast("Comments feature coming soon!");
-}
-
-function sharePost(postId){
-  const url = window.location.origin + "/?post=" + postId;
-  if (navigator.share) {
-    navigator.share({ title: "Check out this post!", url: url }).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(url).then(() => showToast("Post link copied!"));
-  }
-}
-
-// ============================================================
-// ANALYTICS
-// ============================================================
-async function loadAnalytics(){
-  const content = document.getElementById("analyticsContent");
-  content.innerHTML = "<div class='empty-state'><i>⏳</i>Loading analytics...</div>";
-  
-  try {
-    const r = await api("/api/analytics");
-    const analytics = r.analytics || {};
-    
-    let html = `
-      <div style="padding-top:12px;">
-        <div class="analytics-grid">
-          <div class="analytics-card">
-            <div class="value ${analytics.profit && analytics.profit >= 0 ? 'positive' : 'negative'}">
-              ${analytics.profit ? '$' + analytics.profit.toFixed(2) : '$0.00'}
-            </div>
-            <div class="label">Profit</div>
-          </div>
-          <div class="analytics-card">
-            <div class="value positive">${analytics.sales || 0}</div>
-            <div class="label">Total Sales</div>
-          </div>
-          <div class="analytics-card">
-            <div class="value">${analytics.revenue ? '$' + analytics.revenue.toFixed(2) : '$0.00'}</div>
-            <div class="label">Revenue</div>
-          </div>
-          <div class="analytics-card">
-            <div class="value">${analytics.expenses ? '$' + analytics.expenses.toFixed(2) : '$0.00'}</div>
-            <div class="label">Expenses</div>
-          </div>
-          <div class="analytics-card">
-            <div class="value">${analytics.followers || 0}</div>
-            <div class="label">Followers</div>
-          </div>
-          <div class="analytics-card">
-            <div class="value">${analytics.posts || 0}</div>
-            <div class="label">Posts</div>
-          </div>
-        </div>
-        
-        <div class="chart-container">
-          <h3>📈 Sales Over Time</h3>
-          <canvas id="analyticsSalesChart"></canvas>
-        </div>
-        
-        <div class="chart-container">
-          <h3>📊 Revenue vs Expenses</h3>
-          <canvas id="analyticsPLChart"></canvas>
-        </div>
-    `;
-    
-    if (analytics.tips && analytics.tips.length > 0) {
-      html += `
-        <div class="analytics-tips">
-          <h3>💡 Insights & Tips</h3>
-          <ul>
-            ${analytics.tips.map(t => `<li><span class="tip-icon">📌</span> ${escapeHtml(t)}</li>`).join('')}
-          </ul>
-        </div>
-      `;
-    }
-    
-    html += `</div>`;
-    content.innerHTML = html;
-    
-    setTimeout(() => {
-      // Sales chart
-      const salesCtx = document.getElementById('analyticsSalesChart');
-      if (salesCtx && analytics.sales_data) {
-        chartInstances.analyticsSales = new Chart(salesCtx, {
-          type: 'line',
-          data: {
-            labels: analytics.sales_data.map(d => d.label || ''),
-            datasets: [{
-              label: 'Sales',
-              data: analytics.sales_data.map(d => d.value || 0),
-              borderColor: '#4f9aff',
-              backgroundColor: 'rgba(79, 154, 255, 0.1)',
-              fill: true,
-              tension: 0.4
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: { legend: { display: false } },
-            scales: {
-              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-              x: { grid: { display: false } }
-            }
-          }
-        });
-      }
-      
-      // P&L chart
-      const plCtx = document.getElementById('analyticsPLChart');
-      if (plCtx && analytics.pl_data) {
-        chartInstances.analyticsPL = new Chart(plCtx, {
-          type: 'bar',
-          data: {
-            labels: analytics.pl_data.map(d => d.label || ''),
-            datasets: [
-              {
-                label: 'Revenue',
-                data: analytics.pl_data.map(d => d.revenue || 0),
-                backgroundColor: 'rgba(52, 211, 153, 0.6)',
-                borderColor: '#34d399',
-                borderWidth: 1
-              },
-              {
-                label: 'Expenses',
-                data: analytics.pl_data.map(d => d.expenses || 0),
-                backgroundColor: 'rgba(255, 92, 122, 0.6)',
-                borderColor: '#ff5c7a',
-                borderWidth: 1
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-              legend: { 
-                labels: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } }
-              }
-            },
-            scales: {
-              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-              x: { grid: { display: false } }
-            }
-          }
-        });
-      }
-    }, 300);
-    
-  } catch(e){
-    content.innerHTML = `<div class='empty-state'><i>⚠️</i>${escapeHtml(e.message)}</div>`;
-  }
-}
-
-function refreshAnalytics(){
-  loadAnalytics();
-  showToast("🔄 Analytics refreshed");
-}
-
-// ============================================================
-// TABS & LISTS
-// ============================================================
-function switchTab(tab){
-  ["chats","people","market"].forEach(t => {
-    const el = document.getElementById("tab"+cap(t));
-    if (el) el.classList.toggle("active", t===tab);
-  });
-  document.getElementById("searchBox").placeholder = tab==="people" ? "Search people..." : (tab==="market" ? "Search products..." : "Search...");
-  currentTab = tab;
-  loadList();
-}
-function cap(s){return s.charAt(0).toUpperCase()+s.slice(1);}
-
-async function loadList(){
-  const body = document.getElementById("listBody");
-  body.innerHTML = "<div class='empty-state'><i>⏳</i>Loading...</div>";
-  try {
-    if (currentTab === "people") {
-      const r = await api("/api/users/search?q=" + encodeURIComponent(document.getElementById("searchBox").value));
-      renderPeople(r.users);
-    } else if (currentTab === "market") {
-      switchMainScreen('market');
-    } else {
-      const r = await api("/api/conversations");
-      allConversations = r.conversations || [];
-      renderConversations(filterConversations(document.getElementById("searchBox").value));
-    }
-  } catch(e){
-    body.innerHTML = "<div class='empty-state'><i>⚠️</i>Failed to load</div>";
-    showToast(e.message);
-  }
-}
-
-function filterConversations(q){
-  q = (q||"").toLowerCase().trim();
-  if (!q) return allConversations;
-  return allConversations.filter(c => c.name && c.name.toLowerCase().includes(q));
-}
-
-function onSearch(val){
-  if (currentTab === "people") loadList();
-  else if (currentTab === "market") filterMarket(val);
-  else renderConversations(filterConversations(val));
-}
-
-function renderConversations(convos){
-  const body = document.getElementById("listBody");
-  if (!convos || convos.length === 0){
-    body.innerHTML = "<div class='empty-state'><i>💬</i>No conversations yet.<br>Tap <b>People</b> to start a DM!</div>";
-    return;
-  }
-  body.innerHTML = "";
-  convos.forEach(c => {
-    const el = document.createElement("div");
-    el.className = "list-item";
-    el.onclick = () => {
-      if (c.type === "dm") {
-        openDM({id:c.id, username:c.name, avatar:c.avatar, status:c.status});
-      } else {
-        openGroup(c);
-      }
-    };
-    const preview = (c.last_is_mine ? "You: " : "") + escapeHtml(c.last_preview || "");
-    el.innerHTML = `
-      <div class="avatar">${c.avatar ? `<img src="${c.avatar}">` : (c.name ? c.name.charAt(0).toUpperCase() : "?")}${c.type==='dm' ? `<div class="status-dot ${c.status==='online'?'':'offline'}"></div>` : ''}</div>
-      <div class="list-item-content">
-        <div class="list-item-name">${escapeHtml(c.name || "Unknown")}</div>
-        <div class="list-item-sub">${preview}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
-        <div class="list-item-time">${formatRelativeTime(c.last_timestamp)}</div>
-        ${c.unread > 0 ? `<div class="list-badge">${c.unread > 99 ? "99+" : c.unread}</div>` : ""}
-      </div>`;
-    body.appendChild(el);
-  });
-}
-
-function formatRelativeTime(ts){
-  if (!ts) return "now";
-  const now = Date.now()/1000;
-  const diff = now - ts;
-  const d = new Date(ts*1000);
-  if (diff < 60) return "now";
-  if (diff < 3600) return Math.floor(diff/60) + "m";
-  if (diff < 86400 && d.getDate() === new Date().getDate()) return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  if (diff < 172800) return "Yesterday";
-  if (diff < 604800) return d.toLocaleDateString([], {weekday:'short'});
-  return d.toLocaleDateString([], {day:'2-digit', month:'2-digit', year:'2-digit'});
-}
-
-function renderPeople(users){
-  const body = document.getElementById("listBody");
-  if (!users || users.length===0){ body.innerHTML="<div class='empty-state'><i>🔍</i>No users found.</div>"; return; }
-  body.innerHTML = "";
-  users.forEach(u => {
-    const el = document.createElement("div");
-    el.className = "list-item";
-    el.onclick = () => {
-      if (u.id === ME?.id) {
-        viewProfile(ME.id);
-      } else {
-        openDM(u);
-      }
-    };
-    el.innerHTML = `
-      <div class="avatar">${avatarInner(u)}<div class="status-dot ${u.status==='online'?'':'offline'}"></div></div>
-      <div class="list-item-content">
-        <div class="list-item-name">${escapeHtml(u.username)}</div>
-        <div class="list-item-sub">${u.status==='online'?'Online':'Offline'} · ${escapeHtml(u.email)}</div>
-      </div>`;
-    body.appendChild(el);
-  });
-}
-
-function avatarInner(u){
-  return u.avatar ? `<img src="${u.avatar}">` : (u.username||"?").charAt(0).toUpperCase();
-}
-function setAvatarEl(el, u){
-  if (!u) { el.innerHTML = "?"; return; }
-  el.innerHTML = avatarInner(u);
-}
-
-function fabAction(){
-  if (currentTab === "people") openCreateGroupSheet();
-  else if (currentTab === "market") openSellSheet();
-  else switchTab("people");
-}
-
-// ============================================================
-// MARKETPLACE
-// ============================================================
-async function loadMarketplace(){
-  const body = document.getElementById("marketBody");
-  body.innerHTML = "<div class='empty-state'><i>⏳</i>Loading products...</div>";
-  try {
-    const r = await api("/api/products");
-    allProducts = r.products || [];
-    renderMarketplace(allProducts);
-  } catch(e){
-    body.innerHTML = "<div class='empty-state'><i>⚠️</i>Failed to load marketplace</div>";
-    showToast(e.message);
-  }
-}
-
-function renderMarketplace(products){
-  const body = document.getElementById("marketBody");
-  if (!products || products.length === 0){
-    body.innerHTML = "<div class='empty-state'><i>🛒</i>No products yet.<br>Tap the + button to list your first product!</div>";
-    return;
-  }
-  body.innerHTML = `<div class="marketplace-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;">`;
-  products.forEach(p => {
-    const isOwner = p.seller_id === ME?.id;
-    body.innerHTML += `
-      <div class="market-item" style="background:var(--bg-surface);border-radius:16px;overflow:hidden;border:1px solid var(--border-subtle);">
-        ${p.image_path ? `<img src="${p.image_path}" class="item-image" style="width:100%;height:140px;object-fit:cover;" onerror="this.src='https://via.placeholder.com/200x140/1c283c/4f9aff?text=Product'">` : 
-          `<div style="height:140px;background:var(--bg-surface-2);display:flex;align-items:center;justify-content:center;font-size:48px;">🛒</div>`}
-        <div class="item-info" style="padding:10px 12px;">
-          <div class="item-name" style="font-size:14px;font-weight:700;">${escapeHtml(p.name)}</div>
-          <div class="item-price" style="font-size:16px;font-weight:800;color:var(--gold);">$${p.price.toFixed(2)}</div>
-          <div class="item-seller" style="font-size:11px;color:var(--text-dim);cursor:pointer;" onclick="viewProfile(${p.seller_id})">by ${escapeHtml(p.seller_name || "Unknown")}</div>
-          <div class="item-actions" style="display:flex;gap:8px;margin-top:8px;">
-            ${!isOwner ? `<button class="buy-btn" style="flex:1;padding:6px;border-radius:10px;font-size:12px;font-weight:600;background:var(--accent-gradient);color:#fff;" onclick="buyProduct(${p.id})">Buy Now</button>` : 
-              `<button onclick="deleteProduct(${p.id})" style="flex:1;padding:6px;border-radius:10px;font-size:12px;font-weight:600;background:var(--bg-surface-2);color:var(--danger);">Delete</button>`}
-            <button onclick="chatAboutProduct(${p.id})" style="padding:6px 12px;border-radius:10px;font-size:12px;background:var(--bg-surface-2);">💬</button>
-          </div>
-        </div>
-      </div>
-    `;
-  });
-  body.innerHTML += `</div>`;
-}
-
-function filterMarket(query){
-  const q = query.toLowerCase().trim();
-  const filtered = allProducts.filter(p => 
-    p.name.toLowerCase().includes(q) || 
-    (p.description && p.description.toLowerCase().includes(q))
-  );
-  renderMarketplace(filtered);
-}
-
-function openSellSheet(){
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  sheet.innerHTML = `
-    <h2>🛒 List a Product</h2>
-    <div class="field"><label>Product Name</label><input id="productName" placeholder="e.g. iPhone 13"></div>
-    <div class="field"><label>Price ($)</label><input id="productPrice" type="number" step="0.01" placeholder="199.99"></div>
-    <div class="field"><label>Description</label><textarea id="productDesc" rows="3" placeholder="Describe your product..."></textarea></div>
-    <div class="field"><label>Product Photo</label><input type="file" id="productImage" accept="image/*"></div>
-    <button class="btn-primary" onclick="submitProduct()"><span>List Product</span></button>
-  `;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-}
-
-async function submitProduct(){
-  const name = document.getElementById("productName").value.trim();
-  const price = parseFloat(document.getElementById("productPrice").value);
-  const description = document.getElementById("productDesc").value.trim();
-  const fileInput = document.getElementById("productImage");
-  
-  if (!name || !price) { showToast("Name and price required"); return; }
-  
-  const fd = new FormData();
-  fd.append("name", name);
-  fd.append("price", price);
-  fd.append("description", description);
-  if (fileInput.files[0]) fd.append("image", fileInput.files[0]);
-  
-  try {
-    const r = await api("/api/products", {method:"POST", body: fd});
-    showToast("Product listed successfully!");
-    document.querySelector(".overlay")?.remove();
-    loadMarketplace();
-  } catch(e){ showToast(e.message); }
-}
-
-async function buyProduct(productId){
-  if (walletBalance <= 0) {
-    showToast("Insufficient balance. Add funds first!");
-    openWallet();
-    return;
-  }
-  if (!confirm("Are you sure you want to purchase this product?")) return;
-  try {
-    const r = await api("/api/products/"+productId+"/buy", {method:"POST"});
-    walletBalance = r.new_balance;
-    showToast("🎉 Product purchased successfully!");
-    loadMarketplace();
-    loadWalletBalance();
-  } catch(e){ showToast(e.message); }
-}
-
-async function deleteProduct(productId){
-  if (!confirm("Delete this product?")) return;
-  try {
-    await api("/api/products/"+productId, {method:"DELETE"});
-    showToast("Product deleted");
-    loadMarketplace();
-  } catch(e){ showToast(e.message); }
-}
-
-function chatAboutProduct(productId){
-  const product = allProducts.find(p => p.id === productId);
-  if (!product) return;
-  if (product.seller_id === ME?.id) {
-    showToast("This is your product");
-    return;
-  }
-  openDM({id: product.seller_id, username: product.seller_name, avatar: product.seller_avatar});
-  setTimeout(() => {
-    const input = document.getElementById("msgInput");
-    input.value = `Hi! I'm interested in your product: ${product.name} ($${product.price.toFixed(2)})`;
-    input.focus();
-  }, 500);
-}
-
-function openProductPicker(){
-  if (!currentChat) return;
-  const overlay = document.createElement("div");
-  overlay.className = "overlay";
-  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
-  const sheet = document.createElement("div");
-  sheet.className = "sheet";
-  
-  let html = `<h2>🛒 Share a Product</h2>`;
-  const userProducts = allProducts.filter(p => p.seller_id === ME?.id);
-  if (userProducts.length === 0) {
-    html += `<div class="empty-state"><i>🛒</i>You haven't listed any products yet.<br>Go to Marketplace and list one!</div>`;
-  } else {
-    html += `<div style="max-height:300px;overflow-y:auto;">`;
-    userProducts.forEach(p => {
-      html += `
-        <div class="sheet-item" onclick="shareProductInChat(${p.id})">
-          <span class="ic">${p.image_path ? '🖼️' : '🛒'}</span>
-          <span style="flex:1;">${escapeHtml(p.name)}</span>
-          <span style="color:var(--gold);font-weight:700;">$${p.price.toFixed(2)}</span>
-        </div>
-      `;
-    });
-    html += `</div>`;
-  }
-  sheet.innerHTML = html;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-}
-
-function shareProductInChat(productId){
-  const product = allProducts.find(p => p.id === productId);
-  if (!product || !currentChat) return;
-  document.querySelector(".overlay")?.remove();
-  
-  const message = `🛒 **${product.name}**\n💰 Price: $${product.price.toFixed(2)}\n📝 ${product.description || ''}`;
-  
-  const clientId = appendOptimistic("product", message, product.image_path || "");
-  socket.emit("send_message", {
-    chat_type: currentChat.type,
-    target: currentChat.id,
-    msg_type: "product",
-    content: JSON.stringify({
-      product_id: product.id,
-      name: product.name,
-      price: product.price,
-      description: product.description || '',
-      image: product.image_path || ''
-    }),
-    media_path: product.image_path || '',
-    client_id: clientId,
-    reply_to_id: null
-  });
-  showToast("📤 Product shared in chat!");
-}
-
-// ============================================================
-// MESSAGES (simplified from original)
-// ============================================================
+// ---- Messages ----
 function renderMessages(msgs){
   const body = document.getElementById("messagesBody");
   body.innerHTML = "";
@@ -2139,36 +1473,45 @@ function buildBubble(m){
   });
 
   let inner = "";
-  if (currentChat && currentChat.type === "group" && !mine) inner += `<div class="sender">${escapeHtml(m.sender_name)}</div>`;
+  if (currentChat && currentChat.type === "group" && !mine) inner += <div class="sender">${escapeHtml(m.sender_name)}</div>;
+  if (m.forwarded_from_name && !m.deleted) {
+    inner += <div class="forwarded-label" style="font-size:11px;color:var(--text-dim);font-style:italic;margin-bottom:2px;">↪ Forwarded from ${escapeHtml(m.forwarded_from_name)}</div>;
+  }
+  if (m.reply_to && !m.deleted) {
+    const rt = m.reply_to;
+    const preview = rt.msg_type === "text" ? rt.preview :
+      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[rt.msg_type] || rt.preview);
+    inner += <div class="quoted-block" style="background:rgba(255,255,255,0.06);border-left:3px solid rgba(255,255,255,0.2);border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;" onclick="scrollToMessage(${rt.id})">
+      <div style="font-weight:700;color:#8ecbff;">${escapeHtml(rt.sender_name)}</div>
+      <div style="color:rgba(255,255,255,0.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px;">${escapeHtml(preview)}</div>
+    </div>;
+  }
   if (m.deleted) {
     inner += "This message was deleted";
   } else if (m.msg_type === "gift") {
-    const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift" };
-    inner += `<div style="font-size:52px;display:block;text-align:center;margin:4px 0;animation:giftFloat 2s ease-in-out infinite;">${gift.emoji}</div>`;
-    inner += `<div style="font-size:11px;color:rgba(255,255,255,0.6);text-align:center;">🎁 ${escapeHtml(gift.name)}</div>`;
-  } else if (m.msg_type === "product") {
-    try {
-      const p = JSON.parse(m.content);
-      inner += `
-        <div style="background:var(--bg-surface-2);border-radius:16px;padding:12px;margin:4px 0;border:1px solid var(--border-subtle);">
-          ${p.image ? `<img src="${p.image}" style="width:100%;height:150px;object-fit:cover;border-radius:12px;margin-bottom:8px;" onerror="this.style.display='none'">` : ''}
-          <div style="font-size:15px;font-weight:700;">${escapeHtml(p.name)}</div>
-          <div style="font-size:18px;font-weight:800;color:var(--gold);margin:4px 0;">$${p.price.toFixed(2)}</div>
-          ${p.description ? `<div style="font-size:13px;color:var(--text-secondary);">${escapeHtml(p.description)}</div>` : ''}
-          ${m.sender_id !== ME.id ? `<button onclick="buyProductDirect(${p.product_id || 0}, '${escapeHtml(p.name)}', ${p.price})" style="background:var(--accent-gradient);padding:8px 20px;border-radius:20px;font-weight:600;font-size:13px;color:#fff;margin-top:8px;">Buy Now</button>` : ''}
-        </div>
-      `;
-    } catch(e) { inner += escapeHtml(m.content || "📦 Product shared"); }
+    const gift = GIFTS.find(g => g.emoji === m.content) || { emoji: "🎁", name: "Gift", category: "Gift" };
+    inner += <div class="gift-emoji">${gift.emoji}</div>;
+    inner += <div class="gift-label">🎁 ${escapeHtml(gift.name)}</div>;
   } else if (m.msg_type === "image") {
-    inner += `<img src="${m.media_path}" onclick="openMediaFull('${m.media_path}','image')">`;
+    inner += <img src="${m.media_path}" onclick="openMediaFull('${m.media_path}','image')">;
   } else if (m.msg_type === "video") {
-    inner += `<video src="${m.media_path}" controls></video>`;
+    inner += <video src="${m.media_path}" controls></video>;
   } else if (m.msg_type === "voice") {
-    inner += `<audio src="${m.media_path}" controls></audio>`;
+    inner += <audio src="${m.media_path}" controls></audio>;
+  } else if (m.msg_type === "call") {
+    const [ctype, status, dur] = (m.content || "audio:missed:0").split(":");
+
+const isVideo = ctype === "video";
+    const icon = isVideo ? "🎥" : "📞";
+    let label;
+    if (status === "completed") label = ${isVideo ? "Video" : "Voice"} call · ${formatDuration(parseInt(dur) || 0)};
+    else if (status === "declined") label = ${isVideo ? "Video" : "Voice"} call declined;
+    else label = Missed ${isVideo ? "video" : "voice"} call;
+    inner += <div style="display:flex;align-items:center;gap:7px;font-size:13.5px;color:${mine ? 'rgba(255,255,255,0.85)' : 'var(--text-dim)'}"><span style="font-size:15px;">${icon}</span> ${label}</div>;
   } else {
     inner += escapeHtml(m.content || "");
   }
-  inner += `<div class="time">${m.edited && !m.deleted ? "edited · " : ""}${formatTime(m.timestamp)}</div>`;
+  inner += <div class="time">${m.edited && !m.deleted ? "edited · " : ""}${formatTime(m.timestamp)}</div>;
   bubble.innerHTML = inner;
   renderReactionsInto(bubble, m);
 
@@ -2178,7 +1521,7 @@ function buildBubble(m){
 
 function renderReactionsInto(bubble, m){
   bubble.querySelector(".reactions-row")?.remove();
-  if (m.deleted || !m.reactions || !m.reactions.length) return;
+  if (m.deleted  !m.reactions  !m.reactions.length) return;
   const rr = document.createElement("div");
   rr.className = "reactions-row";
   rr.style.cssText = "display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;";
@@ -2201,7 +1544,7 @@ function updateReactionsUI(messageId, userId, emoji){
   const existing = m.reactions.find(r => r.user_id === userId);
   if (existing) existing.emoji = emoji;
   else m.reactions.push({user_id: userId, emoji});
-  const row = document.querySelector(`.bubble-row[data-id="${messageId}"]`);
+  const row = document.querySelector(.bubble-row[data-id="${messageId}"]);
   if (row) renderReactionsInto(row.querySelector(".bubble"), m);
 }
 
@@ -2215,6 +1558,25 @@ function quickHeartReact(m, bubble){
   bubble.appendChild(pop);
   setTimeout(() => pop.remove(), 700);
 }
+const styleSheet = document.createElement("style");
+styleSheet.textContent = 
+  @keyframes heartPop {
+    0% { transform: translate(-50%,-50%) scale(0); opacity:0; }
+    25% { transform: translate(-50%,-50%) scale(1.15); opacity:1; }
+    45% { transform: translate(-50%,-50%) scale(.95); }
+    100% { transform: translate(-50%,-50%) scale(1.3); opacity:0; }
+  }
+;
+document.head.appendChild(styleSheet);
+
+function scrollToMessage(id){
+  const row = document.querySelector(.bubble-row[data-id="${id}"]);
+  if (row) {
+    row.scrollIntoView({behavior: ANIMATIONS_ON ? "smooth" : "auto", block:"center"});
+    row.querySelector(".bubble").style.outline = "2px solid var(--accent)";
+    setTimeout(() => { row.querySelector(".bubble").style.outline = "none"; }, 900);
+  }
+}
 
 function formatTime(ts){
   if (!ts) return "";
@@ -2227,9 +1589,13 @@ function escapeHtml(s){
   const d = document.createElement("div"); d.textContent = s; return d.innerHTML;
 }
 
-// ============================================================
-// MESSAGE SENDING (simplified)
-// ============================================================
+function formatDuration(totalSeconds){
+  if (!totalSeconds) return "0:00";
+  const m = Math.floor(totalSeconds / 60), s = totalSeconds % 60;
+  return ${m}:${s.toString().padStart(2,"0")};
+}
+
+// ---- Sending ----
 function onComposerKey(e){
   if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); sendTextMessage(); }
 }
@@ -2240,14 +1606,46 @@ function makeClientId(){
 let replyingTo = null;
 let editingMessageId = null;
 
-function cancelReply(){
-  replyingTo = null;
-  document.getElementById("replyPreview")?.classList.add("hidden");
+function startEditById(id){
+  document.querySelector(".overlay")?.remove();
+  const m = messageCache[id];
+  if (!m || m.msg_type !== "text") return;
+  cancelReply();
+  editingMessageId = id;
+  document.getElementById("editPreviewText").textContent = m.content || "";
+  document.getElementById("editBanner").classList.remove("hidden");
+  const input = document.getElementById("msgInput");
+  input.value = m.content || "";
+  input.focus();
 }
 function cancelEdit(){
   editingMessageId = null;
   document.getElementById("editBanner")?.classList.add("hidden");
   document.getElementById("msgInput").value = "";
+}
+
+function startReplyById(id){
+  const m = messageCache[id];
+  if (m) startReply(m);
+}
+
+function startReply(m){
+  document.querySelector(".overlay")?.remove();
+  replyingTo = {
+    id: m.id,
+    sender_name: m.sender_id === ME.id ? "You" : m.sender_name,
+    msg_type: m.msg_type,
+    preview: m.msg_type === "text" ? (m.content || "") : 
+      ({image:"📷 Photo", video:"🎬 Video", voice:"🎤 Voice message", gift:"🎁 Gift"}[m.msg_type] || "Message"),
+  };
+  document.getElementById("replyPreviewName").textContent = "Replying to " + replyingTo.sender_name;
+  document.getElementById("replyPreviewText").textContent = replyingTo.preview;
+  document.getElementById("replyPreview").classList.remove("hidden");
+  document.getElementById("msgInput").focus();
+}
+function cancelReply(){
+  replyingTo = null;
+  document.getElementById("replyPreview")?.classList.add("hidden");
 }
 
 function appendOptimistic(msgType, content, mediaPath){
@@ -2284,6 +1682,13 @@ function sendTextMessage(){
   if (!text || !currentChat) return;
   if (document.getElementById("blockBanner")) { showToast("This conversation is unavailable"); return; }
 
+  if (editingMessageId) {
+    socket.emit("edit_message", {message_id: editingMessageId, content: text});
+    cancelEdit();
+    input.value = "";
+    return;
+  }
+
   const replyId = replyingTo ? replyingTo.id : null;
   const clientId = appendOptimistic("text", text, "");
   socket.emit("send_message", {
@@ -2300,7 +1705,9 @@ function sendTextMessage(){
 
 function sendGift(emoji, name){
   if (!currentChat) return;
+  if (document.getElementById("blockBanner")) { showToast("This conversation is unavailable"); return; }
   document.querySelector(".overlay")?.remove();
+  
   const replyId = replyingTo ? replyingTo.id : null;
   const clientId = appendOptimistic("gift", emoji, "");
   socket.emit("send_message", {
@@ -2323,23 +1730,25 @@ function openGiftPicker(){
   const sheet = document.createElement("div");
   sheet.className = "sheet";
   
+  // Group gifts by category
   const categories = {};
   GIFTS.forEach(g => {
     if (!categories[g.category]) categories[g.category] = [];
     categories[g.category].push(g);
   });
   
-  let html = `<h2>🎁 Send a Gift</h2><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:12px 0;max-height:350px;overflow-y:auto;">`;
+  let html = <h2>🎁 Send a Gift</h2><div class="gift-picker">;
   Object.keys(categories).forEach(cat => {
-    html += `<div style="font-size:12px;font-weight:600;color:var(--text-secondary);padding:8px 4px 4px;border-bottom:1px solid var(--border-subtle);grid-column:1/-1;">${cat}</div>`;
+    html += <div class="gift-category-header">${cat}</div>;
     categories[cat].forEach(g => {
-      html += `<div onclick="sendGift('${g.emoji}','${g.name}')" style="display:flex;flex-direction:column;align-items:center;padding:12px 8px;border-radius:14px;background:var(--bg-surface-2);border:2px solid transparent;transition:all 0.25s;cursor:pointer;min-height:80px;justify-content:center;">
-        <span style="font-size:40px;line-height:1.2;">${g.emoji}</span>
-        <span style="font-size:9px;color:var(--text-dim);margin-top:4px;text-align:center;">${escapeHtml(g.name)}</span>
-      </div>`;
+      html += <div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
+        <span class="gift-emoji">${g.emoji}</span>
+        <span class="gift-name">${escapeHtml(g.name)}</span>
+        <span class="gift-category">${escapeHtml(g.category)}</span>
+      </div>;
     });
   });
-  html += `</div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
+  html += </div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>;
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
@@ -2358,6 +1767,7 @@ function triggerFile(kind){
 
 async function uploadAndSend(file, kind){
   if (!file || !currentChat) return;
+  if (document.getElementById("blockBanner")) { showToast("This conversation is unavailable"); return; }
   const fd = new FormData();
   fd.append("file", file);
   try {
@@ -2377,12 +1787,38 @@ async function uploadAndSend(file, kind){
   } catch(e){ showToast(e.message); }
 }
 
-// ============================================================
-// REALTIME HANDLERS
-// ============================================================
+// ---- Voice Recording ----
+async function startRecording(e){
+  if (e) e.preventDefault();
+  if (!currentChat) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = (ev) => audioChunks.push(ev.data);
+    mediaRecorder.start();
+    recStartTime = Date.now();
+    document.getElementById("voiceBtn").classList.add("recording");
+  } catch(err){ showToast("Microphone access denied"); }
+}
+function stopRecording(e){
+  if (e) e.preventDefault();
+  if (!mediaRecorder || mediaRecorder.state==="inactive") return;
+  document.getElementById("voiceBtn").classList.remove("recording");
+  const duration = Date.now() - recStartTime;
+  mediaRecorder.onstop = async () => {
+    if (duration < 500) return;
+    const blob = new Blob(audioChunks, {type:"audio/webm"});
+    const file = new File([blob], "voice.webm", {type:"audio/webm"});
+    await uploadAndSend(file, "voice");
+  };
+  mediaRecorder.stop();
+}
+
+// ---- Realtime Handlers ----
 function handleIncomingMessage(m){
   const belongsToOpenChat = currentChat && (
-    (currentChat.type === "dm" && m.chat_type === "dm" && (m.sender_id === currentChat.id || m.sender_id === ME.id)) ||
+    (currentChat.type === "dm" && m.chat_type === "dm" && (m.sender_id === currentChat.id  m.sender_id === ME.id)) 
     (currentChat.type === "group" && m.chat_type === "group" && String(currentChat.id) === m.chat_id)
   );
 
@@ -2398,7 +1834,7 @@ function handleIncomingMessage(m){
     return;
   }
 
-  if (m.sender_id !== ME.id) {
+if (m.sender_id !== ME.id) {
     socket.emit("mark_read", {chat_type: currentChat.type, target: currentChat.id});
   }
 
@@ -2426,8 +1862,49 @@ async function refreshUnreadBadge(){
   } catch(e){}
 }
 
-function openNotifications(){
-  showToast("📬 Notifications coming soon!");
+async function openNotifications(){
+  const r = await api("/api/conversations").catch(()=>({conversations:[]}));
+  const unread = r.conversations.filter(c => c.unread > 0);
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  let html = "<h2>Notifications</h2>";
+  if (unread.length === 0) {
+    html += "<div class='empty-state'><i>🎉</i>You're all caught up</div>";
+  } else {
+    unread.forEach(c => {
+      html += <div class="notif-item" style="display:flex;gap:12px;align-items:center;padding:12px 4px;border-bottom:1px solid var(--border-subtle);" onclick='closeNotifAndOpen("${c.type}", ${c.id})'>
+        <div class="avatar">${c.avatar ? <img src="${c.avatar}"> : (c.name ? c.name.charAt(0).toUpperCase() : "?")}</div>
+        <div class="list-item-content">
+          <div class="list-item-name">${escapeHtml(c.name)}</div>
+          <div class="list-item-sub">${escapeHtml(c.last_preview)}</div>
+        </div>
+        <div class="list-badge">${c.unread}</div>
+      </div>;
+    });
+  }
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+function closeNotifAndOpen(type, id){
+  document.querySelector(".overlay")?.remove();
+  if (type === "dm") {
+    openDM({id, username:"", avatar:"", status:""});
+    api("/api/conversations").then(r => {
+      const c = r.conversations.find(x => x.type==="dm" && x.id===id);
+      if (c) { currentChat.name = c.name; currentChat.avatar = c.avatar;
+        document.getElementById("chatName").textContent = c.name;
+        setAvatarEl(document.getElementById("chatAvatar"), {username:c.name, avatar:c.avatar}); }
+    });
+  } else {
+    api("/api/conversations").then(r => {
+      const c = r.conversations.find(x => x.type==="group" && x.id===id);
+      if (c) openGroup(c);
+    });
+  }
 }
 
 function maybeAskNotificationPermission(){
@@ -2446,23 +1923,23 @@ function refreshConversationsIfListVisible(){
     loadList();
   }
 }
-
 function handleMessageDeleted(d){
   const m = messageCache[d.message_id];
   if (m) { m.deleted = true; m.content = ""; m.media_path = ""; }
-  const row = document.querySelector(`.bubble-row[data-id="${d.message_id}"]`);
+  const row = document.querySelector(.bubble-row[data-id="${d.message_id}"]);
   if (row) {
     const bubble = row.querySelector(".bubble");
     bubble.className = "bubble deleted";
     bubble.innerHTML = "This message was deleted";
-  }
+
+}
 }
 function handleMessageEdited(d){
   const m = messageCache[d.message_id];
   if (!m) return;
   m.content = d.content;
   m.edited = true;
-  const row = document.querySelector(`.bubble-row[data-id="${d.message_id}"]`);
+  const row = document.querySelector(.bubble-row[data-id="${d.message_id}"]);
   if (row) {
     const newRow = buildBubble(m);
     row.replaceWith(newRow);
@@ -2478,9 +1955,32 @@ function handleTyping(d){
   typingTimeout = setTimeout(() => el.textContent = "", 2000);
 }
 
-// ============================================================
-// MESSAGE MENU (simplified)
-// ============================================================
+// ---- Group Member Updates ----
+function handleGroupMemberUpdate(data){
+  if (currentChat && currentChat.type === "group" && String(currentChat.id) === data.group_id) {
+    if (data.action === "role_changed") {
+      showToast(${data.username} is now ${data.new_role});
+      if (data.target_id === ME.id) {
+        currentChat.role = data.new_role;
+        document.getElementById("chatStatus").textContent = "Group · " + data.new_role;
+      }
+    } else if (data.action === "removed") {
+      if (data.target_id === ME.id) {
+        showToast("You were removed from the group");
+        closeChat();
+      } else {
+        showToast(${data.username} was removed from the group);
+      }
+    } else if (data.action === "restricted") {
+      showToast(${data.username} was restricted for ${data.duration});
+    } else if (data.action === "unrestricted") {
+      showToast(${data.username} is no longer restricted);
+    }
+    loadGroupMembers(currentChat.id);
+  }
+}
+
+// ---- Message Menu ----
 function openMessageMenu(m, mine){
   if (typeof m.id !== "number") return;
   const overlay = document.createElement("div");
@@ -2488,80 +1988,483 @@ function openMessageMenu(m, mine){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  let html = `<h2>Message</h2><div style="display:flex;gap:12px;justify-content:space-around;padding:8px 0 16px;font-size:28px;">
-    ${["❤️","👍","😂","😮","😢","🙏","😡","🎉"].map(e=>`<span onclick="reactToMessage(${m.id},'${e}')" style="transition:all 0.25s;cursor:pointer;">${e}</span>`).join("")}
-  </div>`;
+  let html = <h2>Message</h2><div class="reaction-picker">
+    ${["❤️","👍","😂","😮","😢","🙏","😡","🎉"].map(e=><span onclick="reactToMessage(${m.id},'${e}')">${e}</span>).join("")}
+  </div>;
   if (!m.deleted) {
-    html += `<div class="sheet-item" onclick="copyMessageText(${m.id})"><span class="ic">📋</span> Copy text</div>`;
+    html += <div class="sheet-item" onclick="copyMessage(${m.id})"><span class="ic">📋</span> Copy text</div>;
+    html += <div class="sheet-item" onclick="startReplyById(${m.id})"><span class="ic">↩️</span> Reply</div>;
+    html += <div class="sheet-item" onclick="openForwardPicker(${m.id})"><span class="ic">➡️</span> Forward</div>;
   }
   if (mine && !m.deleted && m.msg_type === "text") {
-    html += `<div class="sheet-item" onclick="startEditById(${m.id})"><span class="ic">✏️</span> Edit</div>`;
+    html += <div class="sheet-item" onclick="startEditById(${m.id})"><span class="ic">✏️</span> Edit message</div>;
+  }
+  if (!m.deleted) {
+    html += <div class="sheet-item" onclick="hideMessageForMe(${m.id})"><span class="ic">🙈</span> Delete for me</div>;
   }
   if (mine && !m.deleted) {
-    html += `<div class="sheet-item" style="color:var(--danger);" onclick="deleteMessage(${m.id})"><span class="ic">🗑️</span> Delete</div>`;
+    html += <div class="sheet-item" style="color:var(--danger);" onclick="deleteMessage(${m.id})"><span class="ic">🗑️</span> Delete for everyone</div>;
+  }
+  if (currentChat && currentChat.type === "group" && currentChat.role === "admin" && !mine && !m.deleted) {
+    html += <div style="border-top:1px solid var(--border-subtle);margin:8px 0;padding-top:8px;">;
+    html += <div class="sheet-item" style="color:var(--danger);" onclick="removeUserFromGroup(${m.sender_id})"><span class="ic">🚫</span> Remove user from group</div>;
+    html += <div class="sheet-item" onclick="restrictUserFromGroup(${m.sender_id})"><span class="ic">⏰</span> Restrict user</div>;
+    html += </div>;
   }
   sheet.innerHTML = html;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
 
-function copyMessageText(id){
-  const m = messageCache[id];
-  if (!m) return;
-  let text = m.msg_type === "text" ? m.content : "[Message]";
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => showToast("Copied!"));
+// ---- Copy Message Function ----
+function copyMessage(messageId) {
+  const m = messageCache[messageId];
+  if (!m) {
+    showToast("Message not found");
+    return;
+
+}
+  if (m.deleted) {
+    showToast("Cannot copy a deleted message");
+    return;
   }
+  
+  let textToCopy = "";
+  if (m.msg_type === "text") {
+    textToCopy = m.content || "";
+  } else if (m.msg_type === "gift") {
+    const gift = GIFTS.find(g => g.emoji === m.content) || { name: "Gift" };
+    textToCopy = "🎁 " + gift.name;
+  } else if (m.msg_type === "image") {
+    textToCopy = "[Image]";
+  } else if (m.msg_type === "video") {
+    textToCopy = "[Video]";
+  } else if (m.msg_type === "voice") {
+    textToCopy = "[Voice message]";
+  } else if (m.msg_type === "call") {
+    const [ctype, status, dur] = (m.content || "audio:missed:0").split(":");
+    const isVideo = ctype === "video";
+    textToCopy = ${isVideo ? "Video" : "Voice"} call - ${status};
+  } else {
+    textToCopy = m.content || "";
+  }
+  
+  if (currentChat && currentChat.type === "group" && m.sender_id !== ME.id) {
+    textToCopy = m.sender_name + ": " + textToCopy;
+  }
+  
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      showToast("Message copied to clipboard");
+    }).catch(() => {
+      fallbackCopy(textToCopy);
+    });
+  } else {
+    fallbackCopy(textToCopy);
+  }
+  
   document.querySelector(".overlay")?.remove();
+}
+
+function fallbackCopy(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.left = "-9999px";
+  textarea.style.top = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand("copy");
+    showToast("Message copied to clipboard");
+  } catch (e) {
+    showToast("Failed to copy message");
+  }
+  document.body.removeChild(textarea);
 }
 
 function reactToMessage(id, emoji){
   socket.emit("react_message", {message_id:id, emoji});
   document.querySelector(".overlay")?.remove();
 }
-
+async function hideMessageForMe(id){
+  document.querySelector(".overlay")?.remove();
+  try {
+    await api("/api/messages/"+id+"/hide", {method:"POST"});
+    document.querySelector(.bubble-row[data-id="${id}"])?.remove();
+    delete messageCache[id];
+    showToast("Message deleted for you");
+  } catch(e){ showToast(e.message); }
+}
 function deleteMessage(id){
   socket.emit("delete_message", {message_id:id});
   document.querySelector(".overlay")?.remove();
 }
-
-function startEditById(id){
-  document.querySelector(".overlay")?.remove();
-  const m = messageCache[id];
-  if (!m || m.msg_type !== "text") return;
-  editingMessageId = id;
-  document.getElementById("editPreviewText").textContent = m.content || "";
-  document.getElementById("editBanner").classList.remove("hidden");
-  const input = document.getElementById("msgInput");
-  input.value = m.content || "";
-  input.focus();
-}
-
 function openMediaFull(src, type){
   window.open(src, "_blank");
 }
 
-// ============================================================
-// GROUP FUNCTIONS (simplified)
-// ============================================================
-function openGroup(gr){
-  currentChat = {type:"group", id:gr.id, name:gr.name, avatar:gr.avatar, role:gr.role, invite_token:gr.invite_token};
-  enterChatScreen();
-  api("/api/messages/group/"+gr.id).then(r => renderMessages(r.messages)).catch(e => showToast(e.message));
-  socket.emit("mark_read", {chat_type:"group", target:gr.id});
+async function openForwardPicker(messageId){
+  document.querySelector(".overlay")?.remove();
+  const [convosRes, peopleRes] = await Promise.all([
+    api("/api/conversations").catch(()=>({conversations:[]})),
+    api("/api/users/search").catch(()=>({users:[]})),
+  ]);
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  let html = <h2>Forward to...</h2><div class="search-bar" style="padding:0 0 12px;"><input id="forwardSearch" placeholder="Search..." oninput="filterForwardList(this.value)"></div><div id="forwardList"></div>;
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+
+  const seen = new Set();
+  const targets = [];
+  if (convosRes.conversations) {
+    convosRes.conversations.forEach(c => { targets.push(c); seen.add(c.type+":"+c.id); });
+  }
+  if (peopleRes.users) {
+    peopleRes.users.forEach(u => { if (!seen.has("dm:"+u.id)) targets.push({type:"dm", id:u.id, name:u.username, avatar:u.avatar}); });
+  }
+
+  window._forwardTargets = targets;
+  window._forwardMessageId = messageId;
+  renderForwardList(targets);
 }
 
+function filterForwardList(q){
+  q = q.toLowerCase().trim();
+  renderForwardList((window._forwardTargets||[]).filter(t => t.name && t.name.toLowerCase().includes(q)));
+}
+
+function renderForwardList(targets){
+  const body = document.getElementById("forwardList");
+  if (!body) return;
+  if (!targets || targets.length === 0){ body.innerHTML = "<div class='empty-state'>No results</div>"; return; }
+  body.innerHTML = "";
+  targets.forEach(t => {
+    const el = document.createElement("div");
+    el.className = "list-item";
+    el.onclick = () => confirmForward(t);
+    el.innerHTML = 
+      <div class="avatar">${t.avatar ? <img src="${t.avatar}"> : (t.name ? t.name.charAt(0).toUpperCase() : "?")}</div>
+      <div class="list-item-content"><div class="list-item-name">${escapeHtml(t.name)}</div>
+      <div class="list-item-sub">${t.type==="group" ? "Group" : "Direct message"}</div></div>;
+    body.appendChild(el);
+  });
+}
+
+function confirmForward(target){
+  socket.emit("forward_message", {
+    message_id: window._forwardMessageId,
+    chat_type: target.type,
+    target: target.id,
+  });
+  document.querySelector(".overlay")?.remove();
+  showToast("Forwarded to " + target.name);
+}
+
+// ---- Group Admin Functions ----
+async function openGroupManageMenu() {
+  if (!currentChat || currentChat.type !== "group") return;
+  if (currentChat.role !== "admin") {
+    showToast("Only admins can manage the group");
+    return;
+  }
+  
+  const members = groupMembersCache[currentChat.id] || [];
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  
+  let html = <h2>👥 Manage Group</h2>;
+  
+  html += <div style="max-height:300px;overflow-y:auto;">;
+  members.forEach(m => {
+    const isSelf = m.user_id === ME.id;
+    const isAdmin = m.role === 'admin';
+    const isModerator = m.role === 'moderator';
+    const isRestricted = m.restricted_until && new Date(m.restricted_until) > new Date();
+    
+    html += <div class="sheet-item" style="flex-wrap:wrap;gap:8px;">
+      <span class="ic">${avatarInner(m)}</span>
+      <span style="flex:1;">${escapeHtml(m.username)}</span>
+      ${isAdmin ? '<span class="role-badge admin">👑 Admin</span>' : ''}
+      ${isModerator ? '<span class="role-badge moderator">🛡️ Mod</span>' : ''}
+      ${isRestricted ? <span class="restricted-badge">⏰ Restricted</span> : ''}
+      ${!isSelf && !isAdmin ? 
+        <select class="member-role-select" onchange="changeMemberRole(${m.user_id}, this.value)">
+          <option value="member" ${!isModerator ? 'selected' : ''}>Member</option>
+          <option value="moderator" ${isModerator ? 'selected' : ''}>Moderator</option>
+          <option value="admin" ${isAdmin ? 'selected' : ''}>Admin</option>
+        </select>
+        <button onclick="removeUserFromGroup(${m.user_id})" style="color:var(--danger);font-size:16px;">🗑️</button>
+        ${!isRestricted ? <button onclick="restrictUserFromGroup(${m.user_id})" style="color:var(--accent);font-size:16px;">⏰</button> : <button onclick="unrestrictUser(${m.user_id})" style="color:#34d399;font-size:16px;">✅</button>}
+       : ''}
+    </div>;
+  });
+  html += </div>;
+  
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+async function changeMemberRole(userId, newRole) {
+  if (!currentChat || currentChat.type !== "group") return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/role", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId, role: newRole})
+    });
+    showToast("Role updated successfully");
+    loadGroupMembers(currentChat.id);
+    document.querySelector(".overlay")?.remove();
+    setTimeout(openGroupManageMenu, 300);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+async function removeUserFromGroup(userId) {
+  if (!currentChat || currentChat.type !== "group") return;
+
+if (!confirm("Are you sure you want to remove this user from the group?")) return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/remove", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId})
+    });
+    showToast("User removed from group");
+    document.querySelector(".overlay")?.remove();
+    loadGroupMembers(currentChat.id);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+async function restrictUserFromGroup(userId) {
+  if (!currentChat || currentChat.type !== "group") return;
+  
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = 
+    <h2>⏰ Restrict User</h2>
+    <p style="color:var(--text-secondary);margin-bottom:12px;">Choose restriction duration:</p>
+    <div class="restriction-picker">
+      <button onclick="confirmRestrict(${userId}, 300)">5 min</button>
+      <button onclick="confirmRestrict(${userId}, 3600)">1 hour</button>
+      <button onclick="confirmRestrict(${userId}, 86400)">24 hours</button>
+      <button onclick="confirmRestrict(${userId}, 604800)">7 days</button>
+      <button onclick="confirmRestrict(${userId}, 2592000)">30 days</button>
+    </div>
+    <button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()" style="background:var(--bg-surface-2);box-shadow:none;margin-top:8px;"><span>Cancel</span></button>
+  ;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+async function confirmRestrict(userId, durationSeconds) {
+  document.querySelector(".overlay")?.remove();
+  if (!currentChat || currentChat.type !== "group") return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/restrict", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId, duration: durationSeconds})
+    });
+    showToast(User restricted for ${formatDuration(durationSeconds)});
+    loadGroupMembers(currentChat.id);
+    document.querySelector(".overlay")?.remove();
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+async function unrestrictUser(userId) {
+  if (!currentChat || currentChat.type !== "group") return;
+  try {
+    await api("/api/groups/"+currentChat.id+"/unrestrict", {
+      method: "POST",
+      body: JSON.stringify({user_id: userId})
+    });
+    showToast("User unrestricted");
+    loadGroupMembers(currentChat.id);
+    document.querySelector(".overlay")?.remove();
+    setTimeout(openGroupManageMenu, 300);
+  } catch(e) {
+    showToast(e.message);
+  }
+}
+
+// ---- Chat Menu ----
+async function openChatMenu(){
+  let blockStatus = {i_blocked: false};
+  if (currentChat && currentChat.type === "dm") {
+    blockStatus = await api("/api/block/status/"+currentChat.id).catch(()=>({i_blocked:false}));
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  let html = <h2>${escapeHtml(currentChat ? currentChat.name : "")}</h2>;
+
+  if (currentChat && currentChat.type === "group") {
+    html += <div class="sheet-item" onclick="viewGroupMembers()"><span class="ic">👥</span> View members</div>;
+    if (currentChat.role === "admin") {
+      html += <div class="sheet-item" onclick="openGroupManageMenu()"><span class="ic">⚙️</span> Manage group</div>;
+      html += <div class="sheet-item" onclick="changeGroupAvatarPrompt()"><span class="ic">🖼️</span> Change group photo</div>;
+    }
+    html += <div class="sheet-item" onclick="shareInviteLink()"><span class="ic">🔗</span> Share invite link</div>;
+  } else if (blockStatus.i_blocked) {
+    html += <div class="sheet-item" onclick="unblockFromChat()"><span class="ic">✅</span> Unblock user</div>;
+
+} else if (currentChat && currentChat.type === "dm") {
+    html += <div class="sheet-item" onclick="blockCurrentUser()"><span class="ic">🚫</span> Block user</div>;
+  }
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+async function checkBlockStatus(){
+  if (!currentChat || currentChat.type !== "dm") return;
+  try {
+    const r = await api("/api/block/status/"+currentChat.id);
+    updateBlockBanner(r.i_blocked, r.they_blocked);
+  } catch(e){}
+}
+
+function updateBlockBanner(iBlocked, theyBlocked){
+  const composer = document.querySelector(".composer");
+  let banner = document.getElementById("blockBanner");
+  if (iBlocked || theyBlocked) {
+    if (!banner) {
+      banner = document.createElement("div");
+      banner.id = "blockBanner";
+      banner.style.cssText = "padding:10px 16px;background:rgba(255,82,82,0.1);color:var(--danger);font-size:13px;text-align:center;flex-shrink:0;";
+      document.getElementById("chatScreen").insertBefore(banner, composer);
+    }
+    banner.textContent = iBlocked
+      ? "You blocked this user. Unblock them to send new messages."
+      : "You can't send messages in this conversation.";
+    composer.style.display = "none";
+  } else if (banner) {
+    banner.remove();
+    composer.style.display = "flex";
+  }
+}
+
+async function viewGroupMembers(){
+  document.querySelector(".overlay")?.remove();
+  if (!currentChat) return;
+  const r = await api("/api/groups/"+currentChat.id+"/members");
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  let html = "<h2>Members</h2>";
+  if (r.members) {
+    r.members.forEach(m => {
+      const isRestricted = m.restricted_until && new Date(m.restricted_until) > new Date();
+      const roleBadge = m.role === 'admin' ? ' 👑' : (m.role === 'moderator' ? ' 🛡️' : '');
+      const restrictBadge = isRestricted ? ' ⏰' : '';
+      html += <div class="sheet-item"><span class="ic">${avatarInner(m)}</span> ${escapeHtml(m.username)}${roleBadge}${restrictBadge}</div>;
+    });
+  }
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+
+async function refreshPublicConfig(){
+  try {
+    const r = await api("/api/config");
+    PUBLIC_BASE_URL = r.public_base_url || "";
+  } catch(e){}
+}
+
+async function shareInviteLink(){
+  document.querySelector(".overlay")?.remove();
+  await refreshPublicConfig();
+  const usingPublicUrl = !!PUBLIC_BASE_URL;
+  const base = usingPublicUrl ? PUBLIC_BASE_URL : window.location.origin;
+  const link = base + "/?join=" + (currentChat ? currentChat.invite_token : "");
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = <h2>Invite link</h2>
+    <div class="link-box"><input readonly value="${link}" id="inviteLinkInput"></div>
+    <button class="btn-primary" onclick="copyInviteLink()"><span>Copy link</span></button>
+    ${usingPublicUrl ? "" : <div class="settings-row desc" style="border:none;padding-top:14px;line-height:1.5;color:var(--text-dim);font-size:13px;">
+       ⚠️ No public internet address is active yet, so this link currently only opens for people on the same local network as you.
+       The server automatically tries to create one on startup (via cloudflared) — check the server console, or install cloudflared and restart. This banner disappears once a public link is ready.
+    </div>};
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+function copyInviteLink(){
+  const input = document.getElementById("inviteLinkInput");
+  input.select();
+  navigator.clipboard.writeText(input.value).then(()=> showToast("Link copied"));
+}
+
+function changeGroupAvatarPrompt(){
+  document.querySelector(".overlay")?.remove();
+  const input = document.getElementById("fileInput");
+  input.onchange = async () => {
+    const fd = new FormData(); fd.append("avatar", input.files[0]);
+    try {
+      const r = await api("/api/groups/"+currentChat.id+"/avatar", {method:"POST", body: fd});
+      currentChat.avatar = r.avatar;
+      setAvatarEl(document.getElementById("chatAvatar"), {username:currentChat.name, avatar:r.avatar});
+      showToast("Group photo updated");
+    } catch(e){ showToast(e.message); }
+  };
+  input.click();
+}
+
+async function blockCurrentUser(){
+  document.querySelector(".overlay")?.remove();
+  try {
+    await api("/api/block", {method:"POST", body: JSON.stringify({user_id: currentChat.id})});
+    showToast("User blocked");
+    checkBlockStatus();
+  } catch(e){ showToast(e.message); }
+}
+
+async function unblockFromChat(){
+  document.querySelector(".overlay")?.remove();
+  try {
+    await api("/api/unblock", {method:"POST", body: JSON.stringify({user_id: currentChat.id})});
+    showToast("User unblocked");
+    checkBlockStatus();
+  } catch(e){ showToast(e.message); }
+}
+
+// ---- Create Group ----
 function openCreateGroupSheet(){
   const overlay = document.createElement("div");
   overlay.className = "overlay";
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-  sheet.innerHTML = `
+  sheet.innerHTML = 
     <h2>New group</h2>
     <div class="field"><label>Group name</label><input id="newGroupName" placeholder="e.g. Weekend Trip"></div>
     <div class="field"><label>Admin password (optional)</label><input id="newGroupPass" type="password" placeholder="Required to join via link"></div>
-    <button class="btn-primary" onclick="submitCreateGroup()"><span>Create group</span></button>`;
+    <button class="btn-primary" onclick="submitCreateGroup()"><span>Create group</span></button>;
   overlay.appendChild(sheet);
   document.getElementById("app").appendChild(overlay);
 }
@@ -2572,55 +2475,140 @@ async function submitCreateGroup(){
   try {
     await api("/api/groups", {method:"POST", body: JSON.stringify({name, password})});
     document.querySelector(".overlay")?.remove();
-    switchTab("chats");
-    loadList();
+    switchTab("groups");
   } catch(e){ showToast(e.message); }
 }
 
-function handleGroupMemberUpdate(data){
-  showToast(`Group update: ${data.username} ${data.action}`);
+// ---- Settings ----
+async function openSettings(){
+  await refreshPublicConfig();
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = `
+    <h2>Your profile</h2>
+    <div style="text-align:center;margin-bottom:16px;">
+      <div class="avatar" style="width:80px;height:80px;font-size:30px;margin:0 auto 10px;" id="settingsAvatar">${avatarInner(ME)}</div>
+      <button class="btn-primary" style="width:auto;padding:8px 18px;font-size:13px;" onclick="document.getElementById('avatarUpload').click()"><span>Change photo</span></button>
+      <input type="file" id="avatarUpload" class="hidden" accept="image/*">
+    </div>
+    <div class="field"><label>Username</label><input id="settingsUsername" value="${escapeHtml(ME ? ME.username : "")}"></div>
+    <div class="field"><label>Email</label><input value="${escapeHtml(ME ? ME.email : "")}" disabled style="opacity:.6;"></div>
+    <button class="btn-primary" onclick="saveProfile()"><span>Save changes</span></button>
+
+    <h2 style="margin-top:22px;">Appearance</h2>
+    <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--border-subtle);font-size:15px;">
+      <div>
+        <div>Conversation animations</div>
+
+<div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">Calm fade/slide effect when messages appear</div>
+      </div>
+      <div class="toggle-switch ${ANIMATIONS_ON ? 'on' : ''}" style="width:44px;height:24px;border-radius:14px;background:#2a3a4d;position:relative;flex-shrink:0;transition:.2s;cursor:pointer;" onclick="toggleAnimations()"><div class="knob" style="width:18px;height:18px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:.2s;"></div></div>
+    </div>
+
+    <h2 style="margin-top:22px;">Server</h2>
+    <div class="settings-row" style="display:block;padding:13px 4px;border-bottom:1px solid var(--border-subtle);">
+      <div>Invite link base address</div>
+      <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">${PUBLIC_BASE_URL ? escapeHtml(PUBLIC_BASE_URL) : "Not ready yet — the server tries to create one automatically on startup (via cloudflared). Check the server console, or install cloudflared and restart."}</div>
+    </div>
+    <div class="settings-row" style="display:block;padding:13px 4px;border-bottom:1px solid var(--border-subtle);">
+      <div>Voice &amp; video calls</div>
+      <div class="desc" style="font-size:12px;color:var(--text-dim);margin-top:2px;">${window.isSecureContext ? "This connection supports calls." : "⚠️ Calls are blocked on this connection because it isn't secure (HTTPS). Open the app using its public link" + (PUBLIC_BASE_URL ? " (" + escapeHtml(PUBLIC_BASE_URL) + ")" : "") + ", or via 127.0.0.1/localhost on this device, for calls to work."}</div>
+    </div>
+
+    <div class="sheet-item" onclick="viewBlockedList()"><span class="ic">🚫</span> Blocked users</div>
+    <div class="sheet-item" style="color:var(--danger);" onclick="logout()"><span class="ic">🚪</span> Log out</div>
+    <div class="sheet-item" style="color:var(--danger);" onclick="openDeleteAccountSheet()"><span class="ic">⚠️</span> Delete account</div>;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+
+  document.getElementById("avatarUpload").onchange = async (e) => {
+    const fd = new FormData(); fd.append("avatar", e.target.files[0]);
+    const r = await api("/api/profile", {method:"POST", body: fd});
+    ME = r.user; saveSession();
+    document.getElementById("settingsAvatar").innerHTML = avatarInner(ME);
+    setAvatarEl(document.getElementById("myAvatar"), ME);
+  };
 }
 
-// ============================================================
-// CALLS (simplified)
-// ============================================================
-let pc = null;
-let localStream = null;
-let isCallActive = false;
-
-async function startCall(type){
-  showToast("📞 Call feature: " + type);
-  // Simplified call handling
-  isCallActive = true;
+function toggleAnimations(){
+  ANIMATIONS_ON = !ANIMATIONS_ON;
+  localStorage.setItem("wg_animations", ANIMATIONS_ON ? "on" : "off");
+  const toggle = document.querySelector(".toggle-switch");
+  if (toggle) toggle.classList.toggle("on", ANIMATIONS_ON);
 }
 
-function endCall(silent){
-  isCallActive = false;
-  if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
-  if (pc) { pc.close(); pc = null; }
-  document.getElementById("callOverlay")?.classList.remove("active");
+async function saveProfile(){
+  const username = document.getElementById("settingsUsername").value.trim();
+  const fd = new FormData(); fd.append("username", username);
+  const r = await api("/api/profile", {method:"POST", body: fd});
+  ME = r.user; saveSession();
+  setAvatarEl(document.getElementById("myAvatar"), ME);
+  showToast("Profile updated");
+  document.querySelector(".overlay")?.remove();
 }
 
-function handleCallOffer(data){ endCall(true); }
-function handleCallAnswer(data){}
-function handleRemoteIce(data){}
-function handleCallReject(data){ showToast("Call declined"); endCall(true); }
-function handleRemoteEnd(data){ showToast("Call ended"); endCall(true); }
-function acceptCall(){}
-function declineCall(){ endCall(true); }
-function toggleMute(){}
-function toggleCamera(){}
+function openDeleteAccountSheet(){
+  document.querySelector(".overlay")?.remove();
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = 
+    <h2 style="color:var(--danger);">Delete account</h2>
+    <div class="settings-row desc" style="border:none;line-height:1.6;padding:0 0 16px;color:var(--text-dim);font-size:13px;">
+      This permanently deletes your account and everything you've posted — messages, reels, comments and reactions.
+      This cannot be undone: your old email and password will stop working immediately, and the only way to use Wavegram again is signing up as a brand new account. Nobody will be able to message you either, because the account will no longer exist.
 
-// ============================================================
-// OPEN SETTINGS
-// ============================================================
-function openSettings(){
-  showToast("⚙️ Settings coming soon!");
+</div>
+    <div class="field"><label>Confirm your password</label><input type="password" id="deleteAccountPassword" placeholder="••••••••"></div>
+    <button class="btn-primary" style="background:var(--danger);box-shadow:none;" onclick="confirmDeleteAccount()"><span>Permanently delete my account</span></button>;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
 }
 
-// ============================================================
-// TOAST
-// ============================================================
+async function confirmDeleteAccount(){
+  const password = document.getElementById("deleteAccountPassword").value;
+  if (!password) { showToast("Enter your password to confirm"); return; }
+  try {
+    await api("/api/account", {method:"DELETE", body: JSON.stringify({password})});
+    document.querySelector(".overlay")?.remove();
+    showToast("Account deleted");
+    localStorage.removeItem("wg_token"); localStorage.removeItem("wg_me");
+    TOKEN = ""; ME = null;
+    if (socket) socket.disconnect();
+    showAuth();
+  } catch(e){ showToast(e.message); }
+}
+
+async function viewBlockedList(){
+  document.querySelector(".overlay")?.remove();
+  const r = await api("/api/blocked");
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  let html = "<h2>Blocked users</h2>";
+  if (!r.users || r.users.length===0) html += "<div class='empty-state'>No blocked users</div>";
+  if (r.users) {
+    r.users.forEach(u => {
+      html += <div class="sheet-item">${escapeHtml(u.username)}
+        <button style="margin-left:auto;color:var(--accent);font-size:13px;" onclick="unblockUser(${u.id})">Unblock</button></div>;
+    });
+  }
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+async function unblockUser(id){
+  await api("/api/unblock", {method:"POST", body: JSON.stringify({user_id:id})});
+  viewBlockedList();
+}
+
 function showToast(msg){
   const t = document.createElement("div");
   t.className = "toast";
@@ -2629,25 +2617,760 @@ function showToast(msg){
   setTimeout(() => t.remove(), 2800);
 }
 
-// ============================================================
-// KEYBOARD SHORTCUTS & INIT
-// ============================================================
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
+// ---- Join-via-link ----
+window.addEventListener("load", () => {
+  const params = new URLSearchParams(window.location.search);
+  const joinToken = params.get("join");
+  if (joinToken && TOKEN) {
+    setTimeout(() => promptJoinGroup(joinToken), 600);
+  } else if (joinToken) {
+    localStorage.setItem("wg_pending_join", joinToken);
+  }
+});
+function promptJoinGroup(token){
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = 
+    <h2>Join group</h2>
+    <div class="field"><label>Group password (if any)</label><input type="password" id="joinPass"></div>
+    <button class="btn-primary" onclick="submitJoinGroup('${token}')"><span>Join</span></button>`;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+async function submitJoinGroup(token){
+  const password = document.getElementById("joinPass").value;
+  try {
+    await api("/api/groups/join/"+token, {method:"POST", body: JSON.stringify({password})});
     document.querySelector(".overlay")?.remove();
-    if (document.getElementById("profileScreen").classList.contains("active")) closeProfile();
-    if (document.getElementById("chatScreen").classList.contains("active")) closeChat();
-  }
-});
+    showToast("Joined group");
+    switchTab("groups");
+  } catch(e){ showToast(e.message); }
+}
 
-// Fix for the avatar click in chat to view profile
-document.addEventListener("click", (e) => {
-  if (e.target.closest("#chatAvatar") || e.target.closest("#chatName")) {
-    if (currentChat) viewProfile(currentChat.id);
-  }
-});
+// ==================== REELS ====================
+let reelsData = [];
+let reelViewObserver = null;
 
-console.log("🚀 Wavegram Premium loaded with Profiles & Analytics!");
+async function loadReels(){
+  const feed = document.getElementById("reelsFeed");
+  try {
+    const r = await api("/api/reels");
+    reelsData = r.reels || [];
+    renderReelsFeed();
+  } catch(e){ showToast(e.message); }
+}
+
+function renderReelsFeed(){
+  const feed = document.getElementById("reelsFeed");
+  feed.innerHTML = "";
+
+if (!reelsData || reelsData.length === 0) {
+    feed.innerHTML = <div class="reel-item"><div class="reel-empty" style="color:#fff;text-align:center;padding:60px 30px;opacity:.7;font-size:14px;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+      <div style="font-size:48px;">🎬</div>
+      <div>No reels yet.</div>
+      <div style="font-size:13px;opacity:0.6;">Tap the + button to share your first photo or video.</div>
+    </div></div>;
+    return;
+  }
+  if (reelViewObserver) reelViewObserver.disconnect();
+  reelViewObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.dataset.reelId;
+        if (id) registerReelView(id);
+        const video = entry.target.querySelector("video");
+        if (video) video.play().catch(()=>{});
+      } else {
+        const video = entry.target.querySelector("video");
+        if (video) video.pause();
+      }
+    });
+  }, {threshold: 0.5});
+
+  reelsData.forEach((reel, index) => {
+    const el = buildReelItem(reel, index);
+    feed.appendChild(el);
+    reelViewObserver.observe(el);
+  });
+}
+
+function buildReelItem(reel, index){
+  const el = document.createElement("div");
+  el.className = "reel-item";
+  el.dataset.reelId = reel.id;
+  el.style.background = #${Math.floor(Math.random()*16777215).toString(16).padStart(6,'0')};
+
+  const media = reel.media_type === "video"
+    ? <video src="${reel.media_path}" loop muted playsinline preload="metadata" poster="${reel.media_path}?v=${Date.now()}"></video>
+    : <img src="${reel.media_path}" loading="lazy">;
+
+  const totalReactions = Object.values(reel.reaction_counts||{}).reduce((a,b)=>a+b,0);
+
+  const gradientColors = [
+    'linear-gradient(0deg, rgba(0,0,0,0.8) 10%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.1) 60%)',
+    'linear-gradient(0deg, rgba(20,0,40,0.8) 10%, rgba(20,0,40,0.2) 40%, rgba(20,0,40,0.1) 60%)',
+    'linear-gradient(0deg, rgba(0,20,40,0.8) 10%, rgba(0,20,40,0.2) 40%, rgba(0,20,40,0.1) 60%)',
+  ];
+  const gradient = gradientColors[index % gradientColors.length];
+
+  el.innerHTML = 
+    ${media}
+    <div class="reel-overlay" style="background:${gradient};">
+      <div class="reel-info">
+        <div class="reel-author">
+          <div class="avatar" style="width:36px;height:36px;font-size:14px;border:2px solid rgba(255,255,255,0.3);">${reel.author_avatar ? <img src="${reel.author_avatar}"> : (reel.author_name ? reel.author_name.charAt(0).toUpperCase() : "?")}</div>
+          <span style="font-size:16px;font-weight:600;">${escapeHtml(reel.author_name)}</span>
+          <span style="font-size:12px;opacity:0.6;margin-left:4px;">• ${formatRelativeTime(reel.timestamp)}</span>
+          ${reel.is_mine ? <span onclick="event.stopPropagation();deleteReel(${reel.id})" style="margin-left:auto;font-size:18px;cursor:pointer;opacity:0.6;background:rgba(0,0,0,0.3);padding:4px 10px;border-radius:20px;">🗑️</span> : ""}
+        </div>
+        ${reel.caption ? <div class="reel-caption" style="font-size:15px;font-weight:400;margin-top:4px;">${escapeHtml(reel.caption)}</div>` : ""}
+        <div class="reel-views" style="margin-top:8px;font-size:13px;opacity:0.8;">
+          <span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${reel.view_count || 0} views</span>
+        </div>
+      </div>
+      <div class="reel-actions">
+        <div class="reel-action" onclick="toggleReelReaction(${reel.id})" style="transition:transform 0.2s;">
+          <span class="ricon" id="reelReactIcon${reel.id}" style="font-size:32px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">${reel.my_reaction || "🤍"}</span>
+          <span id="reelReactCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${totalReactions || ""}</span>
+
+</div>
+        <div class="reel-action" onclick="openReelComments(${reel.id})">
+          <span class="ricon" style="font-size:28px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">💬</span>
+          <span id="reelCommentCount${reel.id}" style="font-size:12px;font-weight:600;background:rgba(0,0,0,0.2);padding:2px 8px;border-radius:12px;">${reel.comment_count || ""}</span>
+        </div>
+        <div class="reel-action" onclick="openReelReactionPicker(${reel.id})">
+          <span class="ricon" style="font-size:26px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">😊</span>
+        </div>
+        <div class="reel-action" onclick="shareReel(${reel.id})">
+          <span class="ricon" style="font-size:24px;text-shadow:0 2px 10px rgba(0,0,0,0.5);">📤</span>
+        </div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3;padding:4px 0;">
+      <span style="width:6px;height:6px;border-radius:50%;background:${index === 0 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:${index === 1 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
+      <span style="width:6px;height:6px;border-radius:50%;background:${index === 2 ? '#fff' : 'rgba(255,255,255,0.3)'};"></span>
+    </div>
+  ;
+  return el;
+}
+
+function shareReel(reelId){
+  const reel = reelsData.find(r => r.id === reelId);
+  if (!reel) return;
+  const url = window.location.origin + "/?reel=" + reelId;
+  if (navigator.share) {
+    navigator.share({
+      title: reel.caption || "Check out this reel!",
+      text: reel.caption || "Check out this reel on Wavegram!",
+      url: url
+    }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      showToast("Reel link copied to clipboard!");
+    }).catch(() => {
+      showToast("Share: " + url);
+    });
+  }
+}
+
+async function registerReelView(id){
+  try {
+    const r = await api("/api/reels/"+id+"/view", {method:"POST"});
+    const reel = reelsData.find(x => x.id === id);
+    if (reel) reel.view_count = r.view_count;
+    const el = document.querySelector(.reel-item[data-reel-id="${id}"] .reel-views);
+    if (el) el.innerHTML = <span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${r.view_count} views</span>;
+  } catch(e){}
+}
+
+async function toggleReelReaction(id){
+  const reel = reelsData.find(x => x.id === id);
+  if (!reel) return;
+  const newEmoji = reel.my_reaction ? null : "❤️";
+  try {
+    const r = await api("/api/reels/"+id+"/react", {method:"POST", body: JSON.stringify({emoji: newEmoji})});
+    reel.my_reaction = newEmoji;
+    reel.reaction_counts = r.reaction_counts;
+    const total = Object.values(r.reaction_counts || {}).reduce((a,b)=>a+b,0);
+    const icon = document.getElementById("reelReactIcon"+id);
+    const count = document.getElementById("reelReactCount"+id);
+    if (icon) icon.textContent = newEmoji || "🤍";
+    if (count) count.textContent = total || "";
+    if (icon) {
+      icon.style.transform = "scale(1.3)";
+      setTimeout(() => icon.style.transform = "scale(1)", 200);
+    }
+  } catch(e){ showToast(e.message); }
+}
+
+function openReelReactionPicker(id){
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.innerHTML = <h2>React</h2><div class="reaction-picker">
+    ${["❤️","👍","😂","😮","😢","🔥","💯","🎉"].map(e=><span onclick="setReelReaction(${id},'${e}')" style="font-size:32px;transition:transform 0.2s;">${e}</span>).join("")}
+  </div>`;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+}
+async function setReelReaction(id, emoji){
+
+const reel = reelsData.find(x => x.id === id);
+  try {
+    const r = await api("/api/reels/"+id+"/react", {method:"POST", body: JSON.stringify({emoji})});
+    if (reel) { reel.my_reaction = emoji; reel.reaction_counts = r.reaction_counts; }
+    const total = Object.values(r.reaction_counts || {}).reduce((a,b)=>a+b,0);
+    const icon = document.getElementById("reelReactIcon"+id);
+    const count = document.getElementById("reelReactCount"+id);
+    if (icon) { icon.textContent = emoji; icon.style.transform = "scale(1.3)"; setTimeout(() => icon.style.transform = "scale(1)", 200); }
+    if (count) count.textContent = total || "";
+  } catch(e){ showToast(e.message); }
+  document.querySelector(".overlay")?.remove();
+}
+
+async function deleteReel(id){
+  if (!confirm("Delete this reel?")) return;
+  try {
+    await api("/api/reels/"+id, {method:"DELETE"});
+    reelsData = reelsData.filter(x => x.id !== id);
+    renderReelsFeed();
+    showToast("Reel deleted");
+  } catch(e){ showToast(e.message); }
+}
+
+function openUploadReelSheet(){
+  const input = document.getElementById("reelFileInput");
+  input.onchange = () => {
+    if (!input.files[0]) return;
+    const file = input.files[0];
+    const overlay = document.createElement("div");
+    overlay.className = "overlay";
+    overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+    const sheet = document.createElement("div");
+    sheet.className = "sheet";
+    const isVideo = file.type.startsWith("video");
+    const previewUrl = URL.createObjectURL(file);
+    sheet.innerHTML = 
+      <h2>🎬 New Reel</h2>
+      <div style="width:100%;max-height:320px;border-radius:16px;overflow:hidden;margin-bottom:14px;background:#000;display:flex;align-items:center;justify-content:center;">
+        ${isVideo ? <video src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;" controls></video>
+                   : <img src="${previewUrl}" style="width:100%;max-height:320px;object-fit:contain;">}
+      </div>
+      <div class="field"><label>Caption (optional)</label><input id="reelCaption" placeholder="Say something about this..." style="width:100%;padding:12px 16px;background:var(--bg-surface-2);border-radius:12px;font-size:14px;"></div>
+      <button class="btn-primary" onclick="publishReel()" style="margin-top:8px;"><span>📤 Share Reel</span></button>
+    ;
+    overlay.appendChild(sheet);
+    document.getElementById("app").appendChild(overlay);
+    window._pendingReelFile = file;
+  };
+  input.click();
+}
+
+async function publishReel(){
+  const file = window._pendingReelFile;
+  const caption = document.getElementById("reelCaption")?.value.trim() || "";
+  if (!file) return;
+  const fd = new FormData();
+  fd.append("file", file);
+  fd.append("caption", caption);
+  try {
+    const r = await api("/api/reels", {method:"POST", body: fd});
+    document.querySelector(".overlay")?.remove();
+    showToast("🎬 Reel shared!");
+    if (r.reel) {
+      reelsData.unshift(r.reel);
+      renderReelsFeed();
+    }
+  } catch(e){ showToast(e.message); }
+}
+
+async function openReelComments(reelId){
+  const r = await api("/api/reels/"+reelId+"/comments").catch(()=>({comments:[]}));
+  const overlay = document.createElement("div");
+  overlay.className = "overlay";
+  overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
+  const sheet = document.createElement("div");
+  sheet.className = "sheet";
+  sheet.style.maxHeight = "80vh";
+  sheet.innerHTML = `<h2>💬 Comments</h2>
+    <div id="commentsList" style="max-height:300px;overflow-y:auto;"></div>
+    <div class="comment-input-row" style="display:flex;gap:8px;align-items:center;padding:12px 4px 4px;border-top:1px solid var(--border-subtle);margin-top:12px;">
+      <input id="commentInput" placeholder="Write a comment..." style="flex:1;background:var(--bg-surface-2);padding:10px 16px;border-radius:20px;font-size:14px;border:1.5px solid transparent;transition:var(--transition-smooth);">
+
+<div class="round-btn send" style="width:38px;height:38px;" onclick="submitComment(${reelId})">➤</div>
+    </div>;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
+  window._currentReplyParent = null;
+  renderComments(r.comments || []);
+  setTimeout(() => document.getElementById("commentInput")?.focus(), 300);
+}
+
+function renderComments(comments){
+  const list = document.getElementById("commentsList");
+  if (!list) return;
+  const top = comments.filter(c => !c.parent_id);
+  const byParent = {};
+  comments.filter(c => c.parent_id).forEach(c => {
+    byParent[c.parent_id] = byParent[c.parent_id] || [];
+    byParent[c.parent_id].push(c);
+  });
+  if (top.length === 0){ list.innerHTML = "<div class='empty-state' style='padding:30px 10px;'><i>💬</i>No comments yet. Be the first!</div>"; return; }
+  list.innerHTML = "";
+  top.forEach(c => {
+    list.appendChild(buildCommentEl(c, false));
+    if (byParent[c.id]) {
+      byParent[c.id].forEach(reply => list.appendChild(buildCommentEl(reply, true)));
+    }
+  });
+}
+
+function buildCommentEl(c, isReply){
+  const el = document.createElement("div");
+  el.className = "comment-item" + (isReply ? " reply" : "");
+  el.style.cssText = display:flex;gap:10px;padding:10px 4px;${isReply ? 'margin-left:38px;border-left:2px solid var(--accent);padding-left:12px;' : ''};
+  el.innerHTML = 
+    <div class="avatar" style="width:32px;height:32px;font-size:12px;flex-shrink:0;">${c.author_avatar ? <img src="${c.author_avatar}"> : (c.author_name ? c.author_name.charAt(0).toUpperCase() : "?")}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;">
+        ${escapeHtml(c.author_name)}
+        <span style="font-size:10px;color:var(--text-dim);font-weight:400;">${formatRelativeTime(c.timestamp)}</span>
+      </div>
+      <div style="font-size:14px;color:var(--text-primary);margin-top:2px;word-wrap:break-word;">${escapeHtml(c.content)}</div>
+    </div>`;
+  return el;
+}
+
+async function submitComment(reelId){
+  const input = document.getElementById("commentInput");
+  const content = input?.value.trim();
+  if (!content) return;
+  try {
+    await api("/api/reels/"+reelId+"/comments", {method:"POST", body: JSON.stringify({content})});
+    if (input) input.value = "";
+    const r = await api("/api/reels/"+reelId+"/comments");
+    renderComments(r.comments || []);
+    const countEl = document.getElementById("reelCommentCount"+reelId);
+    if (countEl) {
+      const reel = reelsData.find(x => x.id === reelId);
+      if (reel) { reel.comment_count = (reel.comment_count||0)+1; countEl.textContent = reel.comment_count; }
+    }
+  } catch(e){ showToast(e.message); }
+}
+
+// ==================== CALLS (WebRTC) ====================
+let pc = null;
+let localStream = null;
+let remoteStream = null;
+let currentCallTargetId = null;
+let isVideoCall = false;
+let isMuted = false;
+let isCameraOff = false;
+let callStartTime = null;
+let callTimerInterval = null;
+let isCallActive = false;
+let callRecordSaved = false;
+
+const rtcConfig = {
+  iceServers: [
+    {urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"]},
+    {urls: ["stun:stun2.l.google.com:19302"]}
+  ]
+};
+
+async function startCall(type){
+  console.log("startCall called with type:", type);
+  
+  if (!window.isSecureContext) {
+    showToast("Calls require HTTPS or localhost");
+    return;
+  }
+  if (!currentChat || currentChat.type !== "dm") {
+    showToast("Only direct messages support calls");
+    return;
+  }
+  if (isCallActive) {
+    showToast("Already in a call");
+    return;
+  }
+  if (!socket || !socket.connected) {
+    showToast("Not connected to server");
+    return;
+  }
+  
+  isVideoCall = (type === "video");
+  currentCallTargetId = currentChat.id;
+  callStartTime = Date.now();
+  callRecordSaved = false;
+  isCallActive = true;
+
+  console.log("Starting call to:", currentCallTargetId, "video:", isVideoCall);
+
+// Show call UI
+  document.getElementById("callActionsIncoming").classList.add("hidden");
+  document.getElementById("callActionsActive").classList.remove("hidden");
+  document.getElementById("callOverlay").classList.remove("hidden");
+  document.getElementById("callStatus").textContent = "Calling...";
+  document.getElementById("callName").textContent = currentChat.name;
+  setAvatarEl(document.getElementById("callAvatar"), {username: currentChat.name, avatar: currentChat.avatar});
+  
+  try {
+    const constraints = {audio: true, video: isVideoCall};
+    console.log("Getting user media with constraints:", constraints);
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    console.log("Local stream obtained");
+    
+    const lv = document.getElementById("localVideo");
+    if (isVideoCall) {
+      lv.srcObject = localStream;
+      lv.classList.remove("hidden");
+    } else {
+      lv.classList.add("hidden");
+    }
+    
+    createPeerConnection();
+    console.log("Peer connection created");
+
+    localStream.getTracks().forEach(track => {
+      if (pc) {
+        pc.addTrack(track, localStream);
+        console.log("Track added:", track.kind);
+      }
+    });
+
+    const offer = await pc.createOffer();
+    console.log("Offer created:", offer);
+    await pc.setLocalDescription(offer);
+    console.log("Local description set");
+
+    socket.emit("call_offer", {
+      target: currentCallTargetId,
+      offer: offer,
+      video: isVideoCall
+    });
+    console.log("Call offer sent");
+    
+    startCallTimer();
+    
+  } catch(err){
+    console.error("Error starting call:", err);
+    showToast("Could not start call: " + err.message);
+    endCall(true);
+  }
+}
+
+function startCallTimer() {
+  if (callTimerInterval) clearInterval(callTimerInterval);
+  callTimerInterval = setInterval(() => {
+    if (callStartTime) {
+      const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
+      const mins = Math.floor(elapsed / 60);
+      const secs = elapsed % 60;
+      document.getElementById("callStatus").textContent = 
+        ${mins}:${secs.toString().padStart(2, '0')};
+    }
+  }, 1000);
+}
+
+async function handleCallOffer(data){
+  console.log("Call offer received from:", data.from_user_id);
+  
+  if (isCallActive || currentCallTargetId) {
+    console.log("Already in a call, rejecting");
+    socket.emit("call_reject", {target: data.from_user_id});
+    return;
+  }
+  if (!data.from_user_id) return;
+  
+  currentCallTargetId = data.from_user_id;
+  isVideoCall = data.video || false;
+  callStartTime = Date.now();
+  callRecordSaved = false;
+  isCallActive = true;
+
+  const user = {username: data.from_username  "Unknown", avatar: data.from_avatar  null};
+  setAvatarEl(document.getElementById("callAvatar"), user);
+  document.getElementById("callName").textContent = user.username;
+  document.getElementById("callStatus").textContent = isVideoCall ? "Incoming video call..." : "Incoming voice call...";
+
+  document.getElementById("callActionsIncoming").classList.remove("hidden");
+  document.getElementById("callActionsActive").classList.add("hidden");
+  document.getElementById("callOverlay").classList.remove("hidden");
+
+  window._incomingOffer = data.offer;
+  window._callerInfo = user;
+  console.log("Incoming call offer stored");
+}
+
+async function acceptCall(){
+  console.log("Accepting call");
+  
+  if (!window._incomingOffer) {
+    showToast("No incoming call to accept");
+    return;
+  }
+  
+  document.getElementById("callActionsIncoming").classList.add("hidden");
+  document.getElementById("callActionsActive").classList.remove("hidden");
+  document.getElementById("callStatus").textContent = "Connecting...";
+
+  try {
+    const constraints = {audio: true, video: isVideoCall};
+    console.log("Getting user media for answer");
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
+
+console.log("Local stream obtained for answer");
+    
+    const lv = document.getElementById("localVideo");
+    if (isVideoCall) {
+      lv.srcObject = localStream;
+      lv.classList.remove("hidden");
+    } else {
+      lv.classList.add("hidden");
+    }
+    
+    createPeerConnection();
+    console.log("Peer connection created for answer");
+
+    localStream.getTracks().forEach(track => {
+      if (pc) {
+        pc.addTrack(track, localStream);
+        console.log("Track added for answer:", track.kind);
+      }
+    });
+
+    console.log("Setting remote description");
+    await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
+    console.log("Remote description set");
+    
+    const answer = await pc.createAnswer();
+    console.log("Answer created");
+    await pc.setLocalDescription(answer);
+    console.log("Local description set for answer");
+
+    socket.emit("call_answer", {target: currentCallTargetId, answer: answer});
+    console.log("Answer sent");
+    
+    startCallTimer();
+    
+  } catch(err){
+    console.error("Error accepting call:", err);
+    showToast("Failed to accept call: " + err.message);
+    endCall(true);
+  }
+}
+
+async function handleCallAnswer(data){
+  console.log("Call answer received");
+  if (!pc) {
+    console.warn("No peer connection for answer");
+    return;
+  }
+  try {
+    console.log("Setting remote description from answer");
+    await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+    console.log("Remote description set from answer");
+    document.getElementById("callStatus").textContent = "Connected";
+    startCallTimer();
+  } catch(e){
+    console.error("Error handling call answer:", e);
+  }
+}
+
+async function handleRemoteIce(data){
+  console.log("ICE candidate received");
+  if (!pc || !data.candidate) return;
+  try {
+    await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+    console.log("ICE candidate added");
+  } catch(e){
+    console.warn("Failed to add ICE candidate:", e);
+  }
+}
+
+function handleCallReject(data){
+  console.log("Call rejected");
+  showToast("Call declined");
+  if (!callRecordSaved) {
+    saveCallRecord("declined");
+    callRecordSaved = true;
+  }
+  endCall(true);
+}
+
+function handleRemoteEnd(data){
+  console.log("Remote end received");
+  showToast("Call ended");
+  if (!callRecordSaved && callStartTime) {
+    saveCallRecord("completed");
+    callRecordSaved = true;
+  }
+  endCall(true);
+}
+
+function declineCall(){
+  console.log("Declining call");
+  if (currentCallTargetId) {
+    socket.emit("call_reject", {target: currentCallTargetId});
+  }
+  if (!callRecordSaved) {
+    saveCallRecord("declined");
+    callRecordSaved = true;
+  }
+  endCall(true);
+}
+
+function endCall(silent){
+  console.log("Ending call, silent:", silent);
+  
+  if (callTimerInterval) {
+    clearInterval(callTimerInterval);
+    callTimerInterval = null;
+  }
+  
+  if (!silent && currentCallTargetId && isCallActive) {
+    socket.emit("call_end", {target: currentCallTargetId});
+    if (!callRecordSaved && callStartTime) {
+      saveCallRecord("completed");
+      callRecordSaved = true;
+    }
+  }
+  
+  if (localStream) {
+    localStream.getTracks().forEach(t => t.stop());
+    localStream = null;
+    console.log("Local stream stopped");
+  }
+  if (pc) {
+    pc.close();
+    pc = null;
+    console.log("Peer connection closed");
+  }
+  currentCallTargetId = null;
+  isCallActive = false;
+  callStartTime = null;
+  document.getElementById("callOverlay").classList.add("hidden");
+  document.getElementById("remoteVideo").classList.add("hidden");
+  document.getElementById("localVideo").classList.add("hidden");
+  document.getElementById("cameraBtn").classList.add("hidden");
+  console.log("Call ended and UI cleaned up");
+}
+
+function saveCallRecord(status) {
+  console.log("Saving call record with status:", status);
+
+if (!currentChat || currentChat.type !== "dm") return;
+  const callType = isVideoCall ? "video" : "audio";
+  const duration = callStartTime ? Math.floor((Date.now() - callStartTime) / 1000) : 0;
+  
+  const content = ${callType}:${status}:${duration};
+  const clientId = makeClientId();
+  
+  const m = {
+    id: clientId,
+    chat_type: "dm",
+    chat_id: null,
+    sender_id: ME.id,
+    sender_name: ME.username,
+    sender_avatar: ME.avatar,
+    msg_type: "call",
+    content: content,
+    media_path: "",
+    timestamp: Date.now()/1000,
+    deleted: false,
+    reactions: [],
+    client_id: clientId,
+  };
+  
+  const body = document.getElementById("messagesBody");
+  if (body) {
+    const row = buildBubble(m);
+    row.classList.add("pending");
+    row.dataset.id = clientId;
+    body.appendChild(row);
+    body.scrollTop = body.scrollHeight;
+  }
+  
+  socket.emit("send_message", {
+    chat_type: "dm",
+    target: currentChat.id,
+    msg_type: "call",
+    content: content,
+    client_id: clientId,
+    reply_to_id: null
+  });
+  console.log("Call record saved");
+}
+
+function createPeerConnection(){
+  console.log("Creating peer connection");
+  pc = new RTCPeerConnection(rtcConfig);
+  
+  pc.onicecandidate = (event) => {
+    if (event.candidate && currentCallTargetId && socket) {
+      console.log("Sending ICE candidate");
+      socket.emit("call_ice_candidate", {target: currentCallTargetId, candidate: event.candidate});
+    }
+  };
+  
+  pc.ontrack = (event) => {
+    console.log("Track received from remote");
+    remoteStream = event.streams[0];
+    const rv = document.getElementById("remoteVideo");
+    rv.srcObject = remoteStream;
+    rv.classList.remove("hidden");
+    document.getElementById("callStatus").textContent = "Connected";
+    document.getElementById("cameraBtn").classList.toggle("hidden", !isVideoCall);
+  };
+  
+  pc.oniceconnectionstatechange = () => {
+    console.log("ICE connection state:", pc?.iceConnectionState);
+    if (pc && pc.iceConnectionState === "failed") {
+      showToast("Connection failed");
+      if (!callRecordSaved) {
+        saveCallRecord("missed");
+        callRecordSaved = true;
+      }
+      endCall(true);
+    }
+    if (pc && pc.iceConnectionState === "connected") {
+      document.getElementById("callStatus").textContent = "Connected";
+    }
+    if (pc && pc.iceConnectionState === "disconnected") {
+      showToast("Disconnected");
+      if (!callRecordSaved) {
+        saveCallRecord("missed");
+        callRecordSaved = true;
+      }
+      endCall(true);
+    }
+  };
+  
+  console.log("Peer connection created");
+}
+
+function toggleMute(){
+  if (!localStream) return;
+  isMuted = !isMuted;
+  localStream.getAudioTracks().forEach(t => t.enabled = !isMuted);
+  const btn = document.getElementById("muteBtn");
+  btn.classList.toggle("active-toggle", isMuted);
+  btn.textContent = isMuted ? "🔇" : "🎤";
+}
+
+function toggleCamera(){
+  if (!localStream) return;
+  isCameraOff = !isCameraOff;
+  localStream.getVideoTracks().forEach(t => t.enabled = !isCameraOff);
+  const btn = document.getElementById("cameraBtn");
+  btn.classList.toggle("active-toggle", isCameraOff);
+  btn.textContent = isCameraOff ? "🎦" : "📷";
+}
 </script>
 </body>
 </html>
