@@ -1,1321 +1,1807 @@
-"""
-HM Chat - Real-time messaging server
-Author: Med Rayen Bouazizi
+# server.py - Wavegram Full Server
+# Run: pip install fastapi uvicorn python-socketio sqlalchemy bcrypt cloudflared
 
-Single-file backend for an Android-style real-time chat application.
-Features: single-use email registration, session tokens, direct messages,
-groups with shareable invite links and optional admin password, profile
-pictures, media messages (image/video/voice), message deletion, emoji
-reactions, typing indicators, block/unblock, and full chat history so
-nothing is lost on a page refresh.
-
-Run:
-    pip install flask flask-socketio flask-cors bcrypt pyjwt
-    python3 hm.py
-Then open http://<server-ip>:5000 in the browser.
-"""
-import subprocess
 import os
-import re
-import sqlite3
-import threading
-import uuid
-import time
-import hashlib
-import secrets
+import asyncio
+import json
 import bcrypt
-import jwt
-from functools import wraps
+import sqlite3
+import aiofiles
+import subprocess
+import shutil
 from datetime import datetime, timedelta
+from typing import Optional, List, Dict, Any
+from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form, Request
+from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+import socketio
+from pydantic import BaseModel
+import uuid
+import base64
+import re
+import random
 
-from flask import Flask, request, jsonify, send_from_directory, g
-from flask_socketio import SocketIO, join_room, emit
-from flask_cors import CORS
+# ============================================================
+# DATABASE SETUP (SQLite with bcrypt password hashing)
+# ============================================================
 
-# ===== CONFIGURATION =====
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "hm.db")
-UPLOAD_DIR = os.path.join(BASE_DIR, "uploads")
-AVATAR_DIR = os.path.join(UPLOAD_DIR, "avatars")
-MEDIA_DIR = os.path.join(UPLOAD_DIR, "media")
-os.makedirs(AVATAR_DIR, exist_ok=True)
-os.makedirs(MEDIA_DIR, exist_ok=True)
-
-ALLOWED_MEDIA = {"png", "jpg", "jpeg", "gif", "webp", "mp4", "mov", "webm",
-                  "mp3", "wav", "ogg", "m4a", "3gp", "aac"}
-
-JWT_SECRET = os.environ.get("JWT_SECRET", secrets.token_hex(32))
-PUBLIC_BASE_URL = os.environ.get("HM_PUBLIC_URL", "").rstrip("/")
-MAX_CONTENT_LENGTH = 60 * 1024 * 1024  # 60 MB
-
-# If no public URL is set, use the local server address
-if not PUBLIC_BASE_URL:
-    PUBLIC_BASE_URL = "http://localhost:5000"
-
-# ===== FLASK APP =====
-app = Flask(__name__, static_folder=None)
-app.config["MAX_CONTENT_LENGTH"] = MAX_CONTENT_LENGTH
-app.config["SECRET_KEY"] = JWT_SECRET
-CORS(app, origins="*")
-
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading",
-                     max_http_buffer_size=MAX_CONTENT_LENGTH)
-
-# ===== DATABASE =====
+DB_PATH = "wavegram.db"
 
 def get_db():
-    db = getattr(g, "_db", None)
-    if db is None:
-        db = g._db = sqlite3.connect(DB_PATH)
-        db.row_factory = sqlite3.Row
-    return db
-
-@app.teardown_appcontext
-def close_db(_exc):
-    db = getattr(g, "_db", None)
-    if db is not None:
-        db.close()
-
-def db_conn():
-    """Standalone connection for use inside Socket.IO handlers (no app context)."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.executescript("""
-        CREATE TABLE IF NOT EXISTS users(
+    conn = get_db()
+    # Users table
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
             email TEXT UNIQUE NOT NULL,
-            username TEXT NOT NULL,
             password_hash TEXT NOT NULL,
-            token TEXT,
-            avatar TEXT DEFAULT '',
+            avatar TEXT,
             status TEXT DEFAULT 'offline',
-            created_at REAL NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS groups(
+            last_seen INTEGER,
+            created_at INTEGER DEFAULT (strftime('%s', 'now')),
+            is_active INTEGER DEFAULT 1
+        )
+    ''')
+    
+    # Conversations (DMs)
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS conversations (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            creator_id INTEGER NOT NULL,
-            invite_token TEXT UNIQUE NOT NULL,
-            password_hash TEXT DEFAULT '',
-            avatar TEXT DEFAULT '',
-            created_at REAL NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS group_members(
-            group_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            role TEXT DEFAULT 'member',
-            joined_at REAL NOT NULL,
-            PRIMARY KEY(group_id, user_id)
-        );
-        CREATE TABLE IF NOT EXISTS messages(
+            user1_id INTEGER NOT NULL,
+            user2_id INTEGER NOT NULL,
+            last_message_id INTEGER,
+            updated_at INTEGER DEFAULT (strftime('%s', 'now')),
+            UNIQUE(user1_id, user2_id)
+        )
+    ''')
+    
+    # Messages
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             chat_type TEXT NOT NULL,
             chat_id TEXT NOT NULL,
             sender_id INTEGER NOT NULL,
             msg_type TEXT NOT NULL,
-            content TEXT DEFAULT '',
-            media_path TEXT DEFAULT '',
-            timestamp REAL NOT NULL,
+            content TEXT,
+            media_path TEXT,
+            timestamp INTEGER DEFAULT (strftime('%s', 'now')),
             deleted INTEGER DEFAULT 0,
+            edited INTEGER DEFAULT 0,
             reply_to_id INTEGER,
             forwarded_from_id INTEGER,
-            edited INTEGER DEFAULT 0
-        );
-        CREATE TABLE IF NOT EXISTS reactions(
+            FOREIGN KEY (sender_id) REFERENCES users(id)
+        )
+    ''')
+    
+    # Message reactions
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS message_reactions (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             message_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             emoji TEXT NOT NULL,
-            UNIQUE(message_id, user_id)
-        );
-        CREATE TABLE IF NOT EXISTS blocks(
-            blocker_id INTEGER NOT NULL,
-            blocked_id INTEGER NOT NULL,
-            PRIMARY KEY(blocker_id, blocked_id)
-        );
-        CREATE TABLE IF NOT EXISTS read_state(
+            UNIQUE(message_id, user_id),
+            FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Groups
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS groups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            avatar TEXT,
+            password_hash TEXT,
+            invite_token TEXT UNIQUE,
+            created_by INTEGER NOT NULL,
+            created_at INTEGER DEFAULT (strftime('%s', 'now')),
+            FOREIGN KEY (created_by) REFERENCES users(id)
+        )
+    ''')
+    
+    # Group members
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS group_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            group_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
-            chat_type TEXT NOT NULL,
-            chat_id TEXT NOT NULL,
-            last_read_id INTEGER DEFAULT 0,
-            PRIMARY KEY(user_id, chat_type, chat_id)
-        );
-        CREATE TABLE IF NOT EXISTS hidden_messages(
-            user_id INTEGER NOT NULL,
-            message_id INTEGER NOT NULL,
-            PRIMARY KEY(user_id, message_id)
-        );
-        CREATE TABLE IF NOT EXISTS reels(
+            role TEXT DEFAULT 'member',
+            restricted_until INTEGER,
+            joined_at INTEGER DEFAULT (strftime('%s', 'now')),
+            UNIQUE(group_id, user_id),
+            FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Group messages (use messages table with chat_type='group')
+    
+    # Reels
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS reels (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             media_path TEXT NOT NULL,
             media_type TEXT NOT NULL,
-            caption TEXT DEFAULT '',
-            created_at REAL NOT NULL
-        );
-        CREATE TABLE IF NOT EXISTS reel_views(
-            reel_id INTEGER NOT NULL,
-            user_id INTEGER NOT NULL,
-            viewed_at REAL NOT NULL,
-            PRIMARY KEY(reel_id, user_id)
-        );
-        CREATE TABLE IF NOT EXISTS reel_reactions(
+            caption TEXT,
+            timestamp INTEGER DEFAULT (strftime('%s', 'now')),
+            view_count INTEGER DEFAULT 0,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    ''')
+    
+    # Reel reactions
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS reel_reactions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             reel_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             emoji TEXT NOT NULL,
-            PRIMARY KEY(reel_id, user_id)
-        );
-        CREATE TABLE IF NOT EXISTS reel_comments(
+            UNIQUE(reel_id, user_id),
+            FOREIGN KEY (reel_id) REFERENCES reels(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Reel comments
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS reel_comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             reel_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
             content TEXT NOT NULL,
             parent_id INTEGER,
-            created_at REAL NOT NULL
-        );
-    """)
-    try:
-        c.execute("ALTER TABLE users ADD COLUMN token TEXT;")
-    except sqlite3.OperationalError:
-        pass
+            timestamp INTEGER DEFAULT (strftime('%s', 'now')),
+            FOREIGN KEY (reel_id) REFERENCES reels(id) ON DELETE CASCADE
+        )
+    ''')
+    
+    # Blocks
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS blocks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            blocker_id INTEGER NOT NULL,
+            blocked_id INTEGER NOT NULL,
+            created_at INTEGER DEFAULT (strftime('%s', 'now')),
+            UNIQUE(blocker_id, blocked_id)
+        )
+    ''')
+    
+    # Read receipts
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS read_receipts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            chat_type TEXT NOT NULL,
+            chat_id TEXT NOT NULL,
+            last_read_message_id INTEGER,
+            updated_at INTEGER DEFAULT (strftime('%s', 'now')),
+            UNIQUE(user_id, chat_type, chat_id)
+        )
+    ''')
+    
     conn.commit()
     conn.close()
 
-# ===== HELPERS =====
+init_db()
 
-def dm_chat_id(uid1, uid2):
-    a, b = sorted([int(uid1), int(uid2)])
-    return f"{a}_{b}"
+# ============================================================
+# PYDANTIC MODELS
+# ============================================================
 
-def hash_pw(pw):
-    return bcrypt.hashpw(pw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+class UserRegister(BaseModel):
+    username: str
+    email: str
+    password: str
 
-def verify_pw(pw, stored):
-    return bcrypt.checkpw(pw.encode('utf-8'), stored.encode('utf-8'))
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
-def new_token():
-    return secrets.token_urlsafe(32)
+class MessageSend(BaseModel):
+    chat_type: str
+    target: str
+    msg_type: str
+    content: str
+    media_path: str = ""
+    client_id: str
+    reply_to_id: Optional[int] = None
 
-def allowed_file(filename):
-    return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_MEDIA
+class GroupCreate(BaseModel):
+    name: str
+    password: str = ""
 
-def user_public(u):
-    return {
-        "id": u["id"],
-        "username": u["username"],
-        "email": u["email"],
-        "avatar": u["avatar"],
-        "status": u["status"]
-    }
+class GroupJoin(BaseModel):
+    password: str = ""
 
-def preview_text(msg):
-    if msg["msg_type"] == "text":
-        t = msg["content"]
-        return (t[:42] + "…") if len(t) > 42 else t
-    if msg["msg_type"] == "call":
-        parts = (msg["content"] or "audio:missed:0").split(":")
-        ctype = parts[0] if len(parts) > 0 else "audio"
-        status = parts[1] if len(parts) > 1 else "missed"
-        icon = "🎥" if ctype == "video" else "📞"
-        if status == "completed":
-            return f"{icon} {'Video' if ctype=='video' else 'Voice'} call"
-        if status == "declined":
-            return f"{icon} Call declined"
-        return f"{icon} Missed call"
-    return {"image": "📷 Photo", "video": "🎬 Video", "voice": "🎤 Voice message"}.get(
-        msg["msg_type"], "Message"
-    )
+class ReelCreate(BaseModel):
+    caption: str = ""
 
-def serialize_message(conn, r):
-    reactions = conn.execute(
-        "SELECT user_id, emoji FROM reactions WHERE message_id=?", (r["id"],)
-    ).fetchall()
-    sender = conn.execute(
-        "SELECT username, avatar FROM users WHERE id=?", (r["sender_id"],)
+class RoleChange(BaseModel):
+    user_id: int
+    role: str
+
+class RestrictUser(BaseModel):
+    user_id: int
+    duration: int
+
+# ============================================================
+# FASTAPI APP
+# ============================================================
+
+app = FastAPI()
+
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Static files
+os.makedirs("static/uploads", exist_ok=True)
+os.makedirs("static/avatars", exist_ok=True)
+os.makedirs("static/reels", exist_ok=True)
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Socket.IO server
+sio = socketio.AsyncServer(
+    cors_allowed_origins="*",
+    async_mode="asgi",
+    ping_timeout=60,
+    ping_interval=25
+)
+socket_app = socketio.ASGIApp(sio, app)
+
+# ============================================================
+# AUTH HELPERS
+# ============================================================
+
+def hash_password(password: str) -> str:
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(password.encode('utf-8'), salt).decode('utf-8')
+
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
+def generate_token():
+    return base64.urlsafe_b64encode(os.urandom(32)).decode('utf-8').rstrip('=')
+
+def get_user_by_token(token: str) -> Optional[dict]:
+    if not token:
+        return None
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE token = ? AND is_active = 1",
+        (token,)
     ).fetchone()
+    conn.close()
+    return dict(user) if user else None
 
-    reply_to = None
-    if r["reply_to_id"]:
-        orig = conn.execute("SELECT * FROM messages WHERE id=?", (r["reply_to_id"],)).fetchone()
-        if orig:
-            orig_sender = conn.execute("SELECT username FROM users WHERE id=?", (orig["sender_id"],)).fetchone()
-            reply_to = {
-                "id": orig["id"],
-                "sender_name": orig_sender["username"] if orig_sender else "Unknown",
-                "preview": preview_text(orig) if not orig["deleted"] else "Message deleted",
-                "msg_type": orig["msg_type"],
-            }
+# Store tokens in memory (simple)
+active_tokens = {}
 
-    forwarded_from_name = None
-    if r["forwarded_from_id"]:
-        orig_user = conn.execute("SELECT username FROM users WHERE id=?", (r["forwarded_from_id"],)).fetchone()
-        forwarded_from_name = orig_user["username"] if orig_user else "Unknown"
+def authenticate_user(token: str) -> dict:
+    user = active_tokens.get(token)
+    if not user:
+        conn = get_db()
+        db_user = conn.execute(
+            "SELECT * FROM users WHERE token = ? AND is_active = 1",
+            (token,)
+        ).fetchone()
+        conn.close()
+        if db_user:
+            user = dict(db_user)
+            active_tokens[token] = user
+    return user
 
-    return {
-        "id": r["id"],
-        "chat_type": r["chat_type"],
-        "chat_id": r["chat_id"],
-        "sender_id": r["sender_id"],
-        "sender_name": sender["username"] if sender else "Unknown",
-        "sender_avatar": sender["avatar"] if sender else "",
-        "msg_type": r["msg_type"],
-        "content": "" if r["deleted"] else r["content"],
-        "media_path": "" if r["deleted"] else r["media_path"],
-        "timestamp": r["timestamp"],
-        "deleted": bool(r["deleted"]),
-        "edited": bool(r["edited"]),
-        "reactions": [{"user_id": x["user_id"], "emoji": x["emoji"]} for x in reactions],
-        "reply_to": reply_to,
-        "forwarded_from_name": forwarded_from_name,
-    }
+# ============================================================
+# API ENDPOINTS
+# ============================================================
 
-def hidden_ids_for(db, uid):
-    rows = db.execute("SELECT message_id FROM hidden_messages WHERE user_id=?", (uid,)).fetchall()
-    return {r["message_id"] for r in rows}
+@app.get("/api/config")
+async def get_config():
+    # Try to get public URL from cloudflared
+    public_url = os.environ.get("PUBLIC_URL", "")
+    return {"public_base_url": public_url}
 
-def touch_read_state(db, uid, chat_type, chat_id, last_id):
-    db.execute(
-        "INSERT INTO read_state(user_id, chat_type, chat_id, last_read_id) VALUES (?,?,?,?) "
-        "ON CONFLICT(user_id, chat_type, chat_id) DO UPDATE SET last_read_id=MAX(last_read_id, excluded.last_read_id)",
-        (uid, chat_type, chat_id, last_id),
-    )
-    db.commit()
-
-def rooms_for(chat_type, chat_id):
-    if chat_type == "dm":
-        a, b = chat_id.split("_")
-        return [f"user:{a}", f"user:{b}"]
-    return [f"group:{chat_id}"]
-
-def generate_invite_link(token):
-    """Generate a full international invite link for a group"""
-    base_url = PUBLIC_BASE_URL.rstrip('/')
-    return f"{base_url}/?join={token}"
-
-# ===== AUTH DECORATOR =====
-
-def auth_required(f):
-    @wraps(f)
-    def wrapper(*args, **kwargs):
-        token = request.headers.get("Authorization", "").replace("Bearer ", "").strip()
-        if not token:
-            return jsonify({"error": "Missing session token"}), 401
-        db = get_db()
-        user = db.execute("SELECT * FROM users WHERE token=?", (token,)).fetchone()
-        if not user:
-            return jsonify({"error": "Invalid or expired session"}), 401
-        g.user = user
-        return f(*args, **kwargs)
-    return wrapper
-
-# ===== AUTH ROUTES =====
-
-@app.route("/api/register", methods=["POST"])
-def register():
-    data = request.get_json(force=True) or {}
-    email = (data.get("email") or "").strip().lower()
-    username = (data.get("username") or "").strip()
-    password = data.get("password") or ""
-
-    if not email or "@" not in email:
-        return jsonify({"error": "Please provide a valid email address"}), 400
-    if not username:
-        return jsonify({"error": "Username is required"}), 400
-    if len(password) < 4:
-        return jsonify({"error": "Password must be at least 4 characters"}), 400
-
-    db = get_db()
-    existing = db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone()
+@app.post("/api/register")
+async def register(data: UserRegister):
+    conn = get_db()
+    
+    # Check existing
+    existing = conn.execute(
+        "SELECT id FROM users WHERE email = ? OR username = ?",
+        (data.email, data.username)
+    ).fetchone()
     if existing:
-        return jsonify({"error": "This email has already been used to create an account"}), 409
-
-    token = new_token()
-    db.execute(
-        "INSERT INTO users(email, username, password_hash, token, status, created_at) "
-        "VALUES (?,?,?,?,?,?)",
-        (email, username, hash_pw(password), token, "online", time.time()),
+        conn.close()
+        raise HTTPException(400, "Email or username already taken")
+    
+    # Hash password
+    hashed = hash_password(data.password)
+    token = generate_token()
+    
+    cursor = conn.execute(
+        "INSERT INTO users (username, email, password_hash, token, status, last_seen) VALUES (?, ?, ?, ?, 'online', ?)",
+        (data.username, data.email, hashed, token, int(datetime.now().timestamp()))
     )
-    db.commit()
-    user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
-    return jsonify({"token": token, "user": user_public(user)})
+    user_id = cursor.lastrowid
+    conn.commit()
+    
+    user = dict(conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone())
+    conn.close()
+    
+    active_tokens[token] = user
+    return {"token": token, "user": {k:v for k,v in user.items() if k not in ['password_hash']}}
 
-@app.route("/api/login", methods=["POST"])
-def login():
-    data = request.get_json(force=True) or {}
-    email = (data.get("email") or "").strip().lower()
-    password = data.get("password") or ""
-    db = get_db()
-    user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
-    if not user or not verify_pw(password, user["password_hash"]):
-        return jsonify({"error": "Invalid email or password"}), 401
-    token = new_token()
-    db.execute("UPDATE users SET token=?, status='online' WHERE id=?", (token, user["id"]))
-    db.commit()
-    user = db.execute("SELECT * FROM users WHERE id=?", (user["id"],)).fetchone()
-    return jsonify({"token": token, "user": user_public(user)})
+@app.post("/api/login")
+async def login(data: UserLogin):
+    conn = get_db()
+    user = conn.execute(
+        "SELECT * FROM users WHERE email = ? AND is_active = 1",
+        (data.email,)
+    ).fetchone()
+    
+    if not user or not verify_password(data.password, user['password_hash']):
+        conn.close()
+        raise HTTPException(401, "Invalid credentials")
+    
+    user = dict(user)
+    token = generate_token()
+    conn.execute(
+        "UPDATE users SET token = ?, status = 'online', last_seen = ? WHERE id = ?",
+        (token, int(datetime.now().timestamp()), user['id'])
+    )
+    conn.commit()
+    conn.close()
+    
+    active_tokens[token] = user
+    user['token'] = token
+    return {"token": token, "user": {k:v for k,v in user.items() if k not in ['password_hash']}}
 
-@app.route("/api/logout", methods=["POST"])
-@auth_required
-def logout():
-    db = get_db()
-    db.execute("UPDATE users SET token=NULL, status='offline' WHERE id=?", (g.user["id"],))
-    db.commit()
-    return jsonify({"ok": True})
+@app.get("/api/me")
+async def get_me(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    return {"user": {k:v for k,v in user.items() if k not in ['password_hash']}}
 
-@app.route("/api/account", methods=["DELETE"])
-@auth_required
-def delete_account():
-    data = request.get_json(force=True) or {}
-    password = data.get("password") or ""
-    if not verify_pw(password, g.user["password_hash"]):
-        return jsonify({"error": "Incorrect password"}), 403
-
-    uid = g.user["id"]
-    db = get_db()
-    reel_files = db.execute("SELECT media_path FROM reels WHERE user_id=?", (uid,)).fetchall()
-
-    try:
-        db.execute("DELETE FROM messages WHERE sender_id=?", (uid,))
-        db.execute("DELETE FROM reactions WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM reel_comments WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM reel_reactions WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM reel_views WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM reels WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM group_members WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM blocks WHERE blocker_id=? OR blocked_id=?", (uid, uid))
-        db.execute("DELETE FROM read_state WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM hidden_messages WHERE user_id=?", (uid,))
-        db.execute("DELETE FROM users WHERE id=?", (uid,))
-        db.commit()
-    except Exception:
-        db.rollback()
-        return jsonify({"error": "Account deletion failed"}), 500
-
-    for row in reel_files:
-        try:
-            path = row["media_path"].replace("/uploads/", "", 1)
-            full = os.path.join(UPLOAD_DIR, path)
-            if os.path.isfile(full):
-                os.remove(full)
-        except OSError:
-            pass
-
-    socketio.emit("account_deleted", {}, room=f"user:{uid}")
-    return jsonify({"ok": True})
-
-@app.route("/api/config", methods=["GET"])
-def get_config():
-    return jsonify({"public_base_url": PUBLIC_BASE_URL})
-
-@app.route("/api/me", methods=["GET"])
-@auth_required
-def me():
-    return jsonify({"user": user_public(g.user)})
-
-@app.route("/api/profile", methods=["POST"])
-@auth_required
-def update_profile():
-    username = request.form.get("username")
-    avatar_file = request.files.get("avatar")
-    db = get_db()
+@app.post("/api/profile")
+async def update_profile(request: Request, username: Optional[str] = Form(None), avatar: Optional[UploadFile] = File(None)):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    updates = []
+    params = []
+    
     if username:
-        db.execute("UPDATE users SET username=? WHERE id=?", (username.strip(), g.user["id"]))
-    if avatar_file and avatar_file.filename and allowed_file(avatar_file.filename):
-        ext = avatar_file.filename.rsplit(".", 1)[1].lower()
-        fname = f"{g.user['id']}_{uuid.uuid4().hex}.{ext}"
-        avatar_file.save(os.path.join(AVATAR_DIR, fname))
-        db.execute("UPDATE users SET avatar=? WHERE id=?",
-                   (f"/uploads/avatars/{fname}", g.user["id"]))
-    db.commit()
-    user = db.execute("SELECT * FROM users WHERE id=?", (g.user["id"],)).fetchone()
-    return jsonify({"user": user_public(user)})
-
-# ===== CONVERSATIONS =====
-
-@app.route("/api/conversations", methods=["GET"])
-@auth_required
-def conversations():
-    db = get_db()
-    uid = g.user["id"]
-    convos = []
-
-    # Get DM conversations
-    dm_chat_ids = db.execute("SELECT DISTINCT chat_id FROM messages WHERE chat_type='dm'").fetchall()
-    for row in dm_chat_ids:
-        cid = row["chat_id"]
-        try:
-            a, b = (int(x) for x in cid.split("_"))
-        except ValueError:
-            continue
-        if uid not in (a, b):
-            continue
-        partner_id = b if a == uid else a
-        partner = db.execute("SELECT * FROM users WHERE id=?", (partner_id,)).fetchone()
-        if not partner:
-            continue
-        last_msg = db.execute(
-            "SELECT * FROM messages WHERE chat_type='dm' AND chat_id=? ORDER BY id DESC LIMIT 1", (cid,)
-        ).fetchone()
-        if not last_msg:
-            continue
-        last_read = db.execute(
-            "SELECT last_read_id FROM read_state WHERE user_id=? AND chat_type='dm' AND chat_id=?", (uid, cid)
-        ).fetchone()
-        last_read_id = last_read["last_read_id"] if last_read else 0
-        unread = db.execute(
-            "SELECT COUNT(*) c FROM messages WHERE chat_type='dm' AND chat_id=? AND sender_id!=? AND id>? AND deleted=0",
-            (cid, uid, last_read_id)
-        ).fetchone()["c"]
-        convos.append({
-            "type": "dm",
-            "id": partner_id,
-            "name": partner["username"],
-            "avatar": partner["avatar"],
-            "status": partner["status"],
-            "last_preview": "Message deleted" if last_msg["deleted"] else preview_text(last_msg),
-            "last_timestamp": last_msg["timestamp"],
-            "last_is_mine": last_msg["sender_id"] == uid,
-            "unread": unread,
-        })
-
-    # Get group conversations
-    group_rows = db.execute(
-        """SELECT g.*, m.role FROM groups g JOIN group_members m ON m.group_id = g.id
-           WHERE m.user_id=?""", (uid,)
-    ).fetchall()
-    for grp in group_rows:
-        last_msg = db.execute(
-            "SELECT * FROM messages WHERE chat_type='group' AND chat_id=? ORDER BY id DESC LIMIT 1",
-            (str(grp["id"]),)
-        ).fetchone()
-        preview, ts, is_mine = "No messages yet", grp["created_at"], False
-        if last_msg:
-            preview = "Message deleted" if last_msg["deleted"] else preview_text(last_msg)
-            ts = last_msg["timestamp"]
-            is_mine = last_msg["sender_id"] == uid
-        last_read = db.execute(
-            "SELECT last_read_id FROM read_state WHERE user_id=? AND chat_type='group' AND chat_id=?",
-            (uid, str(grp["id"]))
-        ).fetchone()
-        last_read_id = last_read["last_read_id"] if last_read else 0
-        unread = db.execute(
-            "SELECT COUNT(*) c FROM messages WHERE chat_type='group' AND chat_id=? AND sender_id!=? AND id>? AND deleted=0",
-            (str(grp["id"]), uid, last_read_id)
-        ).fetchone()["c"]
-        convos.append({
-            "type": "group",
-            "id": grp["id"],
-            "name": grp["name"],
-            "avatar": grp["avatar"],
-            "status": "",
-            "last_preview": preview,
-            "last_timestamp": ts,
-            "last_is_mine": is_mine,
-            "role": grp["role"],
-            "invite_token": grp["invite_token"],
-            "has_password": bool(grp["password_hash"]),
-            "unread": unread,
-            "invite_link": generate_invite_link(grp["invite_token"])
-        })
-
-    convos.sort(key=lambda c: c["last_timestamp"], reverse=True)
-    return jsonify({"conversations": convos})
-
-@app.route("/api/unread_total", methods=["GET"])
-@auth_required
-def unread_total():
-    r = conversations()
-    data = r.get_json()
-    total = sum(c["unread"] for c in data["conversations"])
-    return jsonify({"total": total})
-
-@app.route("/api/users/search", methods=["GET"])
-@auth_required
-def search_users():
-    q = (request.args.get("q") or "").strip()
-    db = get_db()
-    if q:
-        rows = db.execute(
-            "SELECT * FROM users WHERE (username LIKE ? OR email LIKE ?) AND id != ? "
-            "ORDER BY username LIMIT 30",
-            (f"%{q}%", f"%{q}%", g.user["id"]),
-        ).fetchall()
-    else:
-        rows = db.execute(
-            "SELECT * FROM users WHERE id != ? ORDER BY username LIMIT 50", (g.user["id"],)
-        ).fetchall()
-    blocked = {
-        r["blocked_id"]
-        for r in db.execute("SELECT blocked_id FROM blocks WHERE blocker_id=?", (g.user["id"],))
-    }
-    return jsonify({"users": [user_public(u) for u in rows if u["id"] not in blocked]})
-
-@app.route("/api/block", methods=["POST"])
-@auth_required
-def block_user():
-    target_id = (request.get_json(force=True) or {}).get("user_id")
-    db = get_db()
-    db.execute("INSERT OR IGNORE INTO blocks(blocker_id, blocked_id) VALUES (?,?)",
-               (g.user["id"], target_id))
-    db.commit()
-    return jsonify({"ok": True})
-
-@app.route("/api/unblock", methods=["POST"])
-@auth_required
-def unblock_user():
-    target_id = (request.get_json(force=True) or {}).get("user_id")
-    db = get_db()
-    db.execute("DELETE FROM blocks WHERE blocker_id=? AND blocked_id=?", (g.user["id"], target_id))
-    db.commit()
-    return jsonify({"ok": True})
-
-@app.route("/api/block/status/<int:other_id>", methods=["GET"])
-@auth_required
-def block_status(other_id):
-    db = get_db()
-    i_blocked = db.execute(
-        "SELECT 1 FROM blocks WHERE blocker_id=? AND blocked_id=?", (g.user["id"], other_id)
-    ).fetchone() is not None
-    they_blocked = db.execute(
-        "SELECT 1 FROM blocks WHERE blocker_id=? AND blocked_id=?", (other_id, g.user["id"])
-    ).fetchone() is not None
-    return jsonify({"i_blocked": i_blocked, "they_blocked": they_blocked})
-
-@app.route("/api/blocked", methods=["GET"])
-@auth_required
-def list_blocked():
-    db = get_db()
-    rows = db.execute(
-        "SELECT u.* FROM users u JOIN blocks b ON b.blocked_id=u.id WHERE b.blocker_id=?",
-        (g.user["id"],),
-    ).fetchall()
-    return jsonify({"users": [user_public(u) for u in rows]})
-
-# ===== GROUPS =====
-
-@app.route("/api/groups", methods=["POST"])
-@auth_required
-def create_group():
-    data = request.get_json(force=True) or {}
-    name = (data.get("name") or "").strip()
-    password = data.get("password") or ""
-    if not name:
-        return jsonify({"error": "Group name is required"}), 400
-    db = get_db()
-    token = secrets.token_urlsafe(12)
-    pw_hash = hash_pw(password) if password else ""
-    cur = db.execute(
-        "INSERT INTO groups(name, creator_id, invite_token, password_hash, created_at) "
-        "VALUES (?,?,?,?,?)",
-        (name, g.user["id"], token, pw_hash, time.time()),
-    )
-    gid = cur.lastrowid
-    db.execute(
-        "INSERT INTO group_members(group_id, user_id, role, joined_at) VALUES (?,?,?,?)",
-        (gid, g.user["id"], "admin", time.time()),
-    )
-    db.commit()
+        updates.append("username = ?")
+        params.append(username)
     
-    # Return full group info with invite link
-    return jsonify({
-        "group": {
-            "id": gid,
-            "name": name,
-            "invite_token": token,
-            "has_password": bool(password),
-            "role": "admin",
-            "invite_link": generate_invite_link(token)
-        }
-    })
-
-@app.route("/api/groups/mine", methods=["GET"])
-@auth_required
-def my_groups():
-    db = get_db()
-    rows = db.execute(
-        """SELECT g.*, m.role FROM groups g
-           JOIN group_members m ON m.group_id = g.id
-           WHERE m.user_id=?""",
-        (g.user["id"],),
-    ).fetchall()
-    return jsonify({
-        "groups": [
-            {
-                "id": r["id"],
-                "name": r["name"],
-                "avatar": r["avatar"],
-                "invite_token": r["invite_token"],
-                "role": r["role"],
-                "has_password": bool(r["password_hash"]),
-                "invite_link": generate_invite_link(r["invite_token"])
-            }
-            for r in rows
-        ]
-    })
-
-@app.route("/api/groups/join/<token>", methods=["POST"])
-@auth_required
-def join_group(token):
-    password = (request.get_json(force=True) or {}).get("password", "")
-    db = get_db()
-    grp = db.execute("SELECT * FROM groups WHERE invite_token=?", (token,)).fetchone()
-    if not grp:
-        return jsonify({"error": "Invalid invite link"}), 404
-    if grp["password_hash"] and not verify_pw(password, grp["password_hash"]):
-        return jsonify({"error": "Incorrect group password"}), 403
-    db.execute(
-        "INSERT OR IGNORE INTO group_members(group_id, user_id, role, joined_at) VALUES (?,?,?,?)",
-        (grp["id"], g.user["id"], "member", time.time()),
-    )
-    db.commit()
-    return jsonify({
-        "group": {
-            "id": grp["id"],
-            "name": grp["name"],
-            "role": "member",
-            "invite_link": generate_invite_link(grp["invite_token"])
-        }
-    })
-
-@app.route("/api/groups/<int:gid>/members", methods=["GET"])
-@auth_required
-def group_members(gid):
-    db = get_db()
-    member = db.execute(
-        "SELECT * FROM group_members WHERE group_id=? AND user_id=?", (gid, g.user["id"])
-    ).fetchone()
-    if not member:
-        return jsonify({"error": "You are not a member of this group"}), 403
-    rows = db.execute(
-        """SELECT u.*, m.role FROM users u
-           JOIN group_members m ON m.user_id = u.id
-           WHERE m.group_id=?""",
-        (gid,),
-    ).fetchall()
-    return jsonify({"members": [{**user_public(r), "role": r["role"]} for r in rows]})
-
-@app.route("/api/groups/<int:gid>/avatar", methods=["POST"])
-@auth_required
-def group_avatar(gid):
-    db = get_db()
-    member = db.execute(
-        "SELECT role FROM group_members WHERE group_id=? AND user_id=?", (gid, g.user["id"])
-    ).fetchone()
-    if not member or member["role"] != "admin":
-        return jsonify({"error": "Only the group admin can change this"}), 403
-    avatar_file = request.files.get("avatar")
-    if not avatar_file or not allowed_file(avatar_file.filename):
-        return jsonify({"error": "Invalid image"}), 400
-    ext = avatar_file.filename.rsplit(".", 1)[1].lower()
-    fname = f"g{gid}_{uuid.uuid4().hex}.{ext}"
-    avatar_file.save(os.path.join(AVATAR_DIR, fname))
-    db.execute("UPDATE groups SET avatar=? WHERE id=?", (f"/uploads/avatars/{fname}", gid))
-    db.commit()
-    return jsonify({"avatar": f"/uploads/avatars/{fname}"})
-
-# ===== MEDIA UPLOAD =====
-
-@app.route("/api/upload", methods=["POST"])
-@auth_required
-def upload_media():
-    f = request.files.get("file")
-    if not f or not f.filename or not allowed_file(f.filename):
-        return jsonify({"error": "Invalid or missing file"}), 400
-    ext = f.filename.rsplit(".", 1)[1].lower()
-    fname = f"{uuid.uuid4().hex}.{ext}"
-    f.save(os.path.join(MEDIA_DIR, fname))
-    return jsonify({"path": f"/uploads/media/{fname}"})
-
-@app.route("/uploads/<path:subpath>")
-def serve_upload(subpath):
-    return send_from_directory(UPLOAD_DIR, subpath)
-
-# ===== MESSAGES HISTORY =====
-
-@app.route("/api/messages/dm/<int:other_id>", methods=["GET"])
-@auth_required
-def dm_history(other_id):
-    db = get_db()
-    chat_id = dm_chat_id(g.user["id"], other_id)
-    rows = db.execute(
-        "SELECT * FROM messages WHERE chat_type='dm' AND chat_id=? ORDER BY id ASC LIMIT 300",
-        (chat_id,),
-    ).fetchall()
-    if rows:
-        touch_read_state(db, g.user["id"], "dm", chat_id, rows[-1]["id"])
-    hidden = hidden_ids_for(db, g.user["id"])
-    return jsonify({"messages": [serialize_message(db, r) for r in rows if r["id"] not in hidden]})
-
-@app.route("/api/messages/group/<int:gid>", methods=["GET"])
-@auth_required
-def group_history(gid):
-    db = get_db()
-    member = db.execute(
-        "SELECT 1 FROM group_members WHERE group_id=? AND user_id=?", (gid, g.user["id"])
-    ).fetchone()
-    if not member:
-        return jsonify({"error": "You are not a member of this group"}), 403
-    rows = db.execute(
-        "SELECT * FROM messages WHERE chat_type='group' AND chat_id=? ORDER BY id ASC LIMIT 300",
-        (str(gid),),
-    ).fetchall()
-    if rows:
-        touch_read_state(db, g.user["id"], "group", str(gid), rows[-1]["id"])
-    hidden = hidden_ids_for(db, g.user["id"])
-    return jsonify({"messages": [serialize_message(db, r) for r in rows if r["id"] not in hidden]})
-
-@app.route("/api/messages/<int:msg_id>/hide", methods=["POST"])
-@auth_required
-def hide_message(msg_id):
-    db = get_db()
-    db.execute(
-        "INSERT OR IGNORE INTO hidden_messages(user_id, message_id) VALUES (?,?)",
-        (g.user["id"], msg_id),
-    )
-    db.commit()
-    return jsonify({"ok": True})
-
-# ===== REELS =====
-
-def serialize_reel(db, r, uid):
-    author = db.execute("SELECT username, avatar FROM users WHERE id=?", (r["user_id"],)).fetchone()
-    view_count = db.execute("SELECT COUNT(*) c FROM reel_views WHERE reel_id=?", (r["id"],)).fetchone()["c"]
-    reactions = db.execute("SELECT user_id, emoji FROM reel_reactions WHERE reel_id=?", (r["id"],)).fetchall()
-    comment_count = db.execute("SELECT COUNT(*) c FROM reel_comments WHERE reel_id=?", (r["id"],)).fetchone()["c"]
-    my_reaction = next((x["emoji"] for x in reactions if x["user_id"] == uid), None)
-    return {
-        "id": r["id"],
-        "author_id": r["user_id"],
-        "author_name": author["username"] if author else "Unknown",
-        "author_avatar": author["avatar"] if author else "",
-        "media_path": r["media_path"],
-        "media_type": r["media_type"],
-        "caption": r["caption"],
-        "created_at": r["created_at"],
-        "view_count": view_count,
-        "comment_count": comment_count,
-        "reaction_counts": _count_by_emoji(reactions),
-        "my_reaction": my_reaction,
-        "is_mine": r["user_id"] == uid,
-    }
-
-def _count_by_emoji(reactions):
-    counts = {}
-    for x in reactions:
-        counts[x["emoji"]] = counts.get(x["emoji"], 0) + 1
-    return counts
-
-@app.route("/api/reels", methods=["POST"])
-@auth_required
-def create_reel():
-    f = request.files.get("file")
-    caption = (request.form.get("caption") or "").strip()
-    if not f or not f.filename or not allowed_file(f.filename):
-        return jsonify({"error": "Please attach a photo or video"}), 400
-    ext = f.filename.rsplit(".", 1)[1].lower()
-    media_type = "video" if ext in {"mp4", "mov", "webm", "3gp"} else "image"
-    fname = f"reel_{uuid.uuid4().hex}.{ext}"
-    f.save(os.path.join(MEDIA_DIR, fname))
-    db = get_db()
-    cur = db.execute(
-        "INSERT INTO reels(user_id, media_path, media_type, caption, created_at) VALUES (?,?,?,?,?)",
-        (g.user["id"], f"/uploads/media/{fname}", media_type, caption, time.time()),
-    )
-    db.commit()
-    row = db.execute("SELECT * FROM reels WHERE id=?", (cur.lastrowid,)).fetchone()
-    return jsonify({"reel": serialize_reel(db, row, g.user["id"])})
-
-@app.route("/api/reels", methods=["GET"])
-@auth_required
-def list_reels():
-    db = get_db()
-    rows = db.execute("SELECT * FROM reels ORDER BY id DESC LIMIT 100").fetchall()
-    return jsonify({"reels": [serialize_reel(db, r, g.user["id"]) for r in rows]})
-
-@app.route("/api/reels/<int:rid>", methods=["DELETE"])
-@auth_required
-def delete_reel(rid):
-    db = get_db()
-    row = db.execute("SELECT * FROM reels WHERE id=?", (rid,)).fetchone()
-    if not row or row["user_id"] != g.user["id"]:
-        return jsonify({"error": "You can only delete your own reels"}), 403
+    if avatar:
+        ext = avatar.filename.split('.')[-1] if '.' in avatar.filename else 'jpg'
+        filename = f"avatar_{user['id']}.{ext}"
+        path = f"static/avatars/{filename}"
+        content = await avatar.read()
+        with open(path, "wb") as f:
+            f.write(content)
+        avatar_url = f"/static/avatars/{filename}"
+        updates.append("avatar = ?")
+        params.append(avatar_url)
     
-    # Delete the file
-    try:
-        path = row["media_path"].replace("/uploads/", "", 1)
-        full = os.path.join(UPLOAD_DIR, path)
-        if os.path.isfile(full):
-            os.remove(full)
-    except OSError:
-        pass
-    
-    db.execute("DELETE FROM reels WHERE id=?", (rid,))
-    db.execute("DELETE FROM reel_views WHERE reel_id=?", (rid,))
-    db.execute("DELETE FROM reel_reactions WHERE reel_id=?", (rid,))
-    db.execute("DELETE FROM reel_comments WHERE reel_id=?", (rid,))
-    db.commit()
-    return jsonify({"ok": True})
-
-@app.route("/api/reels/<int:rid>/view", methods=["POST"])
-@auth_required
-def view_reel(rid):
-    db = get_db()
-    db.execute(
-        "INSERT OR IGNORE INTO reel_views(reel_id, user_id, viewed_at) VALUES (?,?,?)",
-        (rid, g.user["id"], time.time()),
-    )
-    db.commit()
-    count = db.execute("SELECT COUNT(*) c FROM reel_views WHERE reel_id=?", (rid,)).fetchone()["c"]
-    return jsonify({"view_count": count})
-
-@app.route("/api/reels/<int:rid>/react", methods=["POST"])
-@auth_required
-def react_reel(rid):
-    emoji = (request.get_json(force=True) or {}).get("emoji")
-    db = get_db()
-    if not emoji:
-        db.execute("DELETE FROM reel_reactions WHERE reel_id=? AND user_id=?", (rid, g.user["id"]))
-    else:
-        db.execute(
-            "INSERT INTO reel_reactions(reel_id, user_id, emoji) VALUES (?,?,?) "
-            "ON CONFLICT(reel_id, user_id) DO UPDATE SET emoji=excluded.emoji",
-            (rid, g.user["id"], emoji),
+    if updates:
+        params.append(user['id'])
+        conn.execute(
+            f"UPDATE users SET {', '.join(updates)} WHERE id = ?",
+            params
         )
-    db.commit()
-    reactions = db.execute("SELECT user_id, emoji FROM reel_reactions WHERE reel_id=?", (rid,)).fetchall()
-    return jsonify({"reaction_counts": _count_by_emoji(reactions)})
+        conn.commit()
+    
+    updated_user = dict(conn.execute("SELECT * FROM users WHERE id = ?", (user['id'],)).fetchone())
+    conn.close()
+    active_tokens[token] = updated_user
+    return {"user": {k:v for k,v in updated_user.items() if k not in ['password_hash']}}
 
-def serialize_comment(db, c):
-    author = db.execute("SELECT username, avatar FROM users WHERE id=?", (c["user_id"],)).fetchone()
-    return {
-        "id": c["id"],
-        "reel_id": c["reel_id"],
-        "user_id": c["user_id"],
-        "author_name": author["username"] if author else "Unknown",
-        "author_avatar": author["avatar"] if author else "",
-        "content": c["content"],
-        "parent_id": c["parent_id"],
-        "created_at": c["created_at"],
-    }
-
-@app.route("/api/reels/<int:rid>/comments", methods=["GET"])
-@auth_required
-def get_comments(rid):
-    db = get_db()
-    rows = db.execute("SELECT * FROM reel_comments WHERE reel_id=? ORDER BY id ASC", (rid,)).fetchall()
-    return jsonify({"comments": [serialize_comment(db, c) for c in rows]})
-
-@app.route("/api/reels/<int:rid>/comments", methods=["POST"])
-@auth_required
-def post_comment(rid):
-    data = request.get_json(force=True) or {}
-    content = (data.get("content") or "").strip()
-    parent_id = data.get("parent_id")
-    if not content:
-        return jsonify({"error": "Comment cannot be empty"}), 400
-    db = get_db()
-    reel = db.execute("SELECT 1 FROM reels WHERE id=?", (rid,)).fetchone()
-    if not reel:
-        return jsonify({"error": "Reel not found"}), 404
-    if parent_id:
-        parent = db.execute("SELECT 1 FROM reel_comments WHERE id=? AND reel_id=?", (parent_id, rid)).fetchone()
-        if not parent:
-            parent_id = None
-    cur = db.execute(
-        "INSERT INTO reel_comments(reel_id, user_id, content, parent_id, created_at) VALUES (?,?,?,?,?)",
-        (rid, g.user["id"], content, parent_id, time.time()),
+@app.post("/api/block")
+async def block_user(request: Request, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    conn.execute(
+        "INSERT OR IGNORE INTO blocks (blocker_id, blocked_id) VALUES (?, ?)",
+        (user['id'], data['user_id'])
     )
-    db.commit()
-    row = db.execute("SELECT * FROM reel_comments WHERE id=?", (cur.lastrowid,)).fetchone()
-    return jsonify({"comment": serialize_comment(db, row)})
+    conn.commit()
+    conn.close()
+    return {"success": True}
 
-@app.route("/api/reels/comments/<int:cid>", methods=["DELETE"])
-@auth_required
-def delete_comment(cid):
-    db = get_db()
-    row = db.execute("SELECT * FROM reel_comments WHERE id=?", (cid,)).fetchone()
-    if not row or row["user_id"] != g.user["id"]:
-        return jsonify({"error": "You can only delete your own comments"}), 403
-    db.execute("DELETE FROM reel_comments WHERE id=? OR parent_id=?", (cid, cid))
-    db.commit()
-    return jsonify({"ok": True})
+@app.post("/api/unblock")
+async def unblock_user(request: Request, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    conn.execute(
+        "DELETE FROM blocks WHERE blocker_id = ? AND blocked_id = ?",
+        (user['id'], data['user_id'])
+    )
+    conn.commit()
+    conn.close()
+    return {"success": True}
 
-# ===== SOCKET.IO EVENTS =====
+@app.get("/api/blocked")
+async def get_blocked(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    users = conn.execute(
+        "SELECT u.id, u.username, u.avatar FROM users u JOIN blocks b ON b.blocked_id = u.id WHERE b.blocker_id = ?",
+        (user['id'],)
+    ).fetchall()
+    conn.close()
+    return {"users": [dict(u) for u in users]}
 
-sid_to_user = {}
+@app.get("/api/block/status/{user_id}")
+async def get_block_status(request: Request, user_id: int):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    i_blocked = conn.execute(
+        "SELECT id FROM blocks WHERE blocker_id = ? AND blocked_id = ?",
+        (user['id'], user_id)
+    ).fetchone() is not None
+    they_blocked = conn.execute(
+        "SELECT id FROM blocks WHERE blocker_id = ? AND blocked_id = ?",
+        (user_id, user['id'])
+    ).fetchone() is not None
+    conn.close()
+    return {"i_blocked": i_blocked, "they_blocked": they_blocked}
 
-@socketio.on("connect")
-def handle_connect():
-    print(f"Client connected: {request.sid}")
+@app.delete("/api/account")
+async def delete_account(request: Request, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    # Verify password
+    conn = get_db()
+    db_user = conn.execute(
+        "SELECT password_hash FROM users WHERE id = ?",
+        (user['id'],)
+    ).fetchone()
+    if not db_user or not verify_password(data['password'], db_user['password_hash']):
+        conn.close()
+        raise HTTPException(401, "Invalid password")
+    
+    # Soft delete
+    conn.execute(
+        "UPDATE users SET is_active = 0, status = 'deleted', token = NULL WHERE id = ?",
+        (user['id'],)
+    )
+    conn.commit()
+    conn.close()
+    
+    # Notify via socket
+    await sio.emit("account_deleted", room=f"user_{user['id']}")
+    
+    active_tokens.pop(token, None)
+    return {"success": True}
 
-@socketio.on("disconnect")
-def handle_disconnect():
-    uid = sid_to_user.pop(request.sid, None)
-    if uid:
-        conn = db_conn()
-        conn.execute("UPDATE users SET status='offline' WHERE id=?", (uid,))
+@app.post("/api/logout")
+async def logout(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if user:
+        conn = get_db()
+        conn.execute(
+            "UPDATE users SET status = 'offline', token = NULL WHERE id = ?",
+            (user['id'],)
+        )
         conn.commit()
         conn.close()
-    print(f"Client disconnected: {request.sid}")
+        active_tokens.pop(token, None)
+    return {"success": True}
 
-@socketio.on("auth")
-def sio_auth(data):
-    token = (data or {}).get("token")
-    conn = db_conn()
-    user = conn.execute("SELECT * FROM users WHERE token=?", (token,)).fetchone()
+# ============================================================
+# USER SEARCH
+# ============================================================
+
+@app.get("/api/users/search")
+async def search_users(request: Request, q: str = ""):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
     if not user:
-        emit("auth_error", {"error": "Invalid session"})
-        conn.close()
-        return
-    sid_to_user[request.sid] = user["id"]
-    join_room(f"user:{user['id']}")
-    for grow in conn.execute("SELECT group_id FROM group_members WHERE user_id=?", (user["id"],)):
-        join_room(f"group:{grow['group_id']}")
-    conn.execute("UPDATE users SET status='online' WHERE id=?", (user["id"],))
-    conn.commit()
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    query = "SELECT id, username, email, avatar, status FROM users WHERE is_active = 1 AND id != ?"
+    params = [user['id']]
+    if q:
+        query += " AND (username LIKE ? OR email LIKE ?)"
+        params.extend([f"%{q}%", f"%{q}%"])
+    query += " LIMIT 50"
+    
+    users = conn.execute(query, params).fetchall()
     conn.close()
-    emit("auth_ok", {"user_id": user["id"]})
+    return {"users": [dict(u) for u in users]}
 
-@socketio.on("send_message")
-def sio_send_message(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        emit("error_msg", {"error": "Not authenticated"})
-        return
+# ============================================================
+# CONVERSATIONS
+# ============================================================
 
-    chat_type = (data or {}).get("chat_type")
-    target = (data or {}).get("target")
-    msg_type = (data or {}).get("msg_type", "text")
-    content = (data or {}).get("content", "")
-    media_path = (data or {}).get("media_path", "")
-    reply_to_id = (data or {}).get("reply_to_id")
-    client_id = (data or {}).get("client_id")
-
-    if chat_type not in ("dm", "group") or target is None:
-        emit("error_msg", {"error": "Malformed message"})
-        return
-    if msg_type == "text" and not content.strip():
-        emit("error_msg", {"error": "Empty message"})
-        return
-
-    conn = db_conn()
-    if chat_type == "dm":
-        target_user = conn.execute("SELECT 1 FROM users WHERE id=?", (target,)).fetchone()
-        if not target_user:
-            emit("error_msg", {"error": "This account no longer exists"})
-            conn.close()
-            return
-        blocked = conn.execute(
-            "SELECT 1 FROM blocks WHERE (blocker_id=? AND blocked_id=?) "
-            "OR (blocker_id=? AND blocked_id=?)",
-            (target, uid, uid, target),
-        ).fetchone()
-        if blocked:
-            emit("error_msg", {"error": "You cannot message this user"})
-            conn.close()
-            return
-        chat_id = dm_chat_id(uid, target)
-    else:
-        member = conn.execute(
-            "SELECT 1 FROM group_members WHERE group_id=? AND user_id=?", (target, uid)
-        ).fetchone()
-        if not member:
-            emit("error_msg", {"error": "Not a group member"})
-            conn.close()
-            return
-        chat_id = str(target)
-
-    if reply_to_id:
-        orig = conn.execute(
-            "SELECT 1 FROM messages WHERE id=? AND chat_type=? AND chat_id=? AND deleted=0",
-            (reply_to_id, chat_type, chat_id),
-        ).fetchone()
-        if not orig:
-            reply_to_id = None
-
-    cur = conn.execute(
-        "INSERT INTO messages(chat_type, chat_id, sender_id, msg_type, content, media_path, timestamp, reply_to_id) "
-        "VALUES (?,?,?,?,?,?,?,?)",
-        (chat_type, chat_id, uid, msg_type, content, media_path, time.time(), reply_to_id),
-    )
-    conn.commit()
-    row = conn.execute("SELECT * FROM messages WHERE id=?", (cur.lastrowid,)).fetchone()
-    payload = serialize_message(conn, row)
-    payload["client_id"] = client_id
+@app.get("/api/conversations")
+async def get_conversations(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    # Get DMs
+    dm_convos = conn.execute('''
+        SELECT 
+            c.id,
+            'dm' as type,
+            CASE WHEN c.user1_id = ? THEN u2.username ELSE u1.username END as name,
+            CASE WHEN c.user1_id = ? THEN u2.avatar ELSE u1.avatar END as avatar,
+            CASE WHEN c.user1_id = ? THEN u2.status ELSE u1.status END as status,
+            CASE WHEN c.user1_id = ? THEN u2.id ELSE u1.id END as target_id,
+            m.content as last_preview,
+            m.msg_type as last_msg_type,
+            m.timestamp as last_timestamp,
+            m.sender_id as last_sender_id,
+            (
+                SELECT COUNT(*) FROM messages 
+                WHERE chat_type = 'dm' AND chat_id = c.id 
+                AND sender_id != ? AND timestamp > COALESCE(
+                    (SELECT last_read_message_id FROM read_receipts 
+                     WHERE user_id = ? AND chat_type = 'dm' AND chat_id = c.id), 0
+                )
+            ) as unread
+        FROM conversations c
+        JOIN users u1 ON u1.id = c.user1_id
+        JOIN users u2 ON u2.id = c.user2_id
+        LEFT JOIN messages m ON m.id = c.last_message_id AND m.deleted = 0
+        WHERE (c.user1_id = ? OR c.user2_id = ?)
+        AND u1.is_active = 1 AND u2.is_active = 1
+        ORDER BY c.updated_at DESC
+    ''', (user['id'], user['id'], user['id'], user['id'], user['id'], user['id'], user['id'], user['id'])).fetchall()
+    
+    # Get Groups
+    group_convos = conn.execute('''
+        SELECT 
+            g.id,
+            'group' as type,
+            g.name,
+            g.avatar,
+            NULL as status,
+            NULL as target_id,
+            m.content as last_preview,
+            m.msg_type as last_msg_type,
+            m.timestamp as last_timestamp,
+            m.sender_id as last_sender_id,
+            gm.role,
+            (
+                SELECT COUNT(*) FROM messages 
+                WHERE chat_type = 'group' AND chat_id = g.id 
+                AND sender_id != ? AND timestamp > COALESCE(
+                    (SELECT last_read_message_id FROM read_receipts 
+                     WHERE user_id = ? AND chat_type = 'group' AND chat_id = g.id), 0
+                )
+            ) as unread
+        FROM groups g
+        JOIN group_members gm ON gm.group_id = g.id
+        LEFT JOIN messages m ON m.id = (
+            SELECT id FROM messages 
+            WHERE chat_type = 'group' AND chat_id = g.id AND deleted = 0
+            ORDER BY timestamp DESC LIMIT 1
+        )
+        WHERE gm.user_id = ?
+        ORDER BY COALESCE(m.timestamp, g.created_at) DESC
+    ''', (user['id'], user['id'], user['id'])).fetchall()
+    
+    # Format conversations
+    result = []
+    for c in dm_convos:
+        d = dict(c)
+        d['last_preview'] = format_preview(d.get('last_preview'), d.get('last_msg_type'))
+        d['last_is_mine'] = d.get('last_sender_id') == user['id']
+        result.append(d)
+    
+    for c in group_convos:
+        d = dict(c)
+        d['last_preview'] = format_preview(d.get('last_preview'), d.get('last_msg_type'))
+        d['last_is_mine'] = d.get('last_sender_id') == user['id']
+        result.append(d)
+    
     conn.close()
+    return {"conversations": result}
 
-    for room in rooms_for(chat_type, chat_id):
-        emit("new_message", payload, room=room)
+def format_preview(content, msg_type):
+    if not content:
+        return ""
+    if msg_type == "gift":
+        return "🎁 Sent a gift"
+    if msg_type == "image":
+        return "📷 Photo"
+    if msg_type == "video":
+        return "🎬 Video"
+    if msg_type == "voice":
+        return "🎤 Voice message"
+    if msg_type == "call":
+        parts = content.split(":")
+        if len(parts) >= 2:
+            ctype, status = parts[0], parts[1]
+            return f"{'📞' if ctype == 'audio' else '🎥'} Call {status}"
+    return content[:50] + ("..." if len(content) > 50 else "")
 
-@socketio.on("forward_message")
-def sio_forward_message(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        emit("error_msg", {"error": "Not authenticated"})
-        return
-    message_id = (data or {}).get("message_id")
-    chat_type = (data or {}).get("chat_type")
-    target = (data or {}).get("target")
-    client_id = (data or {}).get("client_id")
-
-    if chat_type not in ("dm", "group") or target is None or not message_id:
-        emit("error_msg", {"error": "Malformed forward request"})
-        return
-
-    conn = db_conn()
-    orig = conn.execute("SELECT * FROM messages WHERE id=? AND deleted=0", (message_id,)).fetchone()
-    if not orig:
-        emit("error_msg", {"error": "Original message not found"})
-        conn.close()
-        return
-
-    if chat_type == "dm":
-        target_user = conn.execute("SELECT 1 FROM users WHERE id=?", (target,)).fetchone()
-        if not target_user:
-            emit("error_msg", {"error": "This account no longer exists"})
-            conn.close()
-            return
-        blocked = conn.execute(
-            "SELECT 1 FROM blocks WHERE (blocker_id=? AND blocked_id=?) OR (blocker_id=? AND blocked_id=?)",
-            (target, uid, uid, target),
-        ).fetchone()
-        if blocked:
-            emit("error_msg", {"error": "You cannot message this user"})
-            conn.close()
-            return
-        chat_id = dm_chat_id(uid, target)
-    else:
-        member = conn.execute(
-            "SELECT 1 FROM group_members WHERE group_id=? AND user_id=?", (target, uid)
-        ).fetchone()
-        if not member:
-            emit("error_msg", {"error": "Not a group member"})
-            conn.close()
-            return
-        chat_id = str(target)
-
-    cur = conn.execute(
-        "INSERT INTO messages(chat_type, chat_id, sender_id, msg_type, content, media_path, timestamp, forwarded_from_id) "
-        "VALUES (?,?,?,?,?,?,?,?)",
-        (chat_type, chat_id, uid, orig["msg_type"], orig["content"], orig["media_path"], time.time(), orig["sender_id"]),
-    )
-    conn.commit()
-    row = conn.execute("SELECT * FROM messages WHERE id=?", (cur.lastrowid,)).fetchone()
-    payload = serialize_message(conn, row)
-    payload["client_id"] = client_id
-    conn.close()
-
-    for room in rooms_for(chat_type, chat_id):
-        emit("new_message", payload, room=room)
-
-@socketio.on("mark_read")
-def sio_mark_read(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    chat_type = (data or {}).get("chat_type")
-    target = (data or {}).get("target")
-    if chat_type not in ("dm", "group") or target is None:
-        return
-    chat_id = dm_chat_id(uid, target) if chat_type == "dm" else str(target)
-    conn = db_conn()
-    last = conn.execute(
-        "SELECT MAX(id) m FROM messages WHERE chat_type=? AND chat_id=?", (chat_type, chat_id)
-    ).fetchone()
-    last_id = last["m"] or 0
-    touch_read_state(conn, uid, chat_type, chat_id, last_id)
-    conn.close()
-
-@socketio.on("delete_message")
-def sio_delete_message(data):
-    uid = sid_to_user.get(request.sid)
-    msg_id = (data or {}).get("message_id")
-    if not uid or not msg_id:
-        return
-    conn = db_conn()
-    row = conn.execute("SELECT * FROM messages WHERE id=?", (msg_id,)).fetchone()
-    if not row or row["sender_id"] != uid:
-        emit("error_msg", {"error": "You can only delete your own messages"})
-        conn.close()
-        return
-    conn.execute("UPDATE messages SET deleted=1, content='', media_path='' WHERE id=?", (msg_id,))
-    conn.commit()
-    chat_type, chat_id = row["chat_type"], row["chat_id"]
-    conn.close()
-    for room in rooms_for(chat_type, chat_id):
-        emit("message_deleted", {"message_id": msg_id}, room=room)
-
-@socketio.on("edit_message")
-def sio_edit_message(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        emit("error_msg", {"error": "Not authenticated"})
-        return
-    msg_id = (data or {}).get("message_id")
-    new_content = (data or {}).get("content", "").strip()
-    if not msg_id or not new_content:
-        return
-    conn = db_conn()
-    row = conn.execute("SELECT * FROM messages WHERE id=?", (msg_id,)).fetchone()
-    if not row or row["sender_id"] != uid or row["deleted"] or row["msg_type"] != "text":
-        emit("error_msg", {"error": "This message can't be edited"})
-        conn.close()
-        return
-    conn.execute("UPDATE messages SET content=?, edited=1 WHERE id=?", (new_content, msg_id))
-    conn.commit()
-    chat_type, chat_id = row["chat_type"], row["chat_id"]
-    conn.close()
-    for room in rooms_for(chat_type, chat_id):
-        emit("message_edited", {"message_id": msg_id, "content": new_content}, room=room)
-
-@socketio.on("react_message")
-def sio_react(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    msg_id = (data or {}).get("message_id")
-    emoji = (data or {}).get("emoji")
-    if not msg_id or not emoji:
-        return
-    conn = db_conn()
-    row = conn.execute("SELECT * FROM messages WHERE id=?", (msg_id,)).fetchone()
-    if not row:
-        conn.close()
-        return
-    conn.execute(
-        "INSERT INTO reactions(message_id, user_id, emoji) VALUES (?,?,?) "
-        "ON CONFLICT(message_id, user_id) DO UPDATE SET emoji=excluded.emoji",
-        (msg_id, uid, emoji),
-    )
-    conn.commit()
-    chat_type, chat_id = row["chat_type"], row["chat_id"]
-    conn.close()
-    for room in rooms_for(chat_type, chat_id):
-        emit("message_reacted", {"message_id": msg_id, "user_id": uid, "emoji": emoji}, room=room)
-
-@socketio.on("typing")
-def sio_typing(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    chat_type = (data or {}).get("chat_type")
-    target = (data or {}).get("target")
-    if chat_type not in ("dm", "group") or target is None:
-        return
-    if chat_type == "dm":
-        emit("typing", {"from": uid}, room=f"user:{target}")
-    else:
-        emit("typing", {"from": uid}, room=f"group:{target}", include_self=False)
-
-# ===== CALL EVENTS =====
-
-@socketio.on("call_offer")
-def sio_call_offer(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    target = (data or {}).get("target")
-    offer = (data or {}).get("offer")
-    call_type = (data or {}).get("call_type", "audio")
-    if target is None or not offer:
-        return
-    conn = db_conn()
-    caller = conn.execute("SELECT username, avatar FROM users WHERE id=?", (uid,)).fetchone()
-    conn.close()
-    emit("call_offer", {
-        "from": uid,
-        "from_name": caller["username"] if caller else "Unknown",
-        "from_avatar": caller["avatar"] if caller else "",
-        "call_type": call_type,
-        "offer": offer,
-    }, room=f"user:{target}")
-
-@socketio.on("call_answer")
-def sio_call_answer(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    target = (data or {}).get("target")
-    answer = (data or {}).get("answer")
-    if target is None or not answer:
-        return
-    emit("call_answer", {"from": uid, "answer": answer}, room=f"user:{target}")
-
-@socketio.on("call_ice_candidate")
-def sio_call_ice(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    target = (data or {}).get("target")
-    candidate = (data or {}).get("candidate")
-    if target is None or not candidate:
-        return
-    emit("call_ice_candidate", {"from": uid, "candidate": candidate}, room=f"user:{target}")
-
-@socketio.on("call_reject")
-def sio_call_reject(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    target = (data or {}).get("target")
-    if target is None:
-        return
-    emit("call_reject", {"from": uid, "reason": (data or {}).get("reason", "declined")}, room=f"user:{target}")
-
-@socketio.on("call_end")
-def sio_call_end(data):
-    uid = sid_to_user.get(request.sid)
-    if not uid:
-        return
-    target = (data or {}).get("target")
-    if target is None:
-        return
-    emit("call_end", {"from": uid}, room=f"user:{target}")
-
-# ===== FRONTEND =====
-
-@app.route("/")
-def index():
-    return send_from_directory(BASE_DIR, "hm.html")
-
-def try_start_public_tunnel():
-    """Best-effort attempt to give this server a real internet address."""
-    global PUBLIC_BASE_URL
-    if PUBLIC_BASE_URL and PUBLIC_BASE_URL != "http://localhost:5000":
-        print(f"Using configured public URL: {PUBLIC_BASE_URL}")
-        return
-
-    def runner():
-        global PUBLIC_BASE_URL
-        try:
-            proc = subprocess.Popen(
-                ["cloudflared", "tunnel", "--url", "http://localhost:5000"],
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                text=True, bufsize=1,
+@app.get("/api/unread_total")
+async def get_unread_total(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    total = conn.execute('''
+        SELECT COUNT(*) as total FROM (
+            SELECT id FROM messages m
+            WHERE chat_type = 'dm' AND chat_id IN (
+                SELECT id FROM conversations WHERE user1_id = ? OR user2_id = ?
+            ) AND sender_id != ? AND timestamp > COALESCE(
+                (SELECT last_read_message_id FROM read_receipts 
+                 WHERE user_id = ? AND chat_type = 'dm' AND chat_id = m.chat_id), 0
             )
-        except FileNotFoundError:
-            print("\nNote: Install cloudflared for public invite links:\n    pkg install cloudflared (Termux)\n")
+            UNION ALL
+            SELECT id FROM messages m
+            WHERE chat_type = 'group' AND chat_id IN (
+                SELECT group_id FROM group_members WHERE user_id = ?
+            ) AND sender_id != ? AND timestamp > COALESCE(
+                (SELECT last_read_message_id FROM read_receipts 
+                 WHERE user_id = ? AND chat_type = 'group' AND chat_id = m.chat_id), 0
+            )
+        )
+    ''', (user['id'], user['id'], user['id'], user['id'], user['id'], user['id'], user['id'])).fetchone()
+    conn.close()
+    return {"total": total['total'] if total else 0}
+
+# ============================================================
+# MESSAGES
+# ============================================================
+
+@app.get("/api/messages/dm/{user_id}")
+async def get_dm_messages(request: Request, user_id: int, limit: int = 100):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    # Get or create conversation
+    conv = conn.execute('''
+        SELECT id FROM conversations 
+        WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)
+    ''', (user['id'], user_id, user_id, user['id'])).fetchone()
+    
+    if not conv:
+        cursor = conn.execute(
+            "INSERT INTO conversations (user1_id, user2_id, updated_at) VALUES (?, ?, ?)",
+            (min(user['id'], user_id), max(user['id'], user_id), int(datetime.now().timestamp()))
+        )
+        conv_id = cursor.lastrowid
+        conn.commit()
+    else:
+        conv_id = conv['id']
+    
+    # Get messages with sender info
+    messages = conn.execute('''
+        SELECT m.*, u.username as sender_name, u.avatar as sender_avatar,
+        (SELECT json_group_array(json_object('user_id', mr.user_id, 'emoji', mr.emoji)) 
+         FROM message_reactions mr WHERE mr.message_id = m.id) as reactions_json
+        FROM messages m
+        JOIN users u ON u.id = m.sender_id
+        WHERE m.chat_type = 'dm' AND m.chat_id = ? AND m.deleted = 0
+        ORDER BY m.timestamp DESC
+        LIMIT ?
+    ''', (str(conv_id), limit)).fetchall()
+    
+    messages = [dict(m) for m in messages]
+    for m in messages:
+        m['reactions'] = json.loads(m.get('reactions_json') or '[]')
+        m.pop('reactions_json', None)
+    
+    # Mark as read
+    if messages:
+        conn.execute(
+            "INSERT OR REPLACE INTO read_receipts (user_id, chat_type, chat_id, last_read_message_id, updated_at) VALUES (?, 'dm', ?, ?, ?)",
+            (user['id'], str(conv_id), messages[0]['id'], int(datetime.now().timestamp()))
+        )
+        conn.commit()
+    
+    conn.close()
+    return {"messages": messages}
+
+@app.get("/api/messages/group/{group_id}")
+async def get_group_messages(request: Request, group_id: int, limit: int = 100):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    # Check membership
+    member = conn.execute(
+        "SELECT id, role FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user['id'])
+    ).fetchone()
+    if not member:
+        conn.close()
+        raise HTTPException(403, "Not a member of this group")
+    
+    # Get messages
+    messages = conn.execute('''
+        SELECT m.*, u.username as sender_name, u.avatar as sender_avatar,
+        (SELECT json_group_array(json_object('user_id', mr.user_id, 'emoji', mr.emoji)) 
+         FROM message_reactions mr WHERE mr.message_id = m.id) as reactions_json
+        FROM messages m
+        JOIN users u ON u.id = m.sender_id
+        WHERE m.chat_type = 'group' AND m.chat_id = ? AND m.deleted = 0
+        ORDER BY m.timestamp DESC
+        LIMIT ?
+    ''', (str(group_id), limit)).fetchall()
+    
+    messages = [dict(m) for m in messages]
+    for m in messages:
+        m['reactions'] = json.loads(m.get('reactions_json') or '[]')
+        m.pop('reactions_json', None)
+    
+    # Mark as read
+    if messages:
+        conn.execute(
+            "INSERT OR REPLACE INTO read_receipts (user_id, chat_type, chat_id, last_read_message_id, updated_at) VALUES (?, 'group', ?, ?, ?)",
+            (user['id'], str(group_id), messages[0]['id'], int(datetime.now().timestamp()))
+        )
+        conn.commit()
+    
+    conn.close()
+    return {"messages": messages}
+
+@app.post("/api/messages/{message_id}/hide")
+async def hide_message(request: Request, message_id: int):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    # Soft delete for user (just mark deleted, but keep for others)
+    # We use deleted=1 for everyone, but we could add a user-specific hide
+    conn.execute(
+        "UPDATE messages SET deleted = 1 WHERE id = ? AND sender_id = ?",
+        (message_id, user['id'])
+    )
+    conn.commit()
+    conn.close()
+    return {"success": True}
+
+@app.post("/api/upload")
+async def upload_file(request: Request, file: UploadFile = File(...)):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'bin'
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    path = f"static/uploads/{filename}"
+    
+    content = await file.read()
+    with open(path, "wb") as f:
+        f.write(content)
+    
+    return {"path": f"/static/uploads/{filename}"}
+
+# ============================================================
+# GROUPS
+# ============================================================
+
+@app.post("/api/groups")
+async def create_group(request: Request, data: GroupCreate):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    invite_token = generate_token()
+    password_hash = hash_password(data.password) if data.password else None
+    
+    cursor = conn.execute(
+        "INSERT INTO groups (name, password_hash, invite_token, created_by) VALUES (?, ?, ?, ?)",
+        (data.name, password_hash, invite_token, user['id'])
+    )
+    group_id = cursor.lastrowid
+    
+    # Add creator as admin
+    conn.execute(
+        "INSERT INTO group_members (group_id, user_id, role) VALUES (?, ?, 'admin')",
+        (group_id, user['id'])
+    )
+    conn.commit()
+    
+    group = dict(conn.execute("SELECT * FROM groups WHERE id = ?", (group_id,)).fetchone())
+    conn.close()
+    return {"group": group}
+
+@app.get("/api/groups/mine")
+async def get_my_groups(request: Request):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    groups = conn.execute('''
+        SELECT g.*, gm.role, 
+        CASE WHEN g.password_hash IS NOT NULL THEN 1 ELSE 0 END as has_password
+        FROM groups g
+        JOIN group_members gm ON gm.group_id = g.id
+        WHERE gm.user_id = ?
+        ORDER BY g.created_at DESC
+    ''', (user['id'],)).fetchall()
+    conn.close()
+    return {"groups": [dict(g) for g in groups]}
+
+@app.get("/api/groups/{group_id}/members")
+async def get_group_members(request: Request, group_id: int):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    members = conn.execute('''
+        SELECT u.id as user_id, u.username, u.avatar, gm.role, gm.restricted_until
+        FROM group_members gm
+        JOIN users u ON u.id = gm.user_id
+        WHERE gm.group_id = ? AND u.is_active = 1
+        ORDER BY gm.role = 'admin' DESC, gm.role = 'moderator' DESC, u.username
+    ''', (group_id,)).fetchall()
+    conn.close()
+    return {"members": [dict(m) for m in members]}
+
+@app.post("/api/groups/{group_id}/role")
+async def change_role(request: Request, group_id: int, data: RoleChange):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    # Check if caller is admin
+    caller = conn.execute(
+        "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user['id'])
+    ).fetchone()
+    if not caller or caller['role'] != 'admin':
+        conn.close()
+        raise HTTPException(403, "Only admins can change roles")
+    
+    # Update role
+    conn.execute(
+        "UPDATE group_members SET role = ? WHERE group_id = ? AND user_id = ?",
+        (data.role, group_id, data.user_id)
+    )
+    conn.commit()
+    
+    # Get username for notification
+    target_user = conn.execute(
+        "SELECT username FROM users WHERE id = ?",
+        (data.user_id,)
+    ).fetchone()
+    conn.close()
+    
+    # Notify via socket
+    await sio.emit("group_member_updated", {
+        "group_id": str(group_id),
+        "action": "role_changed",
+        "target_id": data.user_id,
+        "username": target_user['username'] if target_user else "Unknown",
+        "new_role": data.role
+    })
+    
+    return {"success": True}
+
+@app.post("/api/groups/{group_id}/remove")
+async def remove_from_group(request: Request, group_id: int, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    # Check if caller is admin
+    caller = conn.execute(
+        "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user['id'])
+    ).fetchone()
+    if not caller or caller['role'] != 'admin':
+        conn.close()
+        raise HTTPException(403, "Only admins can remove members")
+    
+    target_user_id = data.get('user_id')
+    if not target_user_id:
+        conn.close()
+        raise HTTPException(400, "Missing user_id")
+    
+    # Remove member
+    conn.execute(
+        "DELETE FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, target_user_id)
+    )
+    conn.commit()
+    
+    target_user = conn.execute(
+        "SELECT username FROM users WHERE id = ?",
+        (target_user_id,)
+    ).fetchone()
+    conn.close()
+    
+    await sio.emit("group_member_updated", {
+        "group_id": str(group_id),
+        "action": "removed",
+        "target_id": target_user_id,
+        "username": target_user['username'] if target_user else "Unknown"
+    })
+    
+    return {"success": True}
+
+@app.post("/api/groups/{group_id}/restrict")
+async def restrict_user(request: Request, group_id: int, data: RestrictUser):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    caller = conn.execute(
+        "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user['id'])
+    ).fetchone()
+    if not caller or caller['role'] not in ['admin', 'moderator']:
+        conn.close()
+        raise HTTPException(403, "Only admins and moderators can restrict users")
+    
+    restricted_until = int((datetime.now() + timedelta(seconds=data.duration)).timestamp())
+    conn.execute(
+        "UPDATE group_members SET restricted_until = ? WHERE group_id = ? AND user_id = ?",
+        (restricted_until, group_id, data.user_id)
+    )
+    conn.commit()
+    
+    target_user = conn.execute(
+        "SELECT username FROM users WHERE id = ?",
+        (data.user_id,)
+    ).fetchone()
+    conn.close()
+    
+    await sio.emit("group_member_updated", {
+        "group_id": str(group_id),
+        "action": "restricted",
+        "target_id": data.user_id,
+        "username": target_user['username'] if target_user else "Unknown",
+        "duration": data.duration
+    })
+    
+    return {"success": True}
+
+@app.post("/api/groups/{group_id}/unrestrict")
+async def unrestrict_user(request: Request, group_id: int, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    
+    caller = conn.execute(
+        "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user['id'])
+    ).fetchone()
+    if not caller or caller['role'] not in ['admin', 'moderator']:
+        conn.close()
+        raise HTTPException(403, "Only admins and moderators can unrestrict users")
+    
+    conn.execute(
+        "UPDATE group_members SET restricted_until = NULL WHERE group_id = ? AND user_id = ?",
+        (group_id, data.get('user_id'))
+    )
+    conn.commit()
+    
+    target_user = conn.execute(
+        "SELECT username FROM users WHERE id = ?",
+        (data.get('user_id'),)
+    ).fetchone()
+    conn.close()
+    
+    await sio.emit("group_member_updated", {
+        "group_id": str(group_id),
+        "action": "unrestricted",
+        "target_id": data.get('user_id'),
+        "username": target_user['username'] if target_user else "Unknown"
+    })
+    
+    return {"success": True}
+
+@app.post("/api/groups/join/{token}")
+async def join_group(request: Request, token: str, data: GroupJoin):
+    auth_token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(auth_token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    group = conn.execute(
+        "SELECT id, password_hash FROM groups WHERE invite_token = ?",
+        (token,)
+    ).fetchone()
+    if not group:
+        conn.close()
+        raise HTTPException(404, "Group not found")
+    
+    # Check password
+    if group['password_hash'] and not verify_password(data.password, group['password_hash']):
+        conn.close()
+        raise HTTPException(401, "Invalid password")
+    
+    # Check if already member
+    existing = conn.execute(
+        "SELECT id FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group['id'], user['id'])
+    ).fetchone()
+    if existing:
+        conn.close()
+        raise HTTPException(400, "Already a member")
+    
+    conn.execute(
+        "INSERT INTO group_members (group_id, user_id, role) VALUES (?, ?, 'member')",
+        (group['id'], user['id'])
+    )
+    conn.commit()
+    conn.close()
+    return {"success": True}
+
+@app.post("/api/groups/{group_id}/avatar")
+async def update_group_avatar(request: Request, group_id: int, avatar: UploadFile = File(...)):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    member = conn.execute(
+        "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user['id'])
+    ).fetchone()
+    if not member or member['role'] != 'admin':
+        conn.close()
+        raise HTTPException(403, "Only admins can change group avatar")
+    
+    ext = avatar.filename.split('.')[-1] if '.' in avatar.filename else 'jpg'
+    filename = f"group_{group_id}.{ext}"
+    path = f"static/avatars/{filename}"
+    content = await avatar.read()
+    with open(path, "wb") as f:
+        f.write(content)
+    
+    avatar_url = f"/static/avatars/{filename}"
+    conn.execute(
+        "UPDATE groups SET avatar = ? WHERE id = ?",
+        (avatar_url, group_id)
+    )
+    conn.commit()
+    conn.close()
+    
+    return {"avatar": avatar_url}
+
+# ============================================================
+# REELS
+# ============================================================
+
+@app.post("/api/reels")
+async def create_reel(request: Request, file: UploadFile = File(...), caption: str = Form("")):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    ext = file.filename.split('.')[-1] if '.' in file.filename else 'mp4'
+    filename = f"reel_{uuid.uuid4().hex}.{ext}"
+    path = f"static/reels/{filename}"
+    
+    content = await file.read()
+    with open(path, "wb") as f:
+        f.write(content)
+    
+    media_type = "video" if file.content_type and file.content_type.startswith("video") else "image"
+    media_path = f"/static/reels/{filename}"
+    
+    conn = get_db()
+    cursor = conn.execute(
+        "INSERT INTO reels (user_id, media_path, media_type, caption) VALUES (?, ?, ?, ?)",
+        (user['id'], media_path, media_type, caption)
+    )
+    reel_id = cursor.lastrowid
+    conn.commit()
+    
+    reel = dict(conn.execute('''
+        SELECT r.*, u.username as author_name, u.avatar as author_avatar,
+        (SELECT COUNT(*) FROM reel_reactions WHERE reel_id = r.id) as reaction_count
+        FROM reels r
+        JOIN users u ON u.id = r.user_id
+        WHERE r.id = ?
+    ''', (reel_id,)).fetchone())
+    conn.close()
+    
+    return {"reel": reel}
+
+@app.get("/api/reels")
+async def get_reels(request: Request, limit: int = 50):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    reels = conn.execute('''
+        SELECT r.*, u.username as author_name, u.avatar as author_avatar,
+        (SELECT json_group_array(json_object('user_id', rr.user_id, 'emoji', rr.emoji))
+         FROM reel_reactions rr WHERE rr.reel_id = r.id) as reactions_json,
+        (SELECT COUNT(*) FROM reel_comments WHERE reel_id = r.id) as comment_count,
+        EXISTS(SELECT 1 FROM reel_reactions WHERE reel_id = r.id AND user_id = ?) as has_reacted
+        FROM reels r
+        JOIN users u ON u.id = r.user_id
+        WHERE u.is_active = 1
+        ORDER BY r.timestamp DESC
+        LIMIT ?
+    ''', (user['id'], limit)).fetchall()
+    
+    result = []
+    for r in reels:
+        d = dict(r)
+        d['reaction_counts'] = {}
+        try:
+            reactions = json.loads(d.pop('reactions_json', '[]'))
+            for rr in reactions:
+                if rr and rr.get('emoji'):
+                    d['reaction_counts'][rr['emoji']] = d['reaction_counts'].get(rr['emoji'], 0) + 1
+        except:
+            pass
+        d['my_reaction'] = None
+        if d.get('has_reacted'):
+            my_reaction = conn.execute(
+                "SELECT emoji FROM reel_reactions WHERE reel_id = ? AND user_id = ?",
+                (d['id'], user['id'])
+            ).fetchone()
+            if my_reaction:
+                d['my_reaction'] = my_reaction['emoji']
+        d['is_mine'] = d['user_id'] == user['id']
+        result.append(d)
+    
+    conn.close()
+    return {"reels": result}
+
+@app.post("/api/reels/{reel_id}/react")
+async def react_to_reel(request: Request, reel_id: int, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    emoji = data.get('emoji')
+    conn = get_db()
+    
+    if emoji:
+        conn.execute(
+            "INSERT OR REPLACE INTO reel_reactions (reel_id, user_id, emoji) VALUES (?, ?, ?)",
+            (reel_id, user['id'], emoji)
+        )
+    else:
+        conn.execute(
+            "DELETE FROM reel_reactions WHERE reel_id = ? AND user_id = ?",
+            (reel_id, user['id'])
+        )
+    conn.commit()
+    
+    # Get counts
+    reactions = conn.execute(
+        "SELECT emoji, COUNT(*) as count FROM reel_reactions WHERE reel_id = ? GROUP BY emoji",
+        (reel_id,)
+    ).fetchall()
+    conn.close()
+    
+    return {"reaction_counts": {r['emoji']: r['count'] for r in reactions}}
+
+@app.post("/api/reels/{reel_id}/view")
+async def view_reel(request: Request, reel_id: int):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    conn.execute(
+        "UPDATE reels SET view_count = view_count + 1 WHERE id = ?",
+        (reel_id,)
+    )
+    conn.commit()
+    
+    view_count = conn.execute(
+        "SELECT view_count FROM reels WHERE id = ?",
+        (reel_id,)
+    ).fetchone()
+    conn.close()
+    
+    return {"view_count": view_count['view_count'] if view_count else 0}
+
+@app.delete("/api/reels/{reel_id}")
+async def delete_reel(request: Request, reel_id: int):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    reel = conn.execute(
+        "SELECT user_id, media_path FROM reels WHERE id = ?",
+        (reel_id,)
+    ).fetchone()
+    if not reel:
+        conn.close()
+        raise HTTPException(404, "Reel not found")
+    if reel['user_id'] != user['id']:
+        conn.close()
+        raise HTTPException(403, "Not your reel")
+    
+    # Delete file
+    try:
+        if reel['media_path']:
+            os.remove(reel['media_path'].lstrip('/'))
+    except:
+        pass
+    
+    conn.execute("DELETE FROM reels WHERE id = ?", (reel_id,))
+    conn.commit()
+    conn.close()
+    return {"success": True}
+
+@app.get("/api/reels/{reel_id}/comments")
+async def get_reel_comments(request: Request, reel_id: int):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    conn = get_db()
+    comments = conn.execute('''
+        SELECT c.*, u.username as author_name, u.avatar as author_avatar
+        FROM reel_comments c
+        JOIN users u ON u.id = c.user_id
+        WHERE c.reel_id = ?
+        ORDER BY c.timestamp ASC
+    ''', (reel_id,)).fetchall()
+    conn.close()
+    return {"comments": [dict(c) for c in comments]}
+
+@app.post("/api/reels/{reel_id}/comments")
+async def add_reel_comment(request: Request, reel_id: int, data: dict):
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
+    user = authenticate_user(token)
+    if not user:
+        raise HTTPException(401, "Unauthorized")
+    
+    content = data.get('content', '').strip()
+    if not content:
+        raise HTTPException(400, "Comment content required")
+    
+    conn = get_db()
+    cursor = conn.execute(
+        "INSERT INTO reel_comments (reel_id, user_id, content) VALUES (?, ?, ?)",
+        (reel_id, user['id'], content)
+    )
+    comment_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    return {"id": comment_id}
+
+# ============================================================
+# SOCKET.IO EVENTS
+# ============================================================
+
+user_rooms = {}
+user_sids = {}
+
+@sio.on('connect')
+async def on_connect(sid, environ):
+    print(f"Socket connected: {sid}")
+
+@sio.on('auth')
+async def on_auth(sid, data):
+    token = data.get('token')
+    if not token:
+        await sio.disconnect(sid)
+        return
+    
+    user = authenticate_user(token)
+    if not user:
+        await sio.emit('auth_error', {'error': 'Invalid token'}, room=sid)
+        await sio.disconnect(sid)
+        return
+    
+    user_sids[sid] = user['id']
+    room = f"user_{user['id']}"
+    await sio.enter_room(sid, room)
+    user_rooms[user['id']] = room
+    
+    # Update status
+    conn = get_db()
+    conn.execute(
+        "UPDATE users SET status = 'online', last_seen = ? WHERE id = ?",
+        (int(datetime.now().timestamp()), user['id'])
+    )
+    conn.commit()
+    conn.close()
+    
+    await sio.emit('auth_ok', {'user_id': user['id'], 'username': user['username']}, room=sid)
+    print(f"User {user['username']} authenticated")
+
+@sio.on('disconnect')
+async def on_disconnect(sid):
+    user_id = user_sids.get(sid)
+    if user_id:
+        conn = get_db()
+        conn.execute(
+            "UPDATE users SET status = 'offline', last_seen = ? WHERE id = ?",
+            (int(datetime.now().timestamp()), user_id)
+        )
+        conn.commit()
+        conn.close()
+        user_sids.pop(sid, None)
+        print(f"User {user_id} disconnected")
+
+@sio.on('send_message')
+async def on_send_message(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    chat_type = data.get('chat_type')
+    target = data.get('target')
+    msg_type = data.get('msg_type')
+    content = data.get('content', '')
+    media_path = data.get('media_path', '')
+    client_id = data.get('client_id')
+    reply_to_id = data.get('reply_to_id')
+    
+    conn = get_db()
+    chat_id = target
+    
+    if chat_type == 'dm':
+        # Get conversation
+        conv = conn.execute(
+            "SELECT id FROM conversations WHERE (user1_id = ? AND user2_id = ?) OR (user1_id = ? AND user2_id = ?)",
+            (user_id, int(target), int(target), user_id)
+        ).fetchone()
+        if not conv:
+            cursor = conn.execute(
+                "INSERT INTO conversations (user1_id, user2_id, updated_at) VALUES (?, ?, ?)",
+                (min(user_id, int(target)), max(user_id, int(target)), int(datetime.now().timestamp()))
+            )
+            chat_id = str(cursor.lastrowid)
+            conn.commit()
+        else:
+            chat_id = str(conv['id'])
+        
+        # Check if blocked
+        blocked = conn.execute(
+            "SELECT id FROM blocks WHERE (blocker_id = ? AND blocked_id = ?) OR (blocker_id = ? AND blocked_id = ?)",
+            (user_id, int(target), int(target), user_id)
+        ).fetchone()
+        if blocked:
+            conn.close()
+            await sio.emit('error_msg', {'error': 'Blocked'}, room=sid)
             return
-        pattern = re.compile(r"https://[a-zA-Z0-9\-]+\.trycloudflare\.com")
-        for line in proc.stdout:
-            m = pattern.search(line)
-            if m:
-                PUBLIC_BASE_URL = m.group(0)
-                print(f"\n✔ Public URL: {PUBLIC_BASE_URL}\n")
-                break
+    
+    elif chat_type == 'group':
+        # Check membership and restrictions
+        member = conn.execute(
+            "SELECT role, restricted_until FROM group_members WHERE group_id = ? AND user_id = ?",
+            (int(target), user_id)
+        ).fetchone()
+        if not member:
+            conn.close()
+            await sio.emit('error_msg', {'error': 'Not a member'}, room=sid)
+            return
+        
+        # Check if restricted
+        if member['restricted_until'] and member['restricted_until'] > int(datetime.now().timestamp()):
+            conn.close()
+            await sio.emit('error_msg', {'error': 'You are restricted'}, room=sid)
+            return
+    
+    # Insert message
+    cursor = conn.execute(
+        '''INSERT INTO messages 
+           (chat_type, chat_id, sender_id, msg_type, content, media_path, reply_to_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?)''',
+        (chat_type, chat_id, user_id, msg_type, content, media_path, reply_to_id)
+    )
+    message_id = cursor.lastrowid
+    conn.commit()
+    
+    # Get full message with sender info
+    message = dict(conn.execute('''
+        SELECT m.*, u.username as sender_name, u.avatar as sender_avatar
+        FROM messages m
+        JOIN users u ON u.id = m.sender_id
+        WHERE m.id = ?
+    ''', (message_id,)).fetchone())
+    message['reactions'] = []
+    
+    # Update conversation last message
+    if chat_type == 'dm':
+        conn.execute(
+            "UPDATE conversations SET last_message_id = ?, updated_at = ? WHERE id = ?",
+            (message_id, int(datetime.now().timestamp()), int(chat_id))
+        )
+    conn.commit()
+    conn.close()
+    
+    # Broadcast to recipients
+    if chat_type == 'dm':
+        target_user_id = int(target)
+        # Send to sender and target
+        await sio.emit('new_message', message, room=f"user_{user_id}")
+        await sio.emit('new_message', message, room=f"user_{target_user_id}")
+    else:
+        # Send to all group members
+        conn2 = get_db()
+        members = conn2.execute(
+            "SELECT user_id FROM group_members WHERE group_id = ?",
+            (int(target),)
+        ).fetchall()
+        conn2.close()
+        for m in members:
+            await sio.emit('new_message', message, room=f"user_{m['user_id']}")
 
-    threading.Thread(target=runner, daemon=True).start()
+@sio.on('edit_message')
+async def on_edit_message(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    message_id = data.get('message_id')
+    content = data.get('content')
+    
+    conn = get_db()
+    message = conn.execute(
+        "SELECT sender_id, chat_type, chat_id FROM messages WHERE id = ? AND deleted = 0",
+        (message_id,)
+    ).fetchone()
+    if not message or message['sender_id'] != user_id:
+        conn.close()
+        return
+    
+    conn.execute(
+        "UPDATE messages SET content = ?, edited = 1 WHERE id = ?",
+        (content, message_id)
+    )
+    conn.commit()
+    conn.close()
+    
+    await sio.emit('message_edited', {'message_id': message_id, 'content': content})
 
-# ===== RUN =====
+@sio.on('delete_message')
+async def on_delete_message(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    message_id = data.get('message_id')
+    
+    conn = get_db()
+    message = conn.execute(
+        "SELECT sender_id, chat_type, chat_id FROM messages WHERE id = ? AND deleted = 0",
+        (message_id,)
+    ).fetchone()
+    if not message:
+        conn.close()
+        return
+    
+    # Check if user can delete (own message or admin in group)
+    can_delete = message['sender_id'] == user_id
+    
+    if not can_delete and message['chat_type'] == 'group':
+        member = conn.execute(
+            "SELECT role FROM group_members WHERE group_id = ? AND user_id = ?",
+            (int(message['chat_id']), user_id)
+        ).fetchone()
+        if member and member['role'] in ['admin', 'moderator']:
+            can_delete = True
+    
+    if not can_delete:
+        conn.close()
+        return
+    
+    conn.execute(
+        "UPDATE messages SET deleted = 1 WHERE id = ?",
+        (message_id,)
+    )
+    conn.commit()
+    conn.close()
+    
+    await sio.emit('message_deleted', {'message_id': message_id})
+
+@sio.on('react_message')
+async def on_react_message(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    message_id = data.get('message_id')
+    emoji = data.get('emoji')
+    
+    conn = get_db()
+    conn.execute(
+        "INSERT OR REPLACE INTO message_reactions (message_id, user_id, emoji) VALUES (?, ?, ?)",
+        (message_id, user_id, emoji)
+    )
+    conn.commit()
+    conn.close()
+    
+    await sio.emit('message_reacted', {'message_id': message_id, 'user_id': user_id, 'emoji': emoji})
+
+@sio.on('forward_message')
+async def on_forward_message(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    message_id = data.get('message_id')
+    chat_type = data.get('chat_type')
+    target = data.get('target')
+    
+    conn = get_db()
+    original = conn.execute(
+        "SELECT * FROM messages WHERE id = ? AND deleted = 0",
+        (message_id,)
+    ).fetchone()
+    if not original:
+        conn.close()
+        return
+    
+    # Create forwarded message
+    cursor = conn.execute(
+        '''INSERT INTO messages 
+           (chat_type, chat_id, sender_id, msg_type, content, media_path, forwarded_from_id)
+           VALUES (?, ?, ?, ?, ?, ?, ?)''',
+        (chat_type, target, user_id, original['msg_type'], original['content'], 
+         original['media_path'], message_id)
+    )
+    new_id = cursor.lastrowid
+    conn.commit()
+    conn.close()
+    
+    # Broadcast
+    # Simple: just send as new message
+    await sio.emit('new_message', {
+        'id': new_id,
+        'sender_id': user_id,
+        'msg_type': original['msg_type'],
+        'content': original['content'],
+        'media_path': original['media_path'],
+        'forwarded_from_name': original.get('sender_name', 'Unknown')
+    })
+
+@sio.on('typing')
+async def on_typing(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    chat_type = data.get('chat_type')
+    target = data.get('target')
+    
+    # Broadcast typing to recipients
+    if chat_type == 'dm':
+        await sio.emit('typing', {'user_id': user_id}, room=f"user_{target}")
+    else:
+        # Broadcast to group members
+        conn = get_db()
+        members = conn.execute(
+            "SELECT user_id FROM group_members WHERE group_id = ? AND user_id != ?",
+            (int(target), user_id)
+        ).fetchall()
+        conn.close()
+        for m in members:
+            await sio.emit('typing', {'user_id': user_id}, room=f"user_{m['user_id']}")
+
+@sio.on('mark_read')
+async def on_mark_read(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    chat_type = data.get('chat_type')
+    target = data.get('target')
+    
+    conn = get_db()
+    # Get last message id
+    last_msg = conn.execute(
+        "SELECT id FROM messages WHERE chat_type = ? AND chat_id = ? ORDER BY timestamp DESC LIMIT 1",
+        (chat_type, target)
+    ).fetchone()
+    
+    if last_msg:
+        conn.execute(
+            "INSERT OR REPLACE INTO read_receipts (user_id, chat_type, chat_id, last_read_message_id, updated_at) VALUES (?, ?, ?, ?, ?)",
+            (user_id, chat_type, target, last_msg['id'], int(datetime.now().timestamp()))
+        )
+        conn.commit()
+    conn.close()
+
+# ============================================================
+# WEBRTC CALL SIGNALING
+# ============================================================
+
+@sio.on('call_offer')
+async def on_call_offer(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    target = data.get('target')
+    offer = data.get('offer')
+    video = data.get('video', False)
+    
+    conn = get_db()
+    target_user = conn.execute(
+        "SELECT id, username, avatar FROM users WHERE id = ? AND is_active = 1",
+        (target,)
+    ).fetchone()
+    conn.close()
+    
+    if not target_user:
+        await sio.emit('call_error', {'error': 'User not found'}, room=sid)
+        return
+    
+    sender = await get_user_by_id(user_id)
+    
+    await sio.emit('call_offer', {
+        'from_user_id': user_id,
+        'from_username': sender['username'] if sender else 'Unknown',
+        'from_avatar': sender.get('avatar') if sender else None,
+        'offer': offer,
+        'video': video
+    }, room=f"user_{target}")
+
+@sio.on('call_answer')
+async def on_call_answer(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    target = data.get('target')
+    answer = data.get('answer')
+    
+    await sio.emit('call_answer', {'answer': answer}, room=f"user_{target}")
+
+@sio.on('call_ice_candidate')
+async def on_call_ice_candidate(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    target = data.get('target')
+    candidate = data.get('candidate')
+    
+    await sio.emit('call_ice_candidate', {'candidate': candidate}, room=f"user_{target}")
+
+@sio.on('call_reject')
+async def on_call_reject(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    target = data.get('target')
+    await sio.emit('call_reject', {}, room=f"user_{target}")
+
+@sio.on('call_end')
+async def on_call_end(sid, data):
+    user_id = user_sids.get(sid)
+    if not user_id:
+        return
+    
+    target = data.get('target')
+    await sio.emit('call_end', {}, room=f"user_{target}")
+
+async def get_user_by_id(user_id):
+    conn = get_db()
+    user = conn.execute(
+        "SELECT id, username, avatar FROM users WHERE id = ? AND is_active = 1",
+        (user_id,)
+    ).fetchone()
+    conn.close()
+    return dict(user) if user else None
+
+# ============================================================
+# PUBLIC URL (Cloudflared)
+# ============================================================
+
+def setup_cloudflare_tunnel():
+    """Attempt to start cloudflared tunnel for public URL"""
+    try:
+        # Check if cloudflared is installed
+        result = subprocess.run(['cloudflared', '--version'], capture_output=True)
+        if result.returncode != 0:
+            print("⚠️ cloudflared not installed. Install with: brew install cloudflared (macOS) or download from cloudflare.com")
+            return None
+        
+        # Start tunnel
+        print("🌐 Starting cloudflared tunnel...")
+        import threading
+        def run_tunnel():
+            subprocess.run([
+                'cloudflared', 'tunnel', '--url', 'http://localhost:8000',
+                '--quiet'
+            ], capture_output=True)
+        
+        threading.Thread(target=run_tunnel, daemon=True).start()
+        return "Tunnel started. Check console for URL."
+    except Exception as e:
+        print(f"⚠️ Failed to start cloudflared: {e}")
+        return None
+
+# Try to setup tunnel on startup
+setup_cloudflare_tunnel()
+
+# ============================================================
+# RUN SERVER
+# ============================================================
 
 if __name__ == "__main__":
-    init_db()
-    print("🚀 HM Chat Server starting on http://0.0.0.0:5000")
-    print(f"📡 Invite links will use: {PUBLIC_BASE_URL}")
-    try_start_public_tunnel()
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True, allow_unsafe_werkzeug=True)
+    import uvicorn
+    print("🚀 Wavegram Server starting on http://localhost:8000")
+    print("📱 Open the HTML client in your browser")
+    uvicorn.run("server:socket_app", host="0.0.0.0", port=8000, reload=True)
