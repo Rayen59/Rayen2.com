@@ -1,8 +1,6 @@
-flask
-flask-socketio
-flask-cors
+fastapi
+uvicorn
+python-socketio
+sqlalchemy
 bcrypt
-pyjwt
-gunicorn
-gevent
-gevent-websocket
+aiofiles
