@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
   <style>
     /* ============================================================
-       ROOT VARIABLES & THEMES
+       ROOT VARIABLES & THEMES (enhanced)
     ============================================================ */
     :root {
       --bg-primary: #0c111b;
@@ -35,108 +35,12 @@
       --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(79, 154, 255, 0.02), transparent 60%);
     }
-
-    /* Theme: Cosmic */
-    .theme-cosmic {
-      --bg-primary: #0a0a1a;
-      --bg-surface: #12122a;
-      --bg-surface-2: #1a1a3a;
-      --bg-surface-3: #2a2a4a;
-      --text-primary: #e8e0ff;
-      --text-secondary: #a090d0;
-      --text-dim: #7060a0;
-      --accent: #7c5cff;
-      --accent-glow: rgba(124, 92, 255, 0.3);
-      --accent-gradient: linear-gradient(145deg, #7c5cff, #4f9aff);
-      --bubble-mine: #5c3cdf;
-      --bubble-theirs: #1a1a3a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(124, 92, 255, 0.05), transparent 60%);
-    }
-
-    /* Theme: Aurora */
-    .theme-aurora {
-      --bg-primary: #0a1a1a;
-      --bg-surface: #0a2a2a;
-      --bg-surface-2: #0a3a3a;
-      --bg-surface-3: #1a4a4a;
-      --text-primary: #d0f0f0;
-      --text-secondary: #80c0c0;
-      --text-dim: #509090;
-      --accent: #34d399;
-      --accent-glow: rgba(52, 211, 153, 0.3);
-      --accent-gradient: linear-gradient(145deg, #34d399, #0ea5e9);
-      --bubble-mine: #1a8a7a;
-      --bubble-theirs: #0a2a2a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(52, 211, 153, 0.05), transparent 60%);
-    }
-
-    /* Theme: Sunset */
-    .theme-sunset {
-      --bg-primary: #1a0a0a;
-      --bg-surface: #2a1212;
-      --bg-surface-2: #3a1a1a;
-      --bg-surface-3: #4a2a2a;
-      --text-primary: #f0d0c0;
-      --text-secondary: #d09070;
-      --text-dim: #a06040;
-      --accent: #f472b6;
-      --accent-glow: rgba(244, 114, 182, 0.3);
-      --accent-gradient: linear-gradient(145deg, #f472b6, #fb923c);
-      --bubble-mine: #c05070;
-      --bubble-theirs: #2a1212;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
-    }
-
-    /* Theme: Ocean */
-    .theme-ocean {
-      --bg-primary: #0a0a1a;
-      --bg-surface: #0a1a2a;
-      --bg-surface-2: #0a2a3a;
-      --bg-surface-3: #1a3a4a;
-      --text-primary: #c0e0f0;
-      --text-secondary: #70a0c0;
-      --text-dim: #4070a0;
-      --accent: #0ea5e9;
-      --accent-glow: rgba(14, 165, 233, 0.3);
-      --accent-gradient: linear-gradient(145deg, #0ea5e9, #06b6d4);
-      --bubble-mine: #0a6a8a;
-      --bubble-theirs: #0a1a2a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.05), transparent 60%);
-    }
-
-    /* Theme: Sakura */
-    .theme-sakura {
-      --bg-primary: #1a0a14;
-      --bg-surface: #2a1018;
-      --bg-surface-2: #3a1822;
-      --bg-surface-3: #4a202a;
-      --text-primary: #f0d0d8;
-      --text-secondary: #d090a0;
-      --text-dim: #a06070;
-      --accent: #f472b6;
-      --accent-glow: rgba(244, 114, 182, 0.3);
-      --accent-gradient: linear-gradient(145deg, #f472b6, #ec4899);
-      --bubble-mine: #c05080;
-      --bubble-theirs: #2a1018;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%);
-    }
-
-    /* Theme: Midnight */
-    .theme-midnight {
-      --bg-primary: #0a0a0a;
-      --bg-surface: #0a0a12;
-      --bg-surface-2: #12121a;
-      --bg-surface-3: #1a1a22;
-      --text-primary: #e0e0e8;
-      --text-secondary: #8888a0;
-      --text-dim: #505068;
-      --accent: #8b5cf6;
-      --accent-glow: rgba(139, 92, 246, 0.3);
-      --accent-gradient: linear-gradient(145deg, #8b5cf6, #6366f1);
-      --bubble-mine: #5b3cf6;
-      --bubble-theirs: #12121a;
-      --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.05), transparent 60%);
-    }
+    .theme-cosmic { --bg-primary: #0a0a1a; --bg-surface: #12122a; --bg-surface-2: #1a1a3a; --bg-surface-3: #2a2a4a; --text-primary: #e8e0ff; --text-secondary: #a090d0; --text-dim: #7060a0; --accent: #7c5cff; --accent-glow: rgba(124, 92, 255, 0.3); --accent-gradient: linear-gradient(145deg, #7c5cff, #4f9aff); --bubble-mine: #5c3cdf; --bubble-theirs: #1a1a3a; --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(124, 92, 255, 0.05), transparent 60%); }
+    .theme-aurora { --bg-primary: #0a1a1a; --bg-surface: #0a2a2a; --bg-surface-2: #0a3a3a; --bg-surface-3: #1a4a4a; --text-primary: #d0f0f0; --text-secondary: #80c0c0; --text-dim: #509090; --accent: #34d399; --accent-glow: rgba(52, 211, 153, 0.3); --accent-gradient: linear-gradient(145deg, #34d399, #0ea5e9); --bubble-mine: #1a8a7a; --bubble-theirs: #0a2a2a; --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(52, 211, 153, 0.05), transparent 60%); }
+    .theme-sunset { --bg-primary: #1a0a0a; --bg-surface: #2a1212; --bg-surface-2: #3a1a1a; --bg-surface-3: #4a2a2a; --text-primary: #f0d0c0; --text-secondary: #d09070; --text-dim: #a06040; --accent: #f472b6; --accent-glow: rgba(244, 114, 182, 0.3); --accent-gradient: linear-gradient(145deg, #f472b6, #fb923c); --bubble-mine: #c05070; --bubble-theirs: #2a1212; --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%); }
+    .theme-ocean { --bg-primary: #0a0a1a; --bg-surface: #0a1a2a; --bg-surface-2: #0a2a3a; --bg-surface-3: #1a3a4a; --text-primary: #c0e0f0; --text-secondary: #70a0c0; --text-dim: #4070a0; --accent: #0ea5e9; --accent-glow: rgba(14, 165, 233, 0.3); --accent-gradient: linear-gradient(145deg, #0ea5e9, #06b6d4); --bubble-mine: #0a6a8a; --bubble-theirs: #0a1a2a; --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(14, 165, 233, 0.05), transparent 60%); }
+    .theme-sakura { --bg-primary: #1a0a14; --bg-surface: #2a1018; --bg-surface-2: #3a1822; --bg-surface-3: #4a202a; --text-primary: #f0d0d8; --text-secondary: #d090a0; --text-dim: #a06070; --accent: #f472b6; --accent-glow: rgba(244, 114, 182, 0.3); --accent-gradient: linear-gradient(145deg, #f472b6, #ec4899); --bubble-mine: #c05080; --bubble-theirs: #2a1018; --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(244, 114, 182, 0.05), transparent 60%); }
+    .theme-midnight { --bg-primary: #0a0a0a; --bg-surface: #0a0a12; --bg-surface-2: #12121a; --bg-surface-3: #1a1a22; --text-primary: #e0e0e8; --text-secondary: #8888a0; --text-dim: #505068; --accent: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3); --accent-gradient: linear-gradient(145deg, #8b5cf6, #6366f1); --bubble-mine: #5b3cf6; --bubble-theirs: #12121a; --chat-bg: radial-gradient(ellipse at 20% 20%, rgba(139, 92, 246, 0.05), transparent 60%); }
 
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     html, body { height: 100%; }
@@ -1032,6 +936,53 @@
     }
     .theme-selector .theme-option .theme-name { font-size: 11px; color: var(--text-dim); }
 
+    /* Activity Analytics */
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .analytics-card {
+      background: var(--bg-surface-2);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+      border: 1px solid var(--border-subtle);
+    }
+    .analytics-card .number {
+      font-size: 28px;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .analytics-card .label {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+    .activity-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 60px;
+      padding: 8px 0;
+    }
+    .activity-chart .bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 4px 4px 0 0;
+      min-height: 4px;
+      transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .activity-chart .bar:hover {
+      opacity: 0.7;
+      transform: scaleY(1.05);
+      transform-origin: bottom;
+    }
+
     @media (max-width: 480px) {
       #app { max-width: 100%; border-radius: 0; }
       .auth-title { font-size: 24px; }
@@ -1058,7 +1009,7 @@
     <div id="registerFields" class="hidden">
       <div class="field"><label>Username</label><input type="text" id="regUsername" placeholder="Your name"></div>
       <div class="field"><label>Email</label><input type="email" id="regEmail" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input type="password" id="regPassword" placeholder="At least 4 characters"></div>
+      <div class="field"><label>Password</label><input type="password" id="regPassword" placeholder="At least 8 characters"></div>
       <button class="btn-primary" onclick="doRegister()"><span>Create Account</span></button>
       <div class="auth-switch">Already have an account? <span onclick="toggleAuth(true)">Log in</span></div>
     </div>
@@ -1076,6 +1027,7 @@
       <div class="tab active" id="tabChats" onclick="switchTab('chats')">Chats</div>
       <div class="tab" id="tabPeople" onclick="switchTab('people')">People</div>
       <div class="tab" id="tabGroups" onclick="switchTab('groups')">Groups</div>
+      <div class="tab" id="tabAnalytics" onclick="switchTab('analytics')">Analytics</div>
     </div>
     <div class="search-bar">
       <input type="text" id="searchBox" placeholder="Search..." oninput="onSearch(this.value)">
@@ -1176,7 +1128,7 @@
 
 <script>
 // ============================================================
-//  WAVEGRAM – FULL CLIENT LOGIC
+//  WAVEGRAM – FULL CLIENT LOGIC (Enhanced)
 // ============================================================
 
 const API = "";
@@ -1194,26 +1146,21 @@ let ANIMATIONS_ON = localStorage.getItem("wg_animations") !== "off";
 let groupMembersCache = {};
 let currentTheme = localStorage.getItem("wg_theme") || "default";
 
+// Activity tracking (local)
+let activityLog = JSON.parse(localStorage.getItem("wg_activity") || '{"sessions":[],"messages_sent":0,"reels_viewed":0,"calls_made":0,"last_active":null}');
+let sessionStart = Date.now();
+
 // ---- Apply Theme ----
 function applyTheme(theme) {
   const app = document.getElementById("app");
-  const chatScreen = document.getElementById("chatScreen");
-  const messages = document.getElementById("messagesBody");
-  
-  // Remove all theme classes
   app.classList.remove('theme-cosmic', 'theme-aurora', 'theme-sunset', 'theme-ocean', 'theme-sakura', 'theme-midnight');
-  
-  if (theme !== 'default') {
-    app.classList.add('theme-' + theme);
-  }
-  
+  if (theme !== 'default') app.classList.add('theme-' + theme);
   currentTheme = theme;
   localStorage.setItem("wg_theme", theme);
 }
 
 // ---- GIFTS (extended with categories) ----
 const GIFTS = [
-  // Love & Romance
   { emoji: "❤️", name: "Red Heart", category: "Love" },
   { emoji: "💕", name: "Two Hearts", category: "Love" },
   { emoji: "💗", name: "Growing Heart", category: "Love" },
@@ -1225,8 +1172,6 @@ const GIFTS = [
   { emoji: "💐", name: "Bouquet", category: "Love" },
   { emoji: "🥰", name: "Smiling Face with Hearts", category: "Love" },
   { emoji: "😘", name: "Face Blowing a Kiss", category: "Love" },
-  
-  // Food & Drink
   { emoji: "🎂", name: "Birthday Cake", category: "Food" },
   { emoji: "🍰", name: "Cake", category: "Food" },
   { emoji: "🧁", name: "Cupcake", category: "Food" },
@@ -1241,8 +1186,6 @@ const GIFTS = [
   { emoji: "🍾", name: "Champagne", category: "Food" },
   { emoji: "🥂", name: "Clinking Glasses", category: "Food" },
   { emoji: "🍷", name: "Wine Glass", category: "Food" },
-  
-  // Animals
   { emoji: "🐶", name: "Dog", category: "Animals" },
   { emoji: "🐱", name: "Cat", category: "Animals" },
   { emoji: "🐭", name: "Mouse", category: "Animals" },
@@ -1258,8 +1201,6 @@ const GIFTS = [
   { emoji: "🐧", name: "Penguin", category: "Animals" },
   { emoji: "🐦", name: "Bird", category: "Animals" },
   { emoji: "🦋", name: "Butterfly", category: "Animals" },
-  
-  // Nature
   { emoji: "⭐", name: "Star", category: "Nature" },
   { emoji: "🌟", name: "Glowing Star", category: "Nature" },
   { emoji: "✨", name: "Sparkles", category: "Nature" },
@@ -1271,8 +1212,6 @@ const GIFTS = [
   { emoji: "🌻", name: "Sunflower", category: "Nature" },
   { emoji: "🌿", name: "Herb", category: "Nature" },
   { emoji: "🌴", name: "Palm Tree", category: "Nature" },
-  
-  // Celebrations
   { emoji: "🎉", name: "Party Popper", category: "Celebration" },
   { emoji: "🎊", name: "Confetti Ball", category: "Celebration" },
   { emoji: "🎈", name: "Balloon", category: "Celebration" },
@@ -1285,8 +1224,6 @@ const GIFTS = [
   { emoji: "🎹", name: "Musical Keyboard", category: "Celebration" },
   { emoji: "🎺", name: "Trumpet", category: "Celebration" },
   { emoji: "🎻", name: "Violin", category: "Celebration" },
-  
-  // Emotions
   { emoji: "😊", name: "Smiling Face", category: "Emotions" },
   { emoji: "😃", name: "Happy Face", category: "Emotions" },
   { emoji: "🤗", name: "Hugging Face", category: "Emotions" },
@@ -1302,8 +1239,6 @@ const GIFTS = [
   { emoji: "🤣", name: "Rolling on Floor", category: "Emotions" },
   { emoji: "😁", name: "Grinning Face", category: "Emotions" },
   { emoji: "😆", name: "Squinting Face", category: "Emotions" },
-  
-  // Objects
   { emoji: "💎", name: "Diamond", category: "Objects" },
   { emoji: "🔮", name: "Crystal Ball", category: "Objects" },
   { emoji: "🏆", name: "Trophy", category: "Objects" },
@@ -1319,8 +1254,6 @@ const GIFTS = [
   { emoji: "🎮", name: "Video Game", category: "Objects" },
   { emoji: "🧸", name: "Teddy Bear", category: "Objects" },
   { emoji: "🎯", name: "Target", category: "Objects" },
-  
-  // Sports
   { emoji: "⚽", name: "Soccer Ball", category: "Sports" },
   { emoji: "🏀", name: "Basketball", category: "Sports" },
   { emoji: "🏈", name: "Football", category: "Sports" },
@@ -1362,6 +1295,14 @@ window.addEventListener("DOMContentLoaded", () => {
   } else {
     showAuth();
   }
+  // Update activity on visibility change
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      sessionStart = Date.now();
+      activityLog.last_active = new Date().toISOString();
+      localStorage.setItem("wg_activity", JSON.stringify(activityLog));
+    }
+  });
 });
 
 function saveSession(){
@@ -1419,6 +1360,7 @@ async function doRegister(){
   const username = document.getElementById("regUsername").value.trim();
   const email = document.getElementById("regEmail").value.trim();
   const password = document.getElementById("regPassword").value;
+  if (password.length < 8) { showAuthError("Password must be at least 8 characters"); return; }
   try {
     const r = await api("/api/register", {method:"POST", body: JSON.stringify({username,email,password})});
     TOKEN = r.token; ME = r.user; saveSession();
@@ -1447,14 +1389,8 @@ function logout(silent){
 function connectSocket(){
   socket = io({transports:["websocket","polling"]});
   socket.on("connect", () => socket.emit("auth", {token: TOKEN}));
-  socket.on("auth_ok", (data) => {
-    console.log("Socket authenticated:", data);
-  });
-  socket.on("auth_error", (data) => {
-    console.error("Socket auth error:", data);
-    showToast("Session expired, please login again");
-    logout(true);
-  });
+  socket.on("auth_ok", (data) => { console.log("Socket authenticated:", data); });
+  socket.on("auth_error", (data) => { console.error("Socket auth error:", data); showToast("Session expired, please login again"); logout(true); });
   socket.on("new_message", handleIncomingMessage);
   socket.on("message_deleted", handleMessageDeleted);
   socket.on("message_edited", handleMessageEdited);
@@ -1466,18 +1402,9 @@ function connectSocket(){
   socket.on("call_ice_candidate", handleRemoteIce);
   socket.on("call_reject", handleCallReject);
   socket.on("call_end", handleRemoteEnd);
-  socket.on("call_error", (d) => {
-    showToast(d.error || "Call error");
-    endCall(true);
-  });
+  socket.on("call_error", (d) => { showToast(d.error || "Call error"); endCall(true); });
   socket.on("group_member_updated", handleGroupMemberUpdate);
-  socket.on("account_deleted", () => {
-    showToast("This account was deleted");
-    localStorage.removeItem("wg_token"); localStorage.removeItem("wg_me");
-    TOKEN = ""; ME = null;
-    if (socket) socket.disconnect();
-    showAuth();
-  });
+  socket.on("account_deleted", () => { showToast("This account was deleted"); localStorage.removeItem("wg_token"); localStorage.removeItem("wg_me"); TOKEN = ""; ME = null; if (socket) socket.disconnect(); showAuth(); });
 }
 
 // ---- Tabs & Lists ----
@@ -1485,11 +1412,11 @@ let currentTab = "chats";
 let allConversations = [];
 
 function switchTab(tab){
-  ["chats","people","groups"].forEach(t => {
+  ["chats","people","groups","analytics"].forEach(t => {
     const el = document.getElementById("tab"+cap(t));
     if (el) el.classList.toggle("active", t===tab);
   });
-  document.getElementById("searchBox").placeholder = tab==="people" ? "Search people..." : (tab==="groups" ? "Search groups..." : "Search...");
+  document.getElementById("searchBox").placeholder = tab==="people" ? "Search people..." : (tab==="groups" ? "Search groups..." : (tab==="analytics" ? "Activity stats" : "Search..."));
   currentTab = tab;
   loadList();
 }
@@ -1506,6 +1433,8 @@ async function loadList(){
       const r = await api("/api/groups/mine");
       allGroups = r.groups || [];
       renderGroups(allGroups);
+    } else if (currentTab === "analytics") {
+      renderAnalytics();
     } else {
       const r = await api("/api/conversations");
       allConversations = r.conversations || [];
@@ -1517,6 +1446,64 @@ async function loadList(){
   }
 }
 
+function renderAnalytics() {
+  const body = document.getElementById("listBody");
+  const log = JSON.parse(localStorage.getItem("wg_activity") || '{"sessions":[],"messages_sent":0,"reels_viewed":0,"calls_made":0,"last_active":null}');
+  const totalSessions = log.sessions ? log.sessions.length : 0;
+  const totalTime = log.sessions ? log.sessions.reduce((a,b) => a + (b.duration || 0), 0) : 0;
+  const hours = Math.floor(totalTime / 3600);
+  const mins = Math.floor((totalTime % 3600) / 60);
+  
+  // Generate activity chart (last 7 days)
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const today = new Date().getDay();
+  const activityData = [];
+  for (let i = 6; i >= 0; i--) {
+    const dayIdx = (today - i + 7) % 7;
+    const count = log.sessions ? log.sessions.filter(s => {
+      const d = new Date(s.start);
+      return d.getDay() === dayIdx;
+    }).length : 0;
+    activityData.push({day: days[dayIdx], count: Math.min(count, 20)});
+  }
+  const maxVal = Math.max(...activityData.map(d => d.count), 1);
+  
+  let chartHtml = '<div class="activity-chart">';
+  activityData.forEach(d => {
+    const height = (d.count / maxVal) * 50 + 4;
+    chartHtml += `<div class="bar" style="height:${height}px;" title="${d.day}: ${d.count} sessions"></div>`;
+  });
+  chartHtml += '</div>';
+  
+  body.innerHTML = `
+    <div style="padding:16px;">
+      <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;">📊 Your Activity</h2>
+      <div class="analytics-grid">
+        <div class="analytics-card"><div class="number">${log.messages_sent || 0}</div><div class="label">Messages Sent</div></div>
+        <div class="analytics-card"><div class="number">${log.reels_viewed || 0}</div><div class="label">Reels Viewed</div></div>
+        <div class="analytics-card"><div class="number">${log.calls_made || 0}</div><div class="label">Calls Made</div></div>
+        <div class="analytics-card"><div class="number">${totalSessions}</div><div class="label">Sessions</div></div>
+      </div>
+      <div style="margin-top:12px;background:var(--bg-surface-2);border-radius:14px;padding:16px;">
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--text-secondary);margin-bottom:6px;">
+          <span>Total time online</span>
+          <span><strong>${hours}h ${mins}m</strong></span>
+        </div>
+        ${chartHtml}
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-dim);margin-top:4px;">
+          ${activityData.map(d => `<span>${d.day}</span>`).join('')}
+        </div>
+      </div>
+      <div style="margin-top:12px;background:var(--bg-surface-2);border-radius:14px;padding:16px;font-size:13px;color:var(--text-secondary);">
+        <div style="display:flex;justify-content:space-between;">
+          <span>Last active</span>
+          <span>${log.last_active ? new Date(log.last_active).toLocaleString() : 'Never'}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 function filterConversations(q){
   q = (q||"").toLowerCase().trim();
   if (!q) return allConversations;
@@ -1526,6 +1513,7 @@ function filterConversations(q){
 function onSearch(val){
   if (currentTab === "people") loadList();
   else if (currentTab === "groups") renderGroups(allGroups.filter(g => g.name && g.name.toLowerCase().includes(val.toLowerCase())));
+  else if (currentTab === "analytics") renderAnalytics();
   else renderConversations(filterConversations(val));
 }
 
@@ -1903,6 +1891,9 @@ function appendOptimistic(msgType, content, mediaPath){
   body.appendChild(row);
   body.scrollTop = body.scrollHeight;
   pendingMessages[clientId] = row;
+  // Track activity
+  activityLog.messages_sent = (activityLog.messages_sent || 0) + 1;
+  localStorage.setItem("wg_activity", JSON.stringify(activityLog));
   return clientId;
 }
 
@@ -2247,14 +2238,8 @@ function openMessageMenu(m, mine){
 // ---- Copy Message Function ----
 function copyMessage(messageId) {
   const m = messageCache[messageId];
-  if (!m) {
-    showToast("Message not found");
-    return;
-  }
-  if (m.deleted) {
-    showToast("Cannot copy a deleted message");
-    return;
-  }
+  if (!m) { showToast("Message not found"); return; }
+  if (m.deleted) { showToast("Cannot copy a deleted message"); return; }
   
   let textToCopy = "";
   if (m.msg_type === "text") {
@@ -3046,6 +3031,8 @@ async function registerReelView(id){
     if (reel) reel.view_count = r.view_count;
     const el = document.querySelector(`.reel-item[data-reel-id="${id}"] .reel-views`);
     if (el) el.innerHTML = `<span style="background:rgba(0,0,0,0.3);padding:4px 12px;border-radius:20px;">👁 ${r.view_count} views</span>`;
+    activityLog.reels_viewed = (activityLog.reels_viewed || 0) + 1;
+    localStorage.setItem("wg_activity", JSON.stringify(activityLog));
   } catch(e){}
 }
 
@@ -3224,7 +3211,7 @@ async function submitComment(reelId){
   } catch(e){ showToast(e.message); }
 }
 
-// ==================== CALLS (WebRTC) - FIXED ====================
+// ==================== CALLS (WebRTC) - FIXED & ENHANCED ====================
 let pc = null;
 let localStream = null;
 let remoteStream = null;
@@ -3276,7 +3263,6 @@ async function startCall(type){
 
   console.log("📞 Starting call to:", currentCallTargetId, "video:", isVideoCall);
 
-  // Show call UI
   document.getElementById("callActionsIncoming").classList.add("hidden");
   document.getElementById("callActionsActive").classList.remove("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
@@ -3304,7 +3290,6 @@ async function startCall(type){
     createPeerConnection();
     console.log("🔗 Peer connection created");
 
-    // Add all tracks to the peer connection
     localStream.getTracks().forEach(track => {
       if (pc) {
         pc.addTrack(track, localStream);
@@ -3312,7 +3297,6 @@ async function startCall(type){
       }
     });
 
-    // Create and send offer
     const offer = await pc.createOffer({
       offerToReceiveAudio: true,
       offerToReceiveVideo: isVideoCall
@@ -3382,7 +3366,6 @@ async function handleCallOffer(data){
   window._callerInfo = user;
   console.log("📥 Incoming call offer stored");
   
-  // Play ringtone effect (vibration on mobile)
   if (navigator.vibrate) {
     navigator.vibrate([200, 100, 200]);
   }
@@ -3589,7 +3572,10 @@ function saveCallRecord(status) {
     client_id: clientId,
     reply_to_id: null
   });
-  console.log("💾 Call record saved");
+  
+  activityLog.calls_made = (activityLog.calls_made || 0) + 1;
+  localStorage.setItem("wg_activity", JSON.stringify(activityLog));
+  console.log("💾 Call record saved and activity updated");
 }
 
 function createPeerConnection(){
