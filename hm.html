@@ -934,10 +934,6 @@
     .edit-banner .edit-preview { font-size: 12px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     /* GIFT PICKER */
-    @keyframes giftPopIn {
-      from { opacity: 0; transform: scale(0.6) translateY(10px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
     .gift-picker {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -958,7 +954,6 @@
       cursor: pointer;
       min-height: 80px;
       justify-content: center;
-      animation: giftPopIn 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
     }
     .gift-picker .gift-option:hover, .gift-picker .gift-option:active {
       border-color: var(--accent);
@@ -1342,30 +1337,6 @@ const GIFTS = [
   { emoji: "🏂", name: "Snowboard", category: "Sports" },
   { emoji: "🏊", name: "Swimming", category: "Sports" },
   { emoji: "🚴", name: "Cycling", category: "Sports" },
-
-  // Travel
-  { emoji: "✈️", name: "Airplane", category: "Travel" },
-  { emoji: "🚗", name: "Car", category: "Travel" },
-  { emoji: "🚀", name: "Rocket", category: "Travel" },
-  { emoji: "🗺️", name: "Map", category: "Travel" },
-  { emoji: "🏖️", name: "Beach", category: "Travel" },
-  { emoji: "🏔️", name: "Mountain", category: "Travel" },
-  { emoji: "🎡", name: "Ferris Wheel", category: "Travel" },
-  { emoji: "🎢", name: "Roller Coaster", category: "Travel" },
-  { emoji: "⛺", name: "Tent", category: "Travel" },
-
-  // Space
-  { emoji: "🌍", name: "Earth", category: "Space" },
-  { emoji: "🪐", name: "Saturn", category: "Space" },
-  { emoji: "☄️", name: "Comet", category: "Space" },
-  { emoji: "🛸", name: "UFO", category: "Space" },
-  { emoji: "🌌", name: "Milky Way", category: "Space" },
-
-  // Weather
-  { emoji: "⚡", name: "Lightning Bolt", category: "Weather" },
-  { emoji: "❄️", name: "Snowflake", category: "Weather" },
-  { emoji: "🔥", name: "Fire", category: "Weather" },
-  { emoji: "☔", name: "Umbrella with Rain", category: "Weather" },
 ];
 
 // ---- API helper ----
@@ -1981,7 +1952,6 @@ function sendGift(emoji, name){
   showToast("🎁 Gift sent: " + name);
 }
 
-// ---- Gift Picker (searchable + animated) ----
 function openGiftPicker(){
   if (!currentChat) return;
   const overlay = document.createElement("div");
@@ -1989,52 +1959,28 @@ function openGiftPicker(){
   overlay.onclick = (e) => { if (e.target===overlay) overlay.remove(); };
   const sheet = document.createElement("div");
   sheet.className = "sheet";
-
-  let html = `<h2>🎁 Send a Gift</h2>
-    <div class="search-bar" style="padding:0 0 12px;">
-      <input type="text" id="giftSearchInput" placeholder="Search gifts..." oninput="filterGifts(this.value)">
-    </div>
-    <div class="gift-picker" id="giftPickerGrid"></div>
-    <button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
-  sheet.innerHTML = html;
-  overlay.appendChild(sheet);
-  document.getElementById("app").appendChild(overlay);
-  renderGiftGrid(GIFTS);
-  setTimeout(() => document.getElementById("giftSearchInput")?.focus(), 250);
-}
-
-function renderGiftGrid(gifts){
-  const grid = document.getElementById("giftPickerGrid");
-  if (!grid) return;
-  if (!gifts || gifts.length === 0){
-    grid.innerHTML = "<div class='empty-state' style='grid-column:1/-1;'><i>🔍</i>No gifts found</div>";
-    return;
-  }
+  
   const categories = {};
-  gifts.forEach(g => {
+  GIFTS.forEach(g => {
     if (!categories[g.category]) categories[g.category] = [];
     categories[g.category].push(g);
   });
-  let html = "";
-  let idx = 0;
+  
+  let html = `<h2>🎁 Send a Gift</h2><div class="gift-picker">`;
   Object.keys(categories).forEach(cat => {
     html += `<div class="gift-category-header">${cat}</div>`;
     categories[cat].forEach(g => {
-      html += `<div class="gift-option" style="animation-delay:${(idx % 16) * 0.025}s" onclick="sendGift('${g.emoji}','${g.name.replace(/'/g, "\\'")}')">
+      html += `<div class="gift-option" onclick="sendGift('${g.emoji}','${g.name}')">
         <span class="gift-emoji">${g.emoji}</span>
         <span class="gift-name">${escapeHtml(g.name)}</span>
         <span class="gift-category">${escapeHtml(g.category)}</span>
       </div>`;
-      idx++;
     });
   });
-  grid.innerHTML = html;
-}
-
-function filterGifts(query){
-  const q = (query || "").toLowerCase().trim();
-  if (!q) { renderGiftGrid(GIFTS); return; }
-  renderGiftGrid(GIFTS.filter(g => g.name.toLowerCase().includes(q) || g.category.toLowerCase().includes(q)));
+  html += `</div><button class="btn-primary" onclick="document.querySelector('.overlay')?.remove()"><span>Cancel</span></button>`;
+  sheet.innerHTML = html;
+  overlay.appendChild(sheet);
+  document.getElementById("app").appendChild(overlay);
 }
 
 function onTypingInput(){
@@ -3297,27 +3243,10 @@ const rtcConfig = {
     { urls: "stun:stun1.l.google.com:19302" },
     { urls: "stun:stun2.l.google.com:19302" },
     { urls: "stun:stun3.l.google.com:19302" },
-    { urls: "stun:stun4.l.google.com:19302" },
-    // TURN relay servers - these are what make calls actually connect when
-    // one or both sides are behind a strict/symmetric NAT (very common on
-    // mobile data networks). STUN alone was the main reason calls silently
-    // failed to connect before.
-    { urls: "turn:openrelay.metered.ca:80", username: "openrelayproject", credential: "openrelayproject" },
-    { urls: "turn:openrelay.metered.ca:443", username: "openrelayproject", credential: "openrelayproject" },
-    { urls: "turn:openrelay.metered.ca:443?transport=tcp", username: "openrelayproject", credential: "openrelayproject" }
+    { urls: "stun:stun4.l.google.com:19302" }
   ],
   iceCandidatePoolSize: 10
 };
-
-// Queue for ICE candidates that arrive before the remote description is set
-// (fixes a race condition where fast networks send candidates before the
-// offer/answer handshake finishes, silently dropping them and breaking the call)
-let pendingIceCandidates = [];
-
-// Only the person who STARTED the call saves/sends the call-log message.
-// Previously both sides saved it independently, which duplicated every
-// call entry in the chat history for both users.
-let isCallInitiator = false;
 
 async function startCall(type){
   console.log("🔵 startCall called with type:", type);
@@ -3344,7 +3273,6 @@ async function startCall(type){
   callStartTime = Date.now();
   callRecordSaved = false;
   isCallActive = true;
-  isCallInitiator = true;
 
   console.log("📞 Starting call to:", currentCallTargetId, "video:", isVideoCall);
 
@@ -3440,16 +3368,12 @@ async function handleCallOffer(data){
   callStartTime = Date.now();
   callRecordSaved = false;
   isCallActive = true;
-  isCallInitiator = false;
 
   const user = {username: data.from_username || "Unknown", avatar: data.from_avatar || null};
   setCallAvatarEl(document.getElementById("callAvatar"), user);
   document.getElementById("callName").textContent = user.username;
   document.getElementById("callStatus").textContent = isVideoCall ? "📹 Incoming video call..." : "📞 Incoming voice call...";
 
-  // This overlay sits above the entire #app (z-index 60) and is toggled
-  // directly, so it shows up no matter which screen (chat list, reels,
-  // a different conversation...) the person is currently looking at.
   document.getElementById("callActionsIncoming").classList.remove("hidden");
   document.getElementById("callActionsActive").classList.add("hidden");
   document.getElementById("callOverlay").classList.remove("hidden");
@@ -3457,14 +3381,10 @@ async function handleCallOffer(data){
   window._incomingOffer = data.offer;
   window._callerInfo = user;
   console.log("📥 Incoming call offer stored");
-
-  // Also raise a system/browser notification so the person can see the
-  // incoming call even if the app is in a background tab or minimized.
-  notifyDesktop(user.username, isVideoCall ? "📹 Incoming video call" : "📞 Incoming voice call");
   
   // Play ringtone effect (vibration on mobile)
   if (navigator.vibrate) {
-    navigator.vibrate([200, 100, 200, 100, 200]);
+    navigator.vibrate([200, 100, 200]);
   }
 }
 
@@ -3510,7 +3430,6 @@ async function acceptCall(){
     console.log("📥 Setting remote description");
     await pc.setRemoteDescription(new RTCSessionDescription(window._incomingOffer));
     console.log("✅ Remote description set");
-    await flushPendingIceCandidates();
     
     const answer = await pc.createAnswer();
     console.log("📤 Answer created");
@@ -3539,7 +3458,6 @@ async function handleCallAnswer(data){
     console.log("📥 Setting remote description from answer");
     await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
     console.log("✅ Remote description set from answer");
-    await flushPendingIceCandidates();
     document.getElementById("callStatus").textContent = "Connected";
     startCallTimer();
   } catch(e){
@@ -3549,33 +3467,12 @@ async function handleCallAnswer(data){
 
 async function handleRemoteIce(data){
   console.log("🧊 ICE candidate received");
-  if (!data.candidate) return;
-  if (!pc || !pc.remoteDescription || !pc.remoteDescription.type) {
-    // Remote description isn't set yet — queue it instead of dropping it,
-    // otherwise the connection can silently fail to establish.
-    pendingIceCandidates.push(data.candidate);
-    console.log("🧊 Queued ICE candidate (remote description not set yet)");
-    return;
-  }
+  if (!pc || !data.candidate) return;
   try {
     await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
     console.log("✅ ICE candidate added");
   } catch(e){
     console.warn("⚠️ Failed to add ICE candidate:", e);
-  }
-}
-
-async function flushPendingIceCandidates(){
-  if (!pc || pendingIceCandidates.length === 0) return;
-  const queued = pendingIceCandidates;
-  pendingIceCandidates = [];
-  for (const c of queued) {
-    try {
-      await pc.addIceCandidate(new RTCIceCandidate(c));
-      console.log("✅ Queued ICE candidate added");
-    } catch(e){
-      console.warn("⚠️ Failed to add queued ICE candidate:", e);
-    }
   }
 }
 
@@ -3643,10 +3540,6 @@ function endCall(silent){
   currentCallTargetId = null;
   isCallActive = false;
   callStartTime = null;
-  isCallInitiator = false;
-  pendingIceCandidates = [];
-  window._incomingOffer = null;
-  window._callerInfo = null;
   document.getElementById("callOverlay").classList.add("hidden");
   document.getElementById("remoteVideo").classList.add("hidden");
   document.getElementById("localVideo").classList.add("hidden");
@@ -3655,15 +3548,6 @@ function endCall(silent){
 }
 
 function saveCallRecord(status) {
-  // Only the initiator writes the call-log message to the conversation.
-  // The other participant receives it automatically through the normal
-  // "new_message" socket broadcast once it's saved here — so recording it
-  // on both sides would create two entries for the same call.
-  if (!isCallInitiator) {
-    console.log("⏭️ Not the call initiator — skipping duplicate call record save");
-    return;
-  }
-
   console.log("💾 Saving call record with status:", status);
   if (!currentChat || currentChat.type !== "dm") return;
   const callType = isVideoCall ? "video" : "audio";
